@@ -1,8 +1,6 @@
 library multiselect_dropdown;
 
 import 'package:flutter/material.dart';
-import 'package:collection/collection.dart';
-import 'package:multiselect_dropdown/enums.dart';
 
 class MultiSelectDropDown extends StatefulWidget {
   // Type of the dropdown
@@ -142,6 +140,7 @@ class _MultiSelectDropDownState extends State<MultiSelectDropDown> {
 
   bool _selectionMode = false;
   final FocusNode _focusNode = FocusNode();
+  late FocusHighlightMode _focusHighlightMode;
 
   final LayerLink _layerLink = LayerLink();
 
@@ -153,21 +152,34 @@ class _MultiSelectDropDownState extends State<MultiSelectDropDown> {
     _selectedOptions.addAll(widget.preSelectedItems);
     _overlayState ??= Overlay.of(context);
 
-    _focusNode.addListener(() {
-      debugPrint('Focus changed: ${_focusNode.hasFocus}');
-      if (_focusNode.hasFocus) {
-        _overlayEntry = _createOverlayEntry();
-        Overlay.of(context)?.insert(_overlayEntry!);
-        setState(() {
-          _selectionMode = true;
-        });
-      } else {
-        _overlayEntry?.remove();
-        setState(() {
-          _selectionMode = false;
-        });
-      }
+    _focusNode.addListener(_handleFocusChange);
+    final FocusManager focusManager = WidgetsBinding.instance!.focusManager;
+    _focusHighlightMode = focusManager.highlightMode;
+    focusManager.addHighlightModeListener(_handleFocusHighlightModeChange);
+  }
+
+  void _handleFocusHighlightModeChange(FocusHighlightMode mode) {
+    if (!mounted) {
+      return;
+    }
+    setState(() {
+      _focusHighlightMode = mode;
     });
+  }
+
+  _handleFocusChange() {
+    if (_focusNode.hasFocus) {
+      _overlayEntry = _createOverlayEntry();
+      Overlay.of(context)?.insert(_overlayEntry!);
+      setState(() {
+        _selectionMode = true;
+      });
+    } else {
+      _overlayEntry?.remove();
+      setState(() {
+        _selectionMode = false;
+      });
+    }
   }
 
   @override
@@ -314,7 +326,10 @@ class _MultiSelectDropDownState extends State<MultiSelectDropDown> {
                           ),
                         ),
                       )
-                    : _buildSelectedItems(),
+                    : widget.type == DropdownType.singleSelect &&
+                            !widget.showChipInSingleSelectMode
+                        ? _buildSelectedItem()
+                        : _buildSelectedItems(),
               ),
               AnimatedRotation(
                   turns: _selectionMode ? 0.5 : 0,
@@ -338,6 +353,19 @@ class _MultiSelectDropDownState extends State<MultiSelectDropDown> {
     super.dispose();
   }
 
+  Widget _buildSelectedItem() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 9.0),
+      child: Text(
+        _selectedOptions.first,
+        style: TextStyle(
+          fontSize: 13,
+          color: Colors.grey.shade700,
+        ),
+      ),
+    );
+  }
+
   Widget _buildSelectedItems() {
     return widget.wrapType == WrapType.scroll
         ? ListView.separated(
@@ -349,6 +377,7 @@ class _MultiSelectDropDownState extends State<MultiSelectDropDown> {
             shrinkWrap: true,
             itemBuilder: (context, index) {
               final item = _selectedOptions[index];
+              debugPrint('type: ${widget.type}');
               return Chip(
                 padding: const EdgeInsets.symmetric(horizontal: 6),
                 label: Text(item),
@@ -370,9 +399,9 @@ class _MultiSelectDropDownState extends State<MultiSelectDropDown> {
           )
         : Wrap(
             spacing: 20,
-            children: _selectedOptions.mapIndexed((index, item) {
+            children: mapIndexed(_selectedOptions, (index, item) {
               return Chip(
-                label: Text(item),
+                label: Text(item.toString()),
                 deleteIconColor:
                     widget.chipDeleteIconColor ?? Colors.grey.shade400,
                 backgroundColor:
@@ -389,4 +418,25 @@ class _MultiSelectDropDownState extends State<MultiSelectDropDown> {
               );
             }).toList());
   }
+
+  Iterable<E> mapIndexed<E, T>(
+      Iterable<T> items, E Function(int index, T item) f) sync* {
+    var index = 0;
+
+    for (final item in items) {
+      yield f(index, item);
+      index = index + 1;
+    }
+  }
+}
+
+// enum class for dropdown types
+enum DropdownType {
+  singleSelect,
+  multiSelect,
+}
+
+enum WrapType {
+  wrap,
+  scroll,
 }

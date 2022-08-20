@@ -1,7 +1,7 @@
 name: multiselect_dropdown
-description: A new Flutter package project.
+description: 'A Flutter widget that allows the user to select one or more options from a list.'
 version: 1.0.0
-homepage: "http://"
+homepage: "https://github.com/oi-narendra/multiselect-dropdown"
 
 environment:
   sdk: ">=2.16.2 <3.0.0"

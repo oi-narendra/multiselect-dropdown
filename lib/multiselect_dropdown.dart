@@ -88,7 +88,7 @@ class MultiSelectDropDown extends StatefulWidget {
   ///
   /// [optionsBackgroundColor] is the background color of the options. The default is [Colors.white].
   ///
-  /// [optionsFontSize] is the font size of the options. The default is 14.0.
+  /// [optionTextStyle] is the text style of the options.
   ///
   /// [optionSeperator] is the seperator between the options.
   ///

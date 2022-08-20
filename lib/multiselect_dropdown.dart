@@ -167,7 +167,7 @@ class MultiSelectDropDown extends StatefulWidget {
       this.alwaysShowOptionIcon = false,
       this.optionTextStyle,
       this.selectedOptionIcon = const Icon(Icons.check),
-      this.selectedOptionBackgroundColor = Colors.grey,
+      this.selectedOptionBackgroundColor,
       this.optionsBackgroundColor,
       this.backgroundColor = Colors.white,
       this.dropdownHeight = 200,
@@ -320,7 +320,7 @@ class _MultiSelectDropDownState extends State<MultiSelectDropDown> {
                                 ),
                                 selected: isSelected,
                                 tileColor: widget.optionsBackgroundColor ??
-                                    Colors.transparent,
+                                    Colors.white,
                                 selectedTileColor:
                                     widget.selectedOptionBackgroundColor ??
                                         Colors.grey.shade200,
@@ -384,6 +384,7 @@ class _MultiSelectDropDownState extends State<MultiSelectDropDown> {
             _toggleFocus();
           },
           child: Container(
+            height: widget.chipConfig.wrapType == WrapType.wrap ? null : 52,
             constraints: BoxConstraints(
               minWidth: MediaQuery.of(context).size.width,
               minHeight: 52,
@@ -432,7 +433,7 @@ class _MultiSelectDropDownState extends State<MultiSelectDropDown> {
   Decoration _getContainerDecoration() {
     return widget.inputDecoration ??
         BoxDecoration(
-          color: Colors.white,
+          color: widget.backgroundColor ?? Colors.white,
           borderRadius: BorderRadius.circular(12),
           border: Border.all(
             color: Colors.grey,

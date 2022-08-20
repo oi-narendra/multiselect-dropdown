@@ -10,7 +10,7 @@ You can customize the dropdown list items, the dropdown list style, and the drop
 `Selection mode: multiple`
 
 [<img src="https://raw.githubusercontent.com/oi-narendra/multiselect-dropdown/main/screenshots/sample2.gif" width="300"/>](sample2.gif)
-[<img src="https://raw.githubusercontent.com/oi-narendra/multiselect-dropdown/main/screenshots/sample1.gif" width="300"/>](sample2.gif)
+[<img src="https://raw.githubusercontent.com/oi-narendra/multiselect-dropdown/main/screenshots/sample3.gif" width="300"/>](sample3.gif)
 
 
 

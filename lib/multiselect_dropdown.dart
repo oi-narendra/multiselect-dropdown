@@ -2,129 +2,181 @@ library multiselect_dropdown;
 
 import 'package:flutter/material.dart';
 
+import 'models/chip_config.dart';
+import 'models/value_item.dart';
+import 'enum/app_enums.dart';
+
+export 'enum/app_enums.dart';
+export 'models/chip_config.dart';
+export 'models/value_item.dart';
+
 class MultiSelectDropDown extends StatefulWidget {
-  // Type of the dropdown
-  final DropdownType type;
+  // selection type of the dropdown
+  final SelectionType selectionType;
 
-  // Hint text to be displayed when no option is selected
+  // Hint
   final String hint;
-
-  //Hint text color
-  final Color? hintTextColor;
-
-  //Font size of hint text
+  final Color? hintColor;
   final double? hintFontSize;
+  final TextStyle? hintStyle;
 
-  // List of options to be displayed
-  final List<String> options;
+  // Options
+  final List<ValueItem> options;
+  final List<ValueItem> selectedOptions;
+  final List<ValueItem> disabledOptions;
 
-  // list of previously selected values
-  final List<String> preSelectedItems;
+  final Function(List<ValueItem>)? onOptionSelected;
 
-  // list of disabled items values
-  final List<String> disabledItems;
-
-  // Function to be called when one or more options are selected
-  final Function(List<String>)? onOptionSelected;
-
-  // Icon to be displayed on the right of the dropdown item
-  final IconData? selectedOptionIcon;
-
-  // Background color of the selected option in the dropdown
+  // selected option
+  final Icon? selectedOptionIcon;
+  final Color? selectedOptionTextColor;
   final Color? selectedOptionBackgroundColor;
+  final Widget Function(BuildContext, ValueItem)? selectedItemBuilder;
 
-  // Background color of the selected option in the dropdown
-  final Color? selectedOptionColor;
-
-  // Background color of the options
-  final Color? optionsBackgroundColor;
-
-  //FontSize of Options
-  final double optionsFontSize;
-
-  //Seperator for options
-  final Widget? optionSeperator;
-
-  // Background color of dropdown field
-  final Color? backgroundColor;
-
-  //Padding for the dropdown
-  final double dropdownHorizontalPadding;
-  final double dropdownVerticalPadding;
-
-  //Border radius for the dropdown field
-  final double dropdownBorderRadius;
-
-  //Border color of the dropdown
-  final Color? dropdownBorderColor;
-
-  //Border width of the dropdown
-  final double dropdownBorderWidth;
-
-  // Chip mode
-  final bool selectionChipMode;
-
-  // Chip background color
-  final Color? chipBackgroundColor;
-
-  // Chip text color
-  final Color? chipTextColor;
-
-  // Chip icon
-  final bool showChipRemoveIcon;
-
-  // Chip separtion width
-  final double chipSeparationWidth;
-
-  //delete icon color in chip
-  final Color? chipDeleteIconColor;
-
-  //suffix icon of dropdown
-  final IconData? suffixIcon;
-
-  //options height
-  final double optionsHeight;
-
-  //show chip in single select mode
+  // chip configuration
   final bool showChipInSingleSelectMode;
+  final ChipConfig chipConfig;
 
-  //options wrap type
-  final WrapType wrapType;
+  // options configuration
+  final Color? optionsBackgroundColor;
+  final TextStyle? optionTextStyle;
+  final Widget? optionSeperator;
+  final double dropdownHeight;
+  final Widget? optionSeparator;
+  final bool alwaysShowOptionIcon;
 
-  static const emptyOption = 'No Options available';
+  // dropdownfield configuration
+  final Color? backgroundColor;
+  final IconData? suffixIcon;
+  final Decoration? inputDecoration;
+
+  /// MultiSelectDropDown is a widget that allows the user to select multiple options from a list of options. It is a dropdown that allows the user to select multiple options.
+  ///
+  ///  **Selection Type**
+  ///
+  ///   [selectionType] is the type of selection that the user can make. The default is [SelectionType.single].
+  /// * [SelectionType.single] - allows the user to select only one option.
+  /// * [SelectionType.multi] - allows the user to select multiple options.
+  ///
+  ///  **Options**
+  ///
+  /// [options] is the list of options that the user can select from. The options need to be of type [ValueItem].
+  ///
+  /// [selectedOptions] is the list of options that are pre-selected when the widget is first displayed. The options need to be of type [ValueItem].
+  ///
+  /// [disabledOptions] is the list of options that the user cannot select. The options need to be of type [ValueItem]. If the items in this list are not available in options, will be ignored.
+  ///
+  /// [onOptionSelected] is the callback that is called when an option is selected or unselected. The callback takes one argument of type `List<ValueItem>`.
+  ///
+  /// **Selected Option**
+  ///
+  /// [selectedOptionIcon] is the icon that is used to indicate the selected option.
+  ///
+  /// [selectedOptionTextColor] is the color of the selected option.
+  ///
+  /// [selectedOptionBackgroundColor] is the background color of the selected option.
+  ///
+  /// [selectedItemBuilder] is the builder that is used to build the selected option. If this is not provided, the default builder is used.
+  ///
+  /// **Chip Configuration**
+  ///
+  /// [showChipInSingleSelectMode] is used to show the chip in single select mode. The default is false.
+  ///
+  /// [chipConfig] is the configuration for the chip.
+  ///
+  /// **Options Configuration**
+  ///
+  /// [optionsBackgroundColor] is the background color of the options. The default is [Colors.white].
+  ///
+  /// [optionsFontSize] is the font size of the options. The default is 14.0.
+  ///
+  /// [optionSeperator] is the seperator between the options.
+  ///
+  /// [dropdownHeight] is the height of the dropdown options. The default is 200.
+  ///
+  ///  **Dropdown Configuration**
+  ///
+  /// [backgroundColor] is the background color of the dropdown. The default is [Colors.white].
+  ///
+  /// [suffixIcon] is the icon that is used to indicate the dropdown. The default is [Icons.arrow_drop_down].
+  ///
+  /// [inputDecoration] is the decoration of the dropdown.
+  ///
+  /// [dropdownHeight] is the height of the dropdown. The default is 200.
+  ///
+  ///  **Hint**
+  ///
+  /// [hint] is the hint text to be displayed when no option is selected.
+  ///
+  /// [hintColor] is the color of the hint text. The default is [Colors.grey.shade300].
+  ///
+  /// [hintFontSize] is the font size of the hint text. The default is 14.0.
+  ///
+  /// [hintStyle] is the style of the hint text.
+  ///
+  ///  **Example**
+  ///
+  /// ```dart
+  ///  final List<ValueItem> options = [
+  ///     ValueItem(label: 'Option 1', value: '1'),
+  ///     ValueItem(label: 'Option 2', value: '2'),
+  ///     ValueItem(label: 'Option 3', value: '3'),
+  ///   ];
+  ///
+  ///   final List<ValueItem> selectedOptions = [
+  ///     ValueItem(label: 'Option 1', value: '1'),
+  ///   ];
+  ///
+  ///   final List<ValueItem> disabledOptions = [
+  ///     ValueItem(label: 'Option 2', value: '2'),
+  ///   ];
+  ///
+  ///  MultiSelectDropDown(
+  ///    onOptionSelected: (option) {},
+  ///    options: const <ValueItem>[
+  ///       ValueItem(label: 'Option 1', value: '1'),
+  ///       ValueItem(label: 'Option 2', value: '2'),
+  ///       ValueItem(label: 'Option 3', value: '3'),
+  ///       ValueItem(label: 'Option 4', value: '4'),
+  ///       ValueItem(label: 'Option 5', value: '5'),
+  ///       ValueItem(label: 'Option 6', value: '6'),
+  ///    ],
+  ///    selectionType: SelectionType.multi,
+  ///    selectedOptions: selectedOptions,
+  ///    disabledOptions: disabledOptions,
+  ///    onOptionSelected: (List<ValueItem> selectedOptions) {
+  ///      debugPrint('onOptionSelected: $option');
+  ///    },
+  ///    chipConfig: const ChipConfig(wrapType: WrapType.scroll),
+  ///    );
+  /// ```
 
   const MultiSelectDropDown(
       {Key? key,
-      this.type = DropdownType.multiSelect,
-      this.hint = 'Select',
-      this.hintTextColor = Colors.grey,
-      this.hintFontSize = 14.0,
+      required this.onOptionSelected,
       required this.options,
-      this.preSelectedItems = const [],
-      this.disabledItems = const [],
-      this.onOptionSelected,
-      this.selectedOptionColor,
+      this.selectedOptionTextColor,
       this.optionSeperator,
-      this.optionsFontSize = 14.0,
-      this.selectedOptionIcon = Icons.check,
+      this.chipConfig = const ChipConfig(),
+      this.selectionType = SelectionType.multi,
+      this.hint = 'Select',
+      this.hintColor = Colors.grey,
+      this.hintFontSize = 14.0,
+      this.selectedOptions = const [],
+      this.disabledOptions = const [],
+      this.alwaysShowOptionIcon = false,
+      this.optionTextStyle,
+      this.selectedOptionIcon = const Icon(Icons.check),
       this.selectedOptionBackgroundColor = Colors.grey,
       this.optionsBackgroundColor,
       this.backgroundColor = Colors.white,
-      this.dropdownHorizontalPadding = 4.0,
-      this.dropdownVerticalPadding = 4.0,
-      this.dropdownBorderRadius = 8.0,
-      this.dropdownBorderColor,
-      this.dropdownBorderWidth = 0.4,
-      this.selectionChipMode = true,
-      this.showChipRemoveIcon = true,
-      this.chipBackgroundColor,
-      this.chipTextColor,
-      this.chipDeleteIconColor,
-      this.chipSeparationWidth = 8.0,
-      this.optionsHeight = 200,
+      this.dropdownHeight = 200,
       this.showChipInSingleSelectMode = false,
       this.suffixIcon = Icons.arrow_drop_down,
-      this.wrapType = WrapType.wrap})
+      this.selectedItemBuilder,
+      this.optionSeparator,
+      this.inputDecoration,
+      this.hintStyle})
       : super(key: key);
 
   @override
@@ -132,44 +184,36 @@ class MultiSelectDropDown extends StatefulWidget {
 }
 
 class _MultiSelectDropDownState extends State<MultiSelectDropDown> {
-  final List<String> _options = [];
-  final List<String> _selectedOptions = [];
+  final List<ValueItem> _options = [];
+  final List<ValueItem> _selectedOptions = [];
+  final List<ValueItem> _disabledOptions = [];
 
   OverlayState? _overlayState;
   OverlayEntry? _overlayEntry;
 
   bool _selectionMode = false;
   final FocusNode _focusNode = FocusNode();
-  late FocusHighlightMode _focusHighlightMode;
 
   final LayerLink _layerLink = LayerLink();
 
   @override
   void initState() {
     super.initState();
-    _options.addAll(
-        widget.options.isNotEmpty ? widget.options : ['No options available']);
-    _selectedOptions.addAll(widget.preSelectedItems);
-    _overlayState ??= Overlay.of(context);
-
-    _focusNode.addListener(_handleFocusChange);
-    final FocusManager focusManager = WidgetsBinding.instance!.focusManager;
-    _focusHighlightMode = focusManager.highlightMode;
-    focusManager.addHighlightModeListener(_handleFocusHighlightModeChange);
+    _initialize();
   }
 
-  void _handleFocusHighlightModeChange(FocusHighlightMode mode) {
-    if (!mounted) {
-      return;
-    }
-    setState(() {
-      _focusHighlightMode = mode;
-    });
+  void _initialize() {
+    _options.addAll(widget.options);
+    _selectedOptions.addAll(widget.selectedOptions);
+    _disabledOptions.addAll(widget.disabledOptions);
+
+    _overlayState ??= Overlay.of(context);
+    _focusNode.addListener(_handleFocusChange);
   }
 
   _handleFocusChange() {
     if (_focusNode.hasFocus) {
-      _overlayEntry = _createOverlayEntry();
+      _overlayEntry = _buildOverlayEntry();
       Overlay.of(context)?.insert(_overlayEntry!);
       setState(() {
         _selectionMode = true;
@@ -184,15 +228,25 @@ class _MultiSelectDropDownState extends State<MultiSelectDropDown> {
 
   @override
   void didUpdateWidget(covariant MultiSelectDropDown oldWidget) {
+    super.didUpdateWidget(oldWidget);
+
     if (widget.options != oldWidget.options) {
       _options.clear();
       _options.addAll(widget.options);
     }
-    super.didUpdateWidget(oldWidget);
+
+    if (widget.selectedOptions != oldWidget.selectedOptions) {
+      _selectedOptions.clear();
+      _selectedOptions.addAll(widget.selectedOptions);
+    }
+
+    if (widget.disabledOptions != oldWidget.disabledOptions) {
+      _disabledOptions.clear();
+      _disabledOptions.addAll(widget.disabledOptions);
+    }
   }
 
-  _createOverlayEntry() {
-    debugPrint('show options');
+  List _calculateOffsetSize() {
     RenderBox? renderBox = context.findRenderObject() as RenderBox?;
 
     var size = renderBox?.size ?? Size.zero;
@@ -200,85 +254,119 @@ class _MultiSelectDropDownState extends State<MultiSelectDropDown> {
 
     final availableHeight = MediaQuery.of(context).size.height - offset.dy;
 
-    if (availableHeight < 200) {
-      offset = Offset(offset.dx, offset.dy - (200 - availableHeight + 40));
+    if (availableHeight < widget.dropdownHeight) {
+      offset = Offset(offset.dx,
+          offset.dy - (widget.dropdownHeight - availableHeight + 40));
     }
+    return [size, offset];
+  }
+
+  OverlayEntry _buildOverlayEntry() {
+    final values = _calculateOffsetSize();
+    final size = values[0] as Size;
+    final offset = values[1] as Offset;
 
     return OverlayEntry(builder: (context) {
-      List<String> options = _options;
-      List<String> selectedOptions = [..._selectedOptions];
+      List<ValueItem> options = _options;
+      List<ValueItem> selectedOptions = [..._selectedOptions];
 
-      return StatefulBuilder(builder: ((context, myState) {
-        return Positioned(
-            left: offset.dx,
-            top: offset.dy + size.height + 5.0,
-            width: size.width,
-            child: CompositedTransformFollower(
-              link: _layerLink,
-              showWhenUnlinked: false,
-              offset: Offset(0.0, size.height + 5.0),
-              child: Material(
-                  elevation: 4,
-                  child: Container(
-                    constraints: BoxConstraints.loose(
-                        Size(size.width, widget.optionsHeight)),
-                    child: ListView.builder(
-                      shrinkWrap: true,
-                      padding: EdgeInsets.zero,
-                      itemCount: options.length,
-                      itemBuilder: (context, index) {
-                        return ListTile(
-                          title: Text(options[index],
-                              style: const TextStyle(fontSize: 13)),
-                          selected: selectedOptions.contains(options[index]),
-                          selectedTileColor: Colors.grey.shade200,
-                          enabled:
-                              options[index] != MultiSelectDropDown.emptyOption,
-                          onTap: () {
-                            var option = options[index];
-                            if (option == MultiSelectDropDown.emptyOption) {
-                              return;
-                            }
-                            if (widget.type == DropdownType.multiSelect) {
-                              if (selectedOptions.contains(option)) {
-                                myState(() {
-                                  selectedOptions.remove(option);
-                                });
-                              } else {
-                                myState(() {
-                                  selectedOptions.add(option);
-                                });
-                              }
-
-                              if (_selectedOptions.contains(option)) {
-                                setState(() {
-                                  _selectedOptions.remove(option);
-                                });
-                              } else {
-                                setState(() {
-                                  _selectedOptions.add(option);
-                                });
-                              }
-                            } else {
-                              myState(() {
-                                selectedOptions.clear();
-                                selectedOptions.add(option);
-                              });
-                              setState(() {
-                                _selectedOptions.clear();
-                                _selectedOptions.add(option);
-                              });
-                              _focusNode.unfocus();
-                            }
+      return StatefulBuilder(builder: ((context, dropdownState) {
+        return Stack(
+          children: [
+            Positioned.fill(
+                child: GestureDetector(
+              onTap: _onOutSideTap,
+              child: Container(
+                color: Colors.transparent,
+              ),
+            )),
+            Positioned(
+                left: offset.dx,
+                top: offset.dy + size.height + 5.0,
+                width: size.width,
+                child: CompositedTransformFollower(
+                  link: _layerLink,
+                  showWhenUnlinked: false,
+                  offset: Offset(0.0, size.height + 5.0),
+                  child: Material(
+                      elevation: 4,
+                      child: Container(
+                        constraints: BoxConstraints.loose(
+                            Size(size.width, widget.dropdownHeight)),
+                        child: ListView.separated(
+                          separatorBuilder: (context, index) {
+                            return widget.optionSeparator ??
+                                const SizedBox(height: 0);
                           },
-                          trailing: selectedOptions.contains(options[index])
-                              ? const Icon(Icons.check)
-                              : null,
-                        );
-                      },
-                    ),
-                  )),
-            ));
+                          shrinkWrap: true,
+                          padding: EdgeInsets.zero,
+                          itemCount: options.length,
+                          itemBuilder: (context, index) {
+                            final option = options[index];
+                            final isSelected = selectedOptions.contains(option);
+                            final primaryColor = Theme.of(context).primaryColor;
+
+                            return ListTile(
+                                title: Text(
+                                  option.label,
+                                  style: widget.optionTextStyle ??
+                                      TextStyle(
+                                        color: isSelected
+                                            ? widget.selectedOptionTextColor ??
+                                                primaryColor
+                                            : Colors.black,
+                                        fontSize: widget.hintFontSize,
+                                      ),
+                                ),
+                                selected: isSelected,
+                                tileColor: widget.optionsBackgroundColor ??
+                                    Colors.transparent,
+                                selectedTileColor:
+                                    widget.selectedOptionBackgroundColor ??
+                                        Colors.grey.shade200,
+                                enabled: !_disabledOptions.contains(option),
+                                onTap: () {
+                                  if (widget.selectionType ==
+                                      SelectionType.multi) {
+                                    if (isSelected) {
+                                      dropdownState(() {
+                                        selectedOptions.remove(option);
+                                      });
+                                    } else {
+                                      dropdownState(() {
+                                        selectedOptions.add(option);
+                                      });
+                                    }
+
+                                    if (isSelected) {
+                                      setState(() {
+                                        _selectedOptions.remove(option);
+                                      });
+                                    } else {
+                                      setState(() {
+                                        _selectedOptions.add(option);
+                                      });
+                                    }
+                                  } else {
+                                    dropdownState(() {
+                                      selectedOptions.clear();
+                                      selectedOptions.add(option);
+                                    });
+                                    setState(() {
+                                      _selectedOptions.clear();
+                                      _selectedOptions.add(option);
+                                    });
+                                    _focusNode.unfocus();
+                                  }
+                                },
+                                trailing:
+                                    _getSelectedIcon(isSelected, primaryColor));
+                          },
+                        ),
+                      )),
+                )),
+          ],
+        );
       }));
     });
   }
@@ -293,55 +381,64 @@ class _MultiSelectDropDownState extends State<MultiSelectDropDown> {
         focusNode: _focusNode,
         child: GestureDetector(
           onTap: () {
-            if (_focusNode.hasFocus) {
-              _focusNode.unfocus();
-            } else {
-              _focusNode.requestFocus();
-            }
+            _toggleFocus();
           },
           child: Container(
-            height: 60,
+            constraints: BoxConstraints(
+              minWidth: MediaQuery.of(context).size.width,
+              minHeight: 52,
+            ),
             padding: const EdgeInsets.symmetric(
               horizontal: 8,
               vertical: 4,
             ),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(12),
-              border: Border.all(
-                color: Colors.grey,
-                width: 0.4,
-              ),
+            decoration: _getContainerDecoration(),
+            child: Row(
+              children: [
+                Expanded(
+                  child: _getContainerContent(),
+                ),
+                AnimatedRotation(
+                    turns: _selectionMode ? 0.5 : 0,
+                    duration: const Duration(milliseconds: 200),
+                    child: Icon(
+                      widget.suffixIcon,
+                    )),
+              ],
             ),
-            child: Row(children: [
-              Expanded(
-                child: _selectedOptions.isEmpty
-                    ? Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 9.0),
-                        child: Text(
-                          widget.hint.toUpperCase(),
-                          style: TextStyle(
-                            fontSize: 13,
-                            color: Colors.grey.shade700,
-                          ),
-                        ),
-                      )
-                    : widget.type == DropdownType.singleSelect &&
-                            !widget.showChipInSingleSelectMode
-                        ? _buildSelectedItem()
-                        : _buildSelectedItems(),
-              ),
-              AnimatedRotation(
-                  turns: _selectionMode ? 0.5 : 0,
-                  duration: const Duration(milliseconds: 300),
-                  child: Icon(
-                    widget.suffixIcon,
-                  )),
-            ]),
           ),
         ),
       ),
     );
+  }
+
+  Widget _getContainerContent() {
+    if (_selectedOptions.isEmpty) {
+      return HintText(
+        hintText: widget.hint,
+        hintColor: widget.hintColor,
+        hintStyle: widget.hintStyle,
+      );
+    }
+
+    if (widget.selectionType == SelectionType.single &&
+        !widget.showChipInSingleSelectMode) {
+      return SingleSelectedItem(label: _selectedOptions.first.label);
+    }
+
+    return _buildSelectedItems();
+  }
+
+  Decoration _getContainerDecoration() {
+    return widget.inputDecoration ??
+        BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(
+            color: Colors.grey,
+            width: 0.4,
+          ),
+        );
   }
 
   @override
@@ -353,70 +450,32 @@ class _MultiSelectDropDownState extends State<MultiSelectDropDown> {
     super.dispose();
   }
 
-  Widget _buildSelectedItem() {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 9.0),
-      child: Text(
-        _selectedOptions.first,
-        style: TextStyle(
-          fontSize: 13,
-          color: Colors.grey.shade700,
-        ),
-      ),
-    );
-  }
-
   Widget _buildSelectedItems() {
-    return widget.wrapType == WrapType.scroll
-        ? ListView.separated(
-            separatorBuilder: (context, index) => SizedBox(
-              width: widget.chipSeparationWidth,
-            ),
-            scrollDirection: Axis.horizontal,
-            itemCount: _selectedOptions.length,
-            shrinkWrap: true,
-            itemBuilder: (context, index) {
-              final item = _selectedOptions[index];
-              debugPrint('type: ${widget.type}');
-              return Chip(
-                padding: const EdgeInsets.symmetric(horizontal: 6),
-                label: Text(item),
-                deleteIconColor:
-                    widget.chipDeleteIconColor ?? Colors.grey.shade400,
-                backgroundColor:
-                    widget.chipBackgroundColor ?? Colors.grey.shade200,
-                labelStyle: TextStyle(
-                  color: widget.chipTextColor ?? Colors.black,
-                ),
-                onDeleted: () {
-                  setState(() {
-                    _selectedOptions.removeAt(index);
-                  });
-                  _focusNode.unfocus();
-                },
-              );
-            },
-          )
-        : Wrap(
-            spacing: 20,
-            children: mapIndexed(_selectedOptions, (index, item) {
-              return Chip(
-                label: Text(item.toString()),
-                deleteIconColor:
-                    widget.chipDeleteIconColor ?? Colors.grey.shade400,
-                backgroundColor:
-                    widget.chipBackgroundColor ?? Colors.grey.shade200,
-                labelStyle: TextStyle(
-                  color: widget.chipTextColor ?? Colors.black,
-                ),
-                onDeleted: () {
-                  setState(() {
-                    _selectedOptions.removeAt(index);
-                    _focusNode.unfocus();
-                  });
-                },
-              );
-            }).toList());
+    if (widget.chipConfig.wrapType == WrapType.scroll) {
+      return ListView.separated(
+        separatorBuilder: (context, index) =>
+            _getChipSeparator(widget.chipConfig),
+        scrollDirection: Axis.horizontal,
+        itemCount: _selectedOptions.length,
+        shrinkWrap: true,
+        itemBuilder: (context, index) {
+          final option = _selectedOptions[index];
+          if (widget.selectedItemBuilder != null) {
+            return widget.selectedItemBuilder!(context, option);
+          }
+          return _buildChip(option, widget.chipConfig);
+        },
+      );
+    }
+    return Wrap(
+        spacing: widget.chipConfig.spacing,
+        children: mapIndexed(_selectedOptions, (index, item) {
+          if (widget.selectedItemBuilder != null) {
+            return widget.selectedItemBuilder!(
+                context, _selectedOptions[index]);
+          }
+          return _buildChip(_selectedOptions[index], widget.chipConfig);
+        }).toList());
   }
 
   Iterable<E> mapIndexed<E, T>(
@@ -428,15 +487,142 @@ class _MultiSelectDropDownState extends State<MultiSelectDropDown> {
       index = index + 1;
     }
   }
+
+  Widget _getChipSeparator(ChipConfig chipConfig) {
+    if (chipConfig.separator != null) {
+      return chipConfig.separator!;
+    }
+
+    return SizedBox(
+      width: chipConfig.spacing,
+    );
+  }
+
+  void _onOutSideTap() {
+    _focusNode.unfocus();
+  }
+
+  Widget _buildChip(ValueItem item, ChipConfig chipConfig) {
+    return SelectionChip(
+      item: item,
+      chipConfig: chipConfig,
+      onItemDelete: (removedItem) {
+        setState(() {
+          _selectedOptions.remove(removedItem);
+        });
+        _focusNode.unfocus();
+      },
+    );
+  }
+
+  void _toggleFocus() {
+    if (_focusNode.hasFocus) {
+      _focusNode.unfocus();
+    } else {
+      _focusNode.requestFocus();
+    }
+  }
+
+  _getSelectedIcon(bool isSelected, Color primaryColor) {
+    if (isSelected) {
+      return widget.selectedOptionIcon ??
+          Icon(
+            Icons.check,
+            color: primaryColor,
+          );
+    }
+    if (!widget.alwaysShowOptionIcon) {
+      return null;
+    }
+
+    final Icon icon = widget.selectedOptionIcon ??
+        Icon(
+          Icons.check,
+          color: widget.optionTextStyle?.color ?? Colors.grey,
+        );
+
+    return icon;
+  }
 }
 
-// enum class for dropdown types
-enum DropdownType {
-  singleSelect,
-  multiSelect,
+class SelectionChip extends StatelessWidget {
+  final ChipConfig chipConfig;
+  final Function(ValueItem) onItemDelete;
+  final ValueItem item;
+
+  const SelectionChip({
+    Key? key,
+    required this.chipConfig,
+    required this.item,
+    required this.onItemDelete,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Chip(
+      padding: chipConfig.padding,
+      label: Text(item.label),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(chipConfig.radius),
+      ),
+      deleteIcon: chipConfig.deleteIcon,
+      deleteIconColor: chipConfig.deleteIconColor,
+      labelPadding: chipConfig.labelPadding,
+      backgroundColor:
+          chipConfig.backgroundColor ?? Theme.of(context).primaryColor,
+      labelStyle: chipConfig.labelStyle ??
+          TextStyle(color: chipConfig.labelColor, fontSize: 14),
+      onDeleted: () => onItemDelete(item),
+    );
+  }
 }
 
-enum WrapType {
-  wrap,
-  scroll,
+class HintText extends StatelessWidget {
+  final TextStyle? hintStyle;
+  final String hintText;
+  final Color? hintColor;
+
+  const HintText({
+    Key? key,
+    this.hintStyle,
+    required this.hintText,
+    this.hintColor,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 10.0),
+      child: Text(
+        hintText,
+        style: hintStyle ??
+            TextStyle(
+              fontSize: 13,
+              color: hintColor ?? Colors.grey.shade300,
+            ),
+      ),
+    );
+  }
+}
+
+class SingleSelectedItem extends StatelessWidget {
+  final String label;
+  const SingleSelectedItem({
+    Key? key,
+    required this.label,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 10.0),
+      child: Text(
+        label,
+        style: TextStyle(
+          fontSize: 13,
+          color: Colors.grey.shade700,
+        ),
+      ),
+    );
+  }
 }

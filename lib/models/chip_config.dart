@@ -49,6 +49,7 @@ class ChipConfig {
 
   final double radius;
   final double spacing;
+  final double runSpacing;
 
   final Widget? separator;
 
@@ -63,6 +64,7 @@ class ChipConfig {
     this.padding = const EdgeInsets.only(left: 12, top: 0, right: 4, bottom: 0),
     this.radius = 18,
     this.spacing = 8,
+    this.runSpacing = 8,
     this.separator,
     this.labelColor = Colors.white,
     this.labelStyle,

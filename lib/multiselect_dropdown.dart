@@ -391,7 +391,7 @@ class _MultiSelectDropDownState extends State<MultiSelectDropDown> {
             ),
             padding: const EdgeInsets.symmetric(
               horizontal: 8,
-              vertical: 4,
+              vertical: 8,
             ),
             decoration: _getContainerDecoration(),
             child: Row(
@@ -470,6 +470,7 @@ class _MultiSelectDropDownState extends State<MultiSelectDropDown> {
     }
     return Wrap(
         spacing: widget.chipConfig.spacing,
+        runSpacing: widget.chipConfig.runSpacing,
         children: mapIndexed(_selectedOptions, (index, item) {
           if (widget.selectedItemBuilder != null) {
             return widget.selectedItemBuilder!(

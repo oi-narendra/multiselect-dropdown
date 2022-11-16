@@ -1,6 +1,14 @@
 library multiselect_dropdown;
 
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:http/http.dart';
+import 'package:multi_dropdown/models/network_config.dart';
+import 'package:multi_dropdown/widgets/hint_text.dart';
+import 'package:multi_dropdown/widgets/selection_chip.dart';
+import 'package:multi_dropdown/widgets/single_selected_item.dart';
+import 'package:http/http.dart' as http;
 
 import 'models/chip_config.dart';
 import 'models/value_item.dart';
@@ -9,6 +17,7 @@ import 'enum/app_enums.dart';
 export 'enum/app_enums.dart';
 export 'models/chip_config.dart';
 export 'models/value_item.dart';
+export 'models/network_config.dart';
 
 class MultiSelectDropDown extends StatefulWidget {
   // selection type of the dropdown
@@ -49,6 +58,11 @@ class MultiSelectDropDown extends StatefulWidget {
   final Color? backgroundColor;
   final IconData? suffixIcon;
   final Decoration? inputDecoration;
+
+  // network configuration
+  final NetworkConfig? networkConfig;
+  final Future<List<ValueItem>> Function(dynamic)? responseParser;
+  final Widget Function(BuildContext, dynamic)? responseErrorBuilder;
 
   /// MultiSelectDropDown is a widget that allows the user to select multiple options from a list of options. It is a dropdown that allows the user to select multiple options.
   ///
@@ -151,50 +165,97 @@ class MultiSelectDropDown extends StatefulWidget {
   ///    );
   /// ```
 
-  const MultiSelectDropDown(
-      {Key? key,
-      required this.onOptionSelected,
-      required this.options,
-      this.selectedOptionTextColor,
-      this.optionSeperator,
-      this.chipConfig = const ChipConfig(),
-      this.selectionType = SelectionType.multi,
-      this.hint = 'Select',
-      this.hintColor = Colors.grey,
-      this.hintFontSize = 14.0,
-      this.selectedOptions = const [],
-      this.disabledOptions = const [],
-      this.alwaysShowOptionIcon = false,
-      this.optionTextStyle,
-      this.selectedOptionIcon = const Icon(Icons.check),
-      this.selectedOptionBackgroundColor,
-      this.optionsBackgroundColor,
-      this.backgroundColor = Colors.white,
-      this.dropdownHeight = 200,
-      this.showChipInSingleSelectMode = false,
-      this.suffixIcon = Icons.arrow_drop_down,
-      this.selectedItemBuilder,
-      this.optionSeparator,
-      this.inputDecoration,
-      this.hintStyle})
-      : super(key: key);
+  const MultiSelectDropDown({
+    Key? key,
+    required this.onOptionSelected,
+    required this.options,
+    this.selectedOptionTextColor,
+    this.optionSeperator,
+    this.chipConfig = const ChipConfig(),
+    this.selectionType = SelectionType.multi,
+    this.hint = 'Select',
+    this.hintColor = Colors.grey,
+    this.hintFontSize = 14.0,
+    this.selectedOptions = const [],
+    this.disabledOptions = const [],
+    this.alwaysShowOptionIcon = false,
+    this.optionTextStyle,
+    this.selectedOptionIcon = const Icon(Icons.check),
+    this.selectedOptionBackgroundColor,
+    this.optionsBackgroundColor,
+    this.backgroundColor = Colors.white,
+    this.dropdownHeight = 200,
+    this.showChipInSingleSelectMode = false,
+    this.suffixIcon = Icons.arrow_drop_down,
+    this.selectedItemBuilder,
+    this.optionSeparator,
+    this.inputDecoration,
+    this.hintStyle,
+  })  : networkConfig = null,
+        responseParser = null,
+        responseErrorBuilder = null,
+        super(key: key);
+
+  /// Constructor for MultiSelectDropDown that fetches the options from a network call.
+  /// [networkConfig] is the configuration for the network call.
+  /// [responseParser] is the parser that is used to parse the response from the network call.
+  /// [responseErrorBuilder] is the builder that is used to build the error widget when the network call fails.
+
+  const MultiSelectDropDown.network({
+    Key? key,
+    required this.networkConfig,
+    required this.responseParser,
+    this.responseErrorBuilder,
+    required this.onOptionSelected,
+    this.selectedOptionTextColor,
+    this.optionSeperator,
+    this.chipConfig = const ChipConfig(),
+    this.selectionType = SelectionType.multi,
+    this.hint = 'Select',
+    this.hintColor = Colors.grey,
+    this.hintFontSize = 14.0,
+    this.selectedOptions = const [],
+    this.disabledOptions = const [],
+    this.alwaysShowOptionIcon = false,
+    this.optionTextStyle,
+    this.selectedOptionIcon = const Icon(Icons.check),
+    this.selectedOptionBackgroundColor,
+    this.optionsBackgroundColor,
+    this.backgroundColor = Colors.white,
+    this.dropdownHeight = 200,
+    this.showChipInSingleSelectMode = false,
+    this.suffixIcon = Icons.arrow_drop_down,
+    this.selectedItemBuilder,
+    this.optionSeparator,
+    this.inputDecoration,
+    this.hintStyle,
+  })  : options = const [],
+        super(key: key);
 
   @override
   State<MultiSelectDropDown> createState() => _MultiSelectDropDownState();
 }
 
 class _MultiSelectDropDownState extends State<MultiSelectDropDown> {
+  /// Options list that is used to display the options.
   final List<ValueItem> _options = [];
+
+  /// Selected options list that is used to display the selected options.
   final List<ValueItem> _selectedOptions = [];
+
+  /// Disabled options list that is used to display the disabled options.
   final List<ValueItem> _disabledOptions = [];
 
+  /// The controller for the dropdown.
   OverlayState? _overlayState;
   OverlayEntry? _overlayEntry;
-
   bool _selectionMode = false;
-  final FocusNode _focusNode = FocusNode();
 
+  final FocusNode _focusNode = FocusNode();
   final LayerLink _layerLink = LayerLink();
+
+  /// Response from the network call.
+  dynamic _reponseBody;
 
   @override
   void initState() {
@@ -202,30 +263,42 @@ class _MultiSelectDropDownState extends State<MultiSelectDropDown> {
     _initialize();
   }
 
-  void _initialize() {
-    _options.addAll(widget.options);
-    _selectedOptions.addAll(widget.selectedOptions);
-    _disabledOptions.addAll(widget.disabledOptions);
-
+  /// Initializes the options, selected options and disabled options.
+  /// If the options are fetched from the network, then the network call is made.
+  /// If the options are passed as a parameter, then the options are initialized.
+  void _initialize() async {
+    if (widget.networkConfig?.url != null) {
+      await _fetchNetwork();
+    } else {
+      _options.addAll(widget.options);
+    }
+    _addOptions();
     _overlayState ??= Overlay.of(context);
     _focusNode.addListener(_handleFocusChange);
   }
 
-  _handleFocusChange() {
-    if (_focusNode.hasFocus) {
-      _overlayEntry = _buildOverlayEntry();
-      Overlay.of(context)?.insert(_overlayEntry!);
-      setState(() {
-        _selectionMode = true;
-      });
-    } else {
-      _overlayEntry?.remove();
-      setState(() {
-        _selectionMode = false;
-      });
-    }
+  /// Adds the selected options and disabled options to the options list.
+  void _addOptions() {
+    _selectedOptions.addAll(widget.selectedOptions);
+    _disabledOptions.addAll(widget.disabledOptions);
   }
 
+  /// Handles the focus change to show/hide the dropdown.
+  _handleFocusChange() {
+    if (_focusNode.hasFocus) {
+      _overlayEntry = _reponseBody != null && widget.networkConfig != null
+          ? _buildNetworkErrorOverlayEntry()
+          : _buildOverlayEntry();
+      Overlay.of(context)?.insert(_overlayEntry!);
+      return;
+    }
+    _overlayEntry?.remove();
+    setState(() {
+      _selectionMode = _focusNode.hasFocus;
+    });
+  }
+
+  /// Handles the widget rebuild when the options are changed externally.
   @override
   void didUpdateWidget(covariant MultiSelectDropDown oldWidget) {
     super.didUpdateWidget(oldWidget);
@@ -246,6 +319,7 @@ class _MultiSelectDropDownState extends State<MultiSelectDropDown> {
     }
   }
 
+  /// Calculate offset size for dropdown.
   List _calculateOffsetSize() {
     RenderBox? renderBox = context.findRenderObject() as RenderBox?;
 
@@ -261,6 +335,192 @@ class _MultiSelectDropDownState extends State<MultiSelectDropDown> {
     return [size, offset];
   }
 
+  @override
+  Widget build(BuildContext context) {
+    return CompositedTransformTarget(
+      link: _layerLink,
+      child: Focus(
+        canRequestFocus: true,
+        skipTraversal: true,
+        focusNode: _focusNode,
+        child: GestureDetector(
+          onTap: () {
+            _toggleFocus();
+          },
+          child: Container(
+            height: widget.chipConfig.wrapType == WrapType.wrap ? null : 52,
+            constraints: BoxConstraints(
+              minWidth: MediaQuery.of(context).size.width,
+              minHeight: 52,
+            ),
+            padding: const EdgeInsets.symmetric(
+              horizontal: 8,
+              vertical: 8,
+            ),
+            decoration: _getContainerDecoration(),
+            child: Row(
+              children: [
+                Expanded(
+                  child: _getContainerContent(),
+                ),
+                AnimatedRotation(
+                    turns: _selectionMode ? 0.5 : 0,
+                    duration: const Duration(milliseconds: 200),
+                    child: Icon(
+                      widget.suffixIcon,
+                    )),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  /// Container Content for the dropdown.
+  Widget _getContainerContent() {
+    if (_selectedOptions.isEmpty) {
+      return HintText(
+        hintText: widget.hint,
+        hintColor: widget.hintColor,
+        hintStyle: widget.hintStyle,
+      );
+    }
+
+    if (widget.selectionType == SelectionType.single &&
+        !widget.showChipInSingleSelectMode) {
+      return SingleSelectedItem(label: _selectedOptions.first.label);
+    }
+
+    return _buildSelectedItems();
+  }
+
+  /// Container decoration for the dropdown.
+  Decoration _getContainerDecoration() {
+    return widget.inputDecoration ??
+        BoxDecoration(
+          color: widget.backgroundColor ?? Colors.white,
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(
+            color: Colors.grey,
+            width: 0.4,
+          ),
+        );
+  }
+
+  /// Dispose the focus node and overlay entry.
+  @override
+  void dispose() {
+    if (_overlayState != null && _overlayEntry != null) {
+      _overlayEntry?.remove();
+    }
+    _focusNode.dispose();
+    super.dispose();
+  }
+
+  /// Build the selected items for the dropdown.
+  Widget _buildSelectedItems() {
+    if (widget.chipConfig.wrapType == WrapType.scroll) {
+      return ListView.separated(
+        separatorBuilder: (context, index) =>
+            _getChipSeparator(widget.chipConfig),
+        scrollDirection: Axis.horizontal,
+        itemCount: _selectedOptions.length,
+        shrinkWrap: true,
+        itemBuilder: (context, index) {
+          final option = _selectedOptions[index];
+          if (widget.selectedItemBuilder != null) {
+            return widget.selectedItemBuilder!(context, option);
+          }
+          return _buildChip(option, widget.chipConfig);
+        },
+      );
+    }
+    return Wrap(
+        spacing: widget.chipConfig.spacing,
+        runSpacing: widget.chipConfig.runSpacing,
+        children: mapIndexed(_selectedOptions, (index, item) {
+          if (widget.selectedItemBuilder != null) {
+            return widget.selectedItemBuilder!(
+                context, _selectedOptions[index]);
+          }
+          return _buildChip(_selectedOptions[index], widget.chipConfig);
+        }).toList());
+  }
+
+  /// Util method to map with index.
+  Iterable<E> mapIndexed<E, T>(
+      Iterable<T> items, E Function(int index, T item) f) sync* {
+    var index = 0;
+
+    for (final item in items) {
+      yield f(index, item);
+      index = index + 1;
+    }
+  }
+
+  /// Get the chip separator.
+  Widget _getChipSeparator(ChipConfig chipConfig) {
+    if (chipConfig.separator != null) {
+      return chipConfig.separator!;
+    }
+
+    return SizedBox(
+      width: chipConfig.spacing,
+    );
+  }
+
+  /// Handle the focus change on tap outside of the dropdown.
+  void _onOutSideTap() {
+    _focusNode.unfocus();
+  }
+
+  /// Buid the selected item chip.
+  Widget _buildChip(ValueItem item, ChipConfig chipConfig) {
+    return SelectionChip(
+      item: item,
+      chipConfig: chipConfig,
+      onItemDelete: (removedItem) {
+        setState(() {
+          _selectedOptions.remove(removedItem);
+        });
+        _focusNode.unfocus();
+      },
+    );
+  }
+
+  /// Method to toggle the focus of the dropdown.
+  void _toggleFocus() {
+    if (_focusNode.hasFocus) {
+      _focusNode.unfocus();
+    } else {
+      _focusNode.requestFocus();
+    }
+  }
+
+  /// Get the selectedItem icon for the dropdown
+  Widget? _getSelectedIcon(bool isSelected, Color primaryColor) {
+    if (isSelected) {
+      return widget.selectedOptionIcon ??
+          Icon(
+            Icons.check,
+            color: primaryColor,
+          );
+    }
+    if (!widget.alwaysShowOptionIcon) {
+      return null;
+    }
+
+    final Icon icon = widget.selectedOptionIcon ??
+        Icon(
+          Icons.check,
+          color: widget.optionTextStyle?.color ?? Colors.grey,
+        );
+
+    return icon;
+  }
+
+  /// Create the overlay entry for the dropdown.
   OverlayEntry _buildOverlayEntry() {
     final values = _calculateOffsetSize();
     final size = values[0] as Size;
@@ -371,260 +631,106 @@ class _MultiSelectDropDownState extends State<MultiSelectDropDown> {
     });
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return CompositedTransformTarget(
-      link: _layerLink,
-      child: Focus(
-        canRequestFocus: true,
-        skipTraversal: true,
-        focusNode: _focusNode,
-        child: GestureDetector(
-          onTap: () {
-            _toggleFocus();
-          },
-          child: Container(
-            height: widget.chipConfig.wrapType == WrapType.wrap ? null : 52,
-            constraints: BoxConstraints(
-              minWidth: MediaQuery.of(context).size.width,
-              minHeight: 52,
-            ),
-            padding: const EdgeInsets.symmetric(
-              horizontal: 8,
-              vertical: 8,
-            ),
-            decoration: _getContainerDecoration(),
-            child: Row(
-              children: [
-                Expanded(
-                  child: _getContainerContent(),
-                ),
-                AnimatedRotation(
-                    turns: _selectionMode ? 0.5 : 0,
-                    duration: const Duration(milliseconds: 200),
-                    child: Icon(
-                      widget.suffixIcon,
-                    )),
-              ],
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _getContainerContent() {
-    if (_selectedOptions.isEmpty) {
-      return HintText(
-        hintText: widget.hint,
-        hintColor: widget.hintColor,
-        hintStyle: widget.hintStyle,
-      );
-    }
-
-    if (widget.selectionType == SelectionType.single &&
-        !widget.showChipInSingleSelectMode) {
-      return SingleSelectedItem(label: _selectedOptions.first.label);
-    }
-
-    return _buildSelectedItems();
-  }
-
-  Decoration _getContainerDecoration() {
-    return widget.inputDecoration ??
-        BoxDecoration(
-          color: widget.backgroundColor ?? Colors.white,
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(
-            color: Colors.grey,
-            width: 0.4,
-          ),
-        );
-  }
-
-  @override
-  void dispose() {
-    if (_overlayState != null && _overlayEntry != null) {
-      _overlayEntry?.remove();
-    }
-    _focusNode.dispose();
-    super.dispose();
-  }
-
-  Widget _buildSelectedItems() {
-    if (widget.chipConfig.wrapType == WrapType.scroll) {
-      return ListView.separated(
-        separatorBuilder: (context, index) =>
-            _getChipSeparator(widget.chipConfig),
-        scrollDirection: Axis.horizontal,
-        itemCount: _selectedOptions.length,
-        shrinkWrap: true,
-        itemBuilder: (context, index) {
-          final option = _selectedOptions[index];
-          if (widget.selectedItemBuilder != null) {
-            return widget.selectedItemBuilder!(context, option);
-          }
-          return _buildChip(option, widget.chipConfig);
-        },
-      );
-    }
-    return Wrap(
-        spacing: widget.chipConfig.spacing,
-        runSpacing: widget.chipConfig.runSpacing,
-        children: mapIndexed(_selectedOptions, (index, item) {
-          if (widget.selectedItemBuilder != null) {
-            return widget.selectedItemBuilder!(
-                context, _selectedOptions[index]);
-          }
-          return _buildChip(_selectedOptions[index], widget.chipConfig);
-        }).toList());
-  }
-
-  Iterable<E> mapIndexed<E, T>(
-      Iterable<T> items, E Function(int index, T item) f) sync* {
-    var index = 0;
-
-    for (final item in items) {
-      yield f(index, item);
-      index = index + 1;
-    }
-  }
-
-  Widget _getChipSeparator(ChipConfig chipConfig) {
-    if (chipConfig.separator != null) {
-      return chipConfig.separator!;
-    }
-
-    return SizedBox(
-      width: chipConfig.spacing,
-    );
-  }
-
-  void _onOutSideTap() {
-    _focusNode.unfocus();
-  }
-
-  Widget _buildChip(ValueItem item, ChipConfig chipConfig) {
-    return SelectionChip(
-      item: item,
-      chipConfig: chipConfig,
-      onItemDelete: (removedItem) {
-        setState(() {
-          _selectedOptions.remove(removedItem);
-        });
-        _focusNode.unfocus();
-      },
-    );
-  }
-
-  void _toggleFocus() {
-    if (_focusNode.hasFocus) {
-      _focusNode.unfocus();
+  /// Make a request to the provided url.
+  /// The response then is parsed to a list of ValueItem objects.
+  Future<void> _fetchNetwork() async {
+    final result = await _performNetworkRequest();
+    http.get(Uri.parse(widget.networkConfig!.url));
+    if (result.statusCode == 200) {
+      final data = json.decode(result.body);
+      final List<ValueItem> parsedOptions = await widget.responseParser!(data);
+      _reponseBody = null;
+      _options.addAll(parsedOptions);
     } else {
-      _focusNode.requestFocus();
+      _reponseBody = result.body;
     }
   }
 
-  _getSelectedIcon(bool isSelected, Color primaryColor) {
-    if (isSelected) {
-      return widget.selectedOptionIcon ??
-          Icon(
-            Icons.check,
-            color: primaryColor,
-          );
-    }
-    if (!widget.alwaysShowOptionIcon) {
-      return null;
-    }
-
-    final Icon icon = widget.selectedOptionIcon ??
-        Icon(
-          Icons.check,
-          color: widget.optionTextStyle?.color ?? Colors.grey,
+  /// Perform the network request according to the provided configuration.
+  Future<Response> _performNetworkRequest() async {
+    switch (widget.networkConfig!.method) {
+      case RequestMethod.get:
+        return await http.get(
+          Uri.parse(widget.networkConfig!.url),
+          headers: widget.networkConfig!.headers,
         );
-
-    return icon;
+      case RequestMethod.post:
+        return await http.post(
+          Uri.parse(widget.networkConfig!.url),
+          body: widget.networkConfig!.body,
+          headers: widget.networkConfig!.headers,
+        );
+      case RequestMethod.put:
+        return await http.put(
+          Uri.parse(widget.networkConfig!.url),
+          body: widget.networkConfig!.body,
+          headers: widget.networkConfig!.headers,
+        );
+      case RequestMethod.patch:
+        return await http.patch(
+          Uri.parse(widget.networkConfig!.url),
+          body: widget.networkConfig!.body,
+          headers: widget.networkConfig!.headers,
+        );
+      case RequestMethod.delete:
+        return await http.delete(
+          Uri.parse(widget.networkConfig!.url),
+          headers: widget.networkConfig!.headers,
+        );
+      default:
+        return await http.get(
+          Uri.parse(widget.networkConfig!.url),
+          headers: widget.networkConfig!.headers,
+        );
+    }
   }
-}
 
-class SelectionChip extends StatelessWidget {
-  final ChipConfig chipConfig;
-  final Function(ValueItem) onItemDelete;
-  final ValueItem item;
+  /// Builds overlay entry for showing error when fetching data from network fails.
+  OverlayEntry _buildNetworkErrorOverlayEntry() {
+    final values = _calculateOffsetSize();
+    final size = values[0] as Size;
+    final offset = values[1] as Offset;
 
-  const SelectionChip({
-    Key? key,
-    required this.chipConfig,
-    required this.item,
-    required this.onItemDelete,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Chip(
-      padding: chipConfig.padding,
-      label: Text(item.label),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(chipConfig.radius),
-      ),
-      deleteIcon: chipConfig.deleteIcon,
-      deleteIconColor: chipConfig.deleteIconColor,
-      labelPadding: chipConfig.labelPadding,
-      backgroundColor:
-          chipConfig.backgroundColor ?? Theme.of(context).primaryColor,
-      labelStyle: chipConfig.labelStyle ??
-          TextStyle(color: chipConfig.labelColor, fontSize: 14),
-      onDeleted: () => onItemDelete(item),
-    );
-  }
-}
-
-class HintText extends StatelessWidget {
-  final TextStyle? hintStyle;
-  final String hintText;
-  final Color? hintColor;
-
-  const HintText({
-    Key? key,
-    this.hintStyle,
-    required this.hintText,
-    this.hintColor,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 10.0),
-      child: Text(
-        hintText,
-        style: hintStyle ??
-            TextStyle(
-              fontSize: 13,
-              color: hintColor ?? Colors.grey.shade300,
-            ),
-      ),
-    );
-  }
-}
-
-class SingleSelectedItem extends StatelessWidget {
-  final String label;
-  const SingleSelectedItem({
-    Key? key,
-    required this.label,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 10.0),
-      child: Text(
-        label,
-        style: TextStyle(
-          fontSize: 13,
-          color: Colors.grey.shade700,
-        ),
-      ),
-    );
+    return OverlayEntry(builder: (context) {
+      return StatefulBuilder(builder: ((context, dropdownState) {
+        return Stack(
+          children: [
+            Positioned.fill(
+                child: GestureDetector(
+              onTap: _onOutSideTap,
+              child: Container(
+                color: Colors.transparent,
+              ),
+            )),
+            Positioned(
+                left: offset.dx,
+                top: offset.dy + size.height + 5.0,
+                width: size.width,
+                child: CompositedTransformFollower(
+                    link: _layerLink,
+                    showWhenUnlinked: false,
+                    offset: Offset(0.0, size.height + 5.0),
+                    child: Material(
+                        elevation: 4,
+                        child: Container(
+                            constraints: BoxConstraints.loose(
+                                Size(size.width, widget.dropdownHeight)),
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                widget.responseErrorBuilder != null
+                                    ? widget.responseErrorBuilder!(
+                                        context, _reponseBody)
+                                    : Padding(
+                                        padding: const EdgeInsets.all(16.0),
+                                        child: Text(
+                                            'Error fetching data: $_reponseBody'),
+                                      ),
+                              ],
+                            )))))
+          ],
+        );
+      }));
+    });
   }
 }

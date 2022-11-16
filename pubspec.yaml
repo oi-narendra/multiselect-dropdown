@@ -1,15 +1,16 @@
 name: multi_dropdown
-description: 'A Flutter widget that allows the user to select one or more options from a list.'
-version: 1.0.2
+description: "A Flutter widget that allows the user to select one or more options from a list, and displays the selected options as chips. The use can also fetch options from a remote source."
+version: 1.0.3
 homepage: "https://github.com/oi-narendra/multiselect-dropdown"
 
 environment:
-  sdk: ">=2.16.2 <3.0.0"
+  sdk: ">=2.16.2 <3.3.8"
   flutter: ">=1.17.0"
 
 dependencies:
   flutter:
     sdk: flutter
+  http: ^0.13.5
 
 dev_dependencies:
   flutter_test:

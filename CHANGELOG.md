@@ -8,3 +8,6 @@
 # 1.0.2
 * Added example.
 
+# 1.0.3
+* Added new constructor that supports fetching the data from a URL.
+

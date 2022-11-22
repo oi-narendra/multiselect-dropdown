@@ -236,4 +236,44 @@ class MyHomePage extends StatelessWidget {
 }
 ```
 
+## Parameters
+
+| Name                          | Type                                       | Description                      |
+| ----------------------------- | ------------------------------------------ | -------------------------------- |
+| selectionType                 | SelectionType                              | selection type of the dropdown   |
+| hint                          | String                                     | Hint                             |
+| hintColor                     | Color?                                     | Hint color                       |
+| hintFontSize                  | double?                                    | Hint font size                   |
+| hintStyle                     | TextStyle?                                 | Hint style                       |
+| options                       | List<ValueItem>                            | Options                          |
+| selectedOptions               | List<ValueItem>                            | Selected options                 |
+| disabledOptions               | List<ValueItem>                            | Disabled options                 |
+| onOptionSelected              | Function(List<ValueItem>)?                 | On option selected               |
+| selectedOptionIcon            | Icon?                                      | Selected option icon             |
+| selectedOptionTextColor       | Color?                                     | Selected option text color       |
+| selectedOptionBackgroundColor | Color?                                     | Selected option background color |
+| selectedItemBuilder           | Widget Function(BuildContext, ValueItem)?  | Selected item builder            |
+| showChipInSingleSelectMode    | bool                                       | Show chip in single select mode  |
+| chipConfig                    | ChipConfig                                 | Chip configuration               |
+| optionsBackgroundColor        | Color?                                     | Options background color         |
+| optionTextStyle               | TextStyle?                                 | Option text style                |
+| optionSeperator               | Widget?                                    | Option seperator                 |
+| dropdownHeight                | double                                     | Dropdown height                  |
+| optionSeparator               | Widget?                                    | Option separator                 |
+| alwaysShowOptionIcon          | bool                                       | Always show option icon          |
+| backgroundColor               | Color?                                     | Background color                 |
+| suffixIcon                    | IconData?                                  | Suffix icon                      |
+| inputDecoration               | Decoration?                                | Input decoration                 |
+| borderRadius                  | double?                                    | Border radius                    |
+| borderColor                   | Color?                                     | Border color                     |
+| borderWidth                   | double?                                    | Border width                     |
+| padding                       | EdgeInsets?                                | Padding                          |
+| networkConfig                 | NetworkConfig?                             | Network configuration            |
+| responseParser                | Future<List<ValueItem>> Function(dynamic)? | Response parser                  |
+| responseErrorBuilder          | Widget Function(BuildContext, dynamic)?    | Response error builder           |
+
+
+
+
+
 

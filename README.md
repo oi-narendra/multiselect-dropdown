@@ -98,6 +98,7 @@ MultiSelectDropDown.network(
 -  Customize dropdown list items.
 -  Customize selected item builder.
 -  Customize dropdown field style.
+-  Callback when dropdown items are selected/unselected.
 
 ## Getting started
 

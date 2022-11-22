@@ -48,7 +48,9 @@ class MyHomePage extends StatelessWidget {
               height: 4,
             ),
             MultiSelectDropDown(
-              onOptionSelected: (List<ValueItem> selectedOptions) {},
+              onOptionSelected: (options) {
+                debugPrint(options.toString());
+              },
               options: const <ValueItem>[
                 ValueItem(label: 'Option 1', value: '1'),
                 ValueItem(label: 'Option 2', value: '2'),
@@ -71,7 +73,9 @@ class MyHomePage extends StatelessWidget {
               height: 4,
             ),
             MultiSelectDropDown(
-              onOptionSelected: (List<ValueItem> selectedOptions) {},
+              onOptionSelected: (options) {
+                debugPrint(options.toString());
+              },
               options: const <ValueItem>[
                 ValueItem(label: 'Option 1', value: '1'),
                 ValueItem(label: 'Option 2', value: '2'),
@@ -82,7 +86,7 @@ class MyHomePage extends StatelessWidget {
               ],
               selectionType: SelectionType.multi,
               chipConfig: const ChipConfig(wrapType: WrapType.scroll),
-              dropdownHeight: 300,
+              dropdownHeight: 400,
               optionTextStyle: const TextStyle(fontSize: 16),
               selectedOptionIcon: const Icon(Icons.check_circle),
             ),
@@ -94,9 +98,12 @@ class MyHomePage extends StatelessWidget {
               height: 4,
             ),
             MultiSelectDropDown.network(
-              onOptionSelected: (options) {},
+              dropdownHeight: 200,
+              onOptionSelected: (options) {
+                debugPrint(options.toString());
+              },
               networkConfig: NetworkConfig(
-                url: 'https://jsonplaceholder.typicode.com/user',
+                url: 'https://jsonplaceholder.typicode.com/users',
                 method: RequestMethod.get,
                 headers: {
                   'Content-Type': 'application/json',

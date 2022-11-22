@@ -19,6 +19,8 @@ export 'models/chip_config.dart';
 export 'models/value_item.dart';
 export 'models/network_config.dart';
 
+typedef OnOptionSelected = void Function(List<ValueItem> selectedOptions);
+
 class MultiSelectDropDown extends StatefulWidget {
   // selection type of the dropdown
   final SelectionType selectionType;
@@ -34,7 +36,7 @@ class MultiSelectDropDown extends StatefulWidget {
   final List<ValueItem> selectedOptions;
   final List<ValueItem> disabledOptions;
 
-  final Function(List<ValueItem>)? onOptionSelected;
+  final OnOptionSelected? onOptionSelected;
 
   // selected option
   final Icon? selectedOptionIcon;
@@ -58,6 +60,10 @@ class MultiSelectDropDown extends StatefulWidget {
   final Color? backgroundColor;
   final IconData? suffixIcon;
   final Decoration? inputDecoration;
+  final double? borderRadius;
+  final Color? borderColor;
+  final double? borderWidth;
+  final EdgeInsets? padding;
 
   // network configuration
   final NetworkConfig? networkConfig;
@@ -191,6 +197,13 @@ class MultiSelectDropDown extends StatefulWidget {
     this.optionSeparator,
     this.inputDecoration,
     this.hintStyle,
+    this.padding = const EdgeInsets.symmetric(
+      horizontal: 8,
+      vertical: 8,
+    ),
+    this.borderColor = Colors.grey,
+    this.borderWidth = 0.4,
+    this.borderRadius = 12.0,
   })  : networkConfig = null,
         responseParser = null,
         responseErrorBuilder = null,
@@ -229,6 +242,13 @@ class MultiSelectDropDown extends StatefulWidget {
     this.optionSeparator,
     this.inputDecoration,
     this.hintStyle,
+    this.padding = const EdgeInsets.symmetric(
+      horizontal: 8,
+      vertical: 8,
+    ),
+    this.borderColor = Colors.grey,
+    this.borderWidth = 0.4,
+    this.borderRadius = 12.0,
   })  : options = const [],
         super(key: key);
 
@@ -353,10 +373,7 @@ class _MultiSelectDropDownState extends State<MultiSelectDropDown> {
               minWidth: MediaQuery.of(context).size.width,
               minHeight: 52,
             ),
-            padding: const EdgeInsets.symmetric(
-              horizontal: 8,
-              vertical: 8,
-            ),
+            padding: widget.padding,
             decoration: _getContainerDecoration(),
             child: Row(
               children: [
@@ -400,10 +417,10 @@ class _MultiSelectDropDownState extends State<MultiSelectDropDown> {
     return widget.inputDecoration ??
         BoxDecoration(
           color: widget.backgroundColor ?? Colors.white,
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(widget.borderRadius ?? 12.0),
           border: Border.all(
-            color: Colors.grey,
-            width: 0.4,
+            color: widget.borderColor ?? Colors.grey,
+            width: widget.borderWidth ?? 0.4,
           ),
         );
   }
@@ -592,17 +609,13 @@ class _MultiSelectDropDownState extends State<MultiSelectDropDown> {
                                       dropdownState(() {
                                         selectedOptions.remove(option);
                                       });
-                                    } else {
-                                      dropdownState(() {
-                                        selectedOptions.add(option);
-                                      });
-                                    }
-
-                                    if (isSelected) {
                                       setState(() {
                                         _selectedOptions.remove(option);
                                       });
                                     } else {
+                                      dropdownState(() {
+                                        selectedOptions.add(option);
+                                      });
                                       setState(() {
                                         _selectedOptions.add(option);
                                       });
@@ -618,6 +631,9 @@ class _MultiSelectDropDownState extends State<MultiSelectDropDown> {
                                     });
                                     _focusNode.unfocus();
                                   }
+
+                                  widget.onOptionSelected
+                                      ?.call(_selectedOptions);
                                 },
                                 trailing:
                                     _getSelectedIcon(isSelected, primaryColor));

@@ -503,7 +503,8 @@ class _MultiSelectDropDownState extends State<MultiSelectDropDown> {
         setState(() {
           _selectedOptions.remove(removedItem);
         });
-        _focusNode.unfocus();
+        widget.onOptionSelected?.call(_selectedOptions);
+        if (_focusNode.hasFocus) _focusNode.unfocus();
       },
     );
   }

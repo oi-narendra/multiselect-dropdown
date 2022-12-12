@@ -15,4 +15,8 @@
 * Added support for dropdown field padding, border color, border width, and border radius.
 * Fixed onOptionsSelected callback not being called.
 * Added toString/JsonSerialization/Equality/Hash methods to ValueItem class.
+  
+# 1.0.5
+* Fixed onOptionsSelected callback not being called when deleting the chip item.
+* Fixed issue causing overlay exception.
 

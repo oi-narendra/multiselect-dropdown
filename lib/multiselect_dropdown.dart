@@ -428,8 +428,10 @@ class _MultiSelectDropDownState extends State<MultiSelectDropDown> {
   /// Dispose the focus node and overlay entry.
   @override
   void dispose() {
-    if (_overlayState != null && _overlayEntry != null) {
+    if (_overlayEntry?.mounted == true) {
       _overlayEntry?.remove();
+      _overlayEntry?.dispose();
+      _overlayState?.dispose();
     }
     _focusNode.dispose();
     super.dispose();

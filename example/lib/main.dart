@@ -60,10 +60,15 @@ class MyHomePage extends StatelessWidget {
                 ValueItem(label: 'Option 6', value: '6'),
               ],
               selectionType: SelectionType.multi,
-              chipConfig: const ChipConfig(wrapType: WrapType.wrap),
+              chipConfig: const ChipConfig(
+                  wrapType: WrapType.wrap, backgroundColor: Colors.red),
               dropdownHeight: 300,
               optionTextStyle: const TextStyle(fontSize: 16),
-              selectedOptionIcon: const Icon(Icons.check_circle),
+              selectedOptionIcon: const Icon(
+                Icons.checklist,
+                color: Colors.pink,
+              ),
+              selectedOptionTextColor: Colors.blue,
             ),
             const SizedBox(
               height: 50,

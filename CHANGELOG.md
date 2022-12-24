@@ -19,4 +19,7 @@
 # 1.0.5
 * Fixed onOptionsSelected callback not being called when deleting the chip item.
 * Fixed issue causing overlay exception.
+  
+# 1.0.6
+* Fixed selected option text color not being applied.
 

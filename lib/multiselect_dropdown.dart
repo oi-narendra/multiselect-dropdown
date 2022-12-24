@@ -587,17 +587,14 @@ class _MultiSelectDropDownState extends State<MultiSelectDropDown> {
                             final primaryColor = Theme.of(context).primaryColor;
 
                             return ListTile(
-                                title: Text(
-                                  option.label,
-                                  style: widget.optionTextStyle ??
-                                      TextStyle(
-                                        color: isSelected
-                                            ? widget.selectedOptionTextColor ??
-                                                primaryColor
-                                            : Colors.black,
-                                        fontSize: widget.hintFontSize,
-                                      ),
-                                ),
+                                title: Text(option.label,
+                                    style: widget.optionTextStyle ??
+                                        TextStyle(
+                                          fontSize: widget.hintFontSize,
+                                        )),
+                                textColor: Colors.black,
+                                selectedColor: widget.selectedOptionTextColor ??
+                                    primaryColor,
                                 selected: isSelected,
                                 tileColor: widget.optionsBackgroundColor ??
                                     Colors.white,

@@ -106,7 +106,7 @@ Add the following to your `pubspec.yaml`:
 
 ```yaml
 dependencies:
-  multi_dropdown: any
+  multi_dropdown: ^1.0.6
 ```
 
 Run `flutter packages get`

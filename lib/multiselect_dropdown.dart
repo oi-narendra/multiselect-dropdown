@@ -61,6 +61,7 @@ class MultiSelectDropDown extends StatefulWidget {
   final IconData? suffixIcon;
   final Decoration? inputDecoration;
   final double? borderRadius;
+  final BorderRadiusGeometry? radiusGeometry;
   final Color? borderColor;
   final double? borderWidth;
   final EdgeInsets? padding;
@@ -204,6 +205,7 @@ class MultiSelectDropDown extends StatefulWidget {
     this.borderColor = Colors.grey,
     this.borderWidth = 0.4,
     this.borderRadius = 12.0,
+    this.radiusGeometry,
   })  : networkConfig = null,
         responseParser = null,
         responseErrorBuilder = null,
@@ -249,6 +251,7 @@ class MultiSelectDropDown extends StatefulWidget {
     this.borderColor = Colors.grey,
     this.borderWidth = 0.4,
     this.borderRadius = 12.0,
+    this.radiusGeometry,
   })  : options = const [],
         super(key: key);
 
@@ -417,7 +420,9 @@ class _MultiSelectDropDownState extends State<MultiSelectDropDown> {
     return widget.inputDecoration ??
         BoxDecoration(
           color: widget.backgroundColor ?? Colors.white,
-          borderRadius: BorderRadius.circular(widget.borderRadius ?? 12.0),
+          borderRadius: widget.radiusGeometry != null
+              ? BorderRadius.circular(widget.borderRadius ?? 12.0)
+              : widget.radiusGeometry,
           border: Border.all(
             color: widget.borderColor ?? Colors.grey,
             width: widget.borderWidth ?? 0.4,

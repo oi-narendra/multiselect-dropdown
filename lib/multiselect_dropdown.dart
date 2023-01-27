@@ -420,9 +420,8 @@ class _MultiSelectDropDownState extends State<MultiSelectDropDown> {
     return widget.inputDecoration ??
         BoxDecoration(
           color: widget.backgroundColor ?? Colors.white,
-          borderRadius: widget.radiusGeometry != null
-              ? BorderRadius.circular(widget.borderRadius ?? 12.0)
-              : widget.radiusGeometry,
+          borderRadius: widget.radiusGeometry ??
+              BorderRadius.circular(widget.borderRadius ?? 12.0),
           border: Border.all(
             color: widget.borderColor ?? Colors.grey,
             width: widget.borderWidth ?? 0.4,

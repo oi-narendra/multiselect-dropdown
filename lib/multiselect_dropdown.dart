@@ -312,7 +312,7 @@ class _MultiSelectDropDownState extends State<MultiSelectDropDown> {
       _overlayEntry = _reponseBody != null && widget.networkConfig != null
           ? _buildNetworkErrorOverlayEntry()
           : _buildOverlayEntry();
-      Overlay.of(context)?.insert(_overlayEntry!);
+      Overlay.of(context).insert(_overlayEntry!);
       return;
     }
     _overlayEntry?.remove();

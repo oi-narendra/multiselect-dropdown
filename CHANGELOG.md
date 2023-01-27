@@ -22,4 +22,6 @@
   
 # 1.0.6
 * Fixed selected option text color not being applied.
+# 1.0.7
+* Added custom border radius in dropdown.
 

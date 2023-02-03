@@ -25,3 +25,5 @@
 # 1.0.7
 * Added custom border radius in dropdown.
 
+# 1.0.8
+* Updated dropdown to detect available space and show the dropdown above or below the field.

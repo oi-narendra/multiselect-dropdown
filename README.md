@@ -65,7 +65,6 @@ MultiSelectDropDown.network(
               ),
               chipConfig: const ChipConfig(wrapType: WrapType.wrap),
               responseParser: (response) {
-                debugPrint('Response: $response');
 
                 final list = (response as List<dynamic>).map((e) {
                   final item = e as Map<String, dynamic>;
@@ -209,8 +208,6 @@ class MyHomePage extends StatelessWidget {
               ),
               chipConfig: const ChipConfig(wrapType: WrapType.wrap),
               responseParser: (response) {
-                debugPrint('Response: $response');
-
                 final list = (response as List<dynamic>).map((e) {
                   final item = e as Map<String, dynamic>;
                   return ValueItem(

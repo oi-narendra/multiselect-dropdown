@@ -283,7 +283,9 @@ class _MultiSelectDropDownState extends State<MultiSelectDropDown> {
   @override
   void initState() {
     super.initState();
-    _initialize();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _initialize();
+    });
   }
 
   /// Initializes the options, selected options and disabled options.
@@ -351,11 +353,7 @@ class _MultiSelectDropDownState extends State<MultiSelectDropDown> {
 
     final availableHeight = MediaQuery.of(context).size.height - offset.dy;
 
-    if (availableHeight < widget.dropdownHeight) {
-      offset = Offset(offset.dx,
-          offset.dy - (widget.dropdownHeight - availableHeight + 40));
-    }
-    return [size, offset];
+    return [size, availableHeight < widget.dropdownHeight];
   }
 
   @override
@@ -548,7 +546,18 @@ class _MultiSelectDropDownState extends State<MultiSelectDropDown> {
   OverlayEntry _buildOverlayEntry() {
     final values = _calculateOffsetSize();
     final size = values[0] as Size;
-    final offset = values[1] as Offset;
+    final showOnTop = values[1] as bool;
+    final visualDensity = Theme.of(context).visualDensity;
+    final tileHeight = 48.0 + visualDensity.vertical;
+    final currentHeight = tileHeight * _options.length;
+
+    final bool isScrollable =
+        widget.dropdownHeight < currentHeight && widget.dropdownHeight > 0;
+    final offsetY = showOnTop
+        ? isScrollable
+            ? -widget.dropdownHeight - 5
+            : -currentHeight - 5
+        : size.height + 5;
 
     return OverlayEntry(builder: (context) {
       List<ValueItem> options = _options;
@@ -564,87 +573,82 @@ class _MultiSelectDropDownState extends State<MultiSelectDropDown> {
                 color: Colors.transparent,
               ),
             )),
-            Positioned(
-                left: offset.dx,
-                top: offset.dy + size.height + 5.0,
-                width: size.width,
-                child: CompositedTransformFollower(
-                  link: _layerLink,
-                  showWhenUnlinked: false,
-                  offset: Offset(0.0, size.height + 5.0),
-                  child: Material(
-                      elevation: 4,
-                      child: Container(
-                        constraints: BoxConstraints.loose(
-                            Size(size.width, widget.dropdownHeight)),
-                        child: ListView.separated(
-                          separatorBuilder: (context, index) {
-                            return widget.optionSeparator ??
-                                const SizedBox(height: 0);
-                          },
-                          shrinkWrap: true,
-                          padding: EdgeInsets.zero,
-                          itemCount: options.length,
-                          itemBuilder: (context, index) {
-                            final option = options[index];
-                            final isSelected = selectedOptions.contains(option);
-                            final primaryColor = Theme.of(context).primaryColor;
+            CompositedTransformFollower(
+              link: _layerLink,
+              showWhenUnlinked: false,
+              offset: Offset(0.0, offsetY),
+              child: Material(
+                  elevation: 4,
+                  child: Container(
+                    constraints: BoxConstraints.loose(
+                        Size(size.width, widget.dropdownHeight)),
+                    child: ListView.separated(
+                      separatorBuilder: (context, index) {
+                        return widget.optionSeparator ??
+                            const SizedBox(height: 0);
+                      },
+                      shrinkWrap: true,
+                      padding: EdgeInsets.zero,
+                      itemCount: options.length,
+                      itemBuilder: (context, index) {
+                        final option = options[index];
+                        final isSelected = selectedOptions.contains(option);
+                        final primaryColor = Theme.of(context).primaryColor;
 
-                            return ListTile(
-                                title: Text(option.label,
-                                    style: widget.optionTextStyle ??
-                                        TextStyle(
-                                          fontSize: widget.hintFontSize,
-                                        )),
-                                textColor: Colors.black,
-                                selectedColor: widget.selectedOptionTextColor ??
-                                    primaryColor,
-                                selected: isSelected,
-                                tileColor: widget.optionsBackgroundColor ??
-                                    Colors.white,
-                                selectedTileColor:
-                                    widget.selectedOptionBackgroundColor ??
-                                        Colors.grey.shade200,
-                                enabled: !_disabledOptions.contains(option),
-                                onTap: () {
-                                  if (widget.selectionType ==
-                                      SelectionType.multi) {
-                                    if (isSelected) {
-                                      dropdownState(() {
-                                        selectedOptions.remove(option);
-                                      });
-                                      setState(() {
-                                        _selectedOptions.remove(option);
-                                      });
-                                    } else {
-                                      dropdownState(() {
-                                        selectedOptions.add(option);
-                                      });
-                                      setState(() {
-                                        _selectedOptions.add(option);
-                                      });
-                                    }
-                                  } else {
-                                    dropdownState(() {
-                                      selectedOptions.clear();
-                                      selectedOptions.add(option);
-                                    });
-                                    setState(() {
-                                      _selectedOptions.clear();
-                                      _selectedOptions.add(option);
-                                    });
-                                    _focusNode.unfocus();
-                                  }
+                        return ListTile(
+                            title: Text(option.label,
+                                style: widget.optionTextStyle ??
+                                    TextStyle(
+                                      fontSize: widget.hintFontSize,
+                                    )),
+                            textColor: Colors.black,
+                            selectedColor:
+                                widget.selectedOptionTextColor ?? primaryColor,
+                            selected: isSelected,
+                            dense: true,
+                            tileColor:
+                                widget.optionsBackgroundColor ?? Colors.white,
+                            selectedTileColor:
+                                widget.selectedOptionBackgroundColor ??
+                                    Colors.grey.shade200,
+                            enabled: !_disabledOptions.contains(option),
+                            onTap: () {
+                              if (widget.selectionType == SelectionType.multi) {
+                                if (isSelected) {
+                                  dropdownState(() {
+                                    selectedOptions.remove(option);
+                                  });
+                                  setState(() {
+                                    _selectedOptions.remove(option);
+                                  });
+                                } else {
+                                  dropdownState(() {
+                                    selectedOptions.add(option);
+                                  });
+                                  setState(() {
+                                    _selectedOptions.add(option);
+                                  });
+                                }
+                              } else {
+                                dropdownState(() {
+                                  selectedOptions.clear();
+                                  selectedOptions.add(option);
+                                });
+                                setState(() {
+                                  _selectedOptions.clear();
+                                  _selectedOptions.add(option);
+                                });
+                                _focusNode.unfocus();
+                              }
 
-                                  widget.onOptionSelected
-                                      ?.call(_selectedOptions);
-                                },
-                                trailing:
-                                    _getSelectedIcon(isSelected, primaryColor));
-                          },
-                        ),
-                      )),
-                )),
+                              widget.onOptionSelected?.call(_selectedOptions);
+                            },
+                            trailing:
+                                _getSelectedIcon(isSelected, primaryColor));
+                      },
+                    ),
+                  )),
+            ),
           ],
         );
       }));
@@ -709,7 +713,9 @@ class _MultiSelectDropDownState extends State<MultiSelectDropDown> {
   OverlayEntry _buildNetworkErrorOverlayEntry() {
     final values = _calculateOffsetSize();
     final size = values[0] as Size;
-    final offset = values[1] as Offset;
+    final showOnTop = values[1] as bool;
+
+    final offsetY = showOnTop ? -(size.height + 5) : size.height + 5;
 
     return OverlayEntry(builder: (context) {
       return StatefulBuilder(builder: ((context, dropdownState) {
@@ -722,32 +728,28 @@ class _MultiSelectDropDownState extends State<MultiSelectDropDown> {
                 color: Colors.transparent,
               ),
             )),
-            Positioned(
-                left: offset.dx,
-                top: offset.dy + size.height + 5.0,
-                width: size.width,
-                child: CompositedTransformFollower(
-                    link: _layerLink,
-                    showWhenUnlinked: false,
-                    offset: Offset(0.0, size.height + 5.0),
-                    child: Material(
-                        elevation: 4,
-                        child: Container(
-                            constraints: BoxConstraints.loose(
-                                Size(size.width, widget.dropdownHeight)),
-                            child: Column(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                widget.responseErrorBuilder != null
-                                    ? widget.responseErrorBuilder!(
-                                        context, _reponseBody)
-                                    : Padding(
-                                        padding: const EdgeInsets.all(16.0),
-                                        child: Text(
-                                            'Error fetching data: $_reponseBody'),
-                                      ),
-                              ],
-                            )))))
+            CompositedTransformFollower(
+                link: _layerLink,
+                offset: Offset(0.0, offsetY),
+                child: Material(
+                    elevation: 4,
+                    child: Container(
+                        width: size.width,
+                        constraints: BoxConstraints.loose(
+                            Size(size.width, widget.dropdownHeight)),
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            widget.responseErrorBuilder != null
+                                ? widget.responseErrorBuilder!(
+                                    context, _reponseBody)
+                                : Padding(
+                                    padding: const EdgeInsets.all(16.0),
+                                    child: Text(
+                                        'Error fetching data: $_reponseBody'),
+                                  ),
+                          ],
+                        ))))
           ],
         );
       }));

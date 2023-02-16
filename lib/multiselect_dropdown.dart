@@ -65,6 +65,7 @@ class MultiSelectDropDown extends StatefulWidget {
   final Color? borderColor;
   final double? borderWidth;
   final EdgeInsets? padding;
+  final bool showClearIcon;
 
   // network configuration
   final NetworkConfig? networkConfig;
@@ -172,41 +173,42 @@ class MultiSelectDropDown extends StatefulWidget {
   ///    );
   /// ```
 
-  const MultiSelectDropDown({
-    Key? key,
-    required this.onOptionSelected,
-    required this.options,
-    this.selectedOptionTextColor,
-    this.optionSeperator,
-    this.chipConfig = const ChipConfig(),
-    this.selectionType = SelectionType.multi,
-    this.hint = 'Select',
-    this.hintColor = Colors.grey,
-    this.hintFontSize = 14.0,
-    this.selectedOptions = const [],
-    this.disabledOptions = const [],
-    this.alwaysShowOptionIcon = false,
-    this.optionTextStyle,
-    this.selectedOptionIcon = const Icon(Icons.check),
-    this.selectedOptionBackgroundColor,
-    this.optionsBackgroundColor,
-    this.backgroundColor = Colors.white,
-    this.dropdownHeight = 200,
-    this.showChipInSingleSelectMode = false,
-    this.suffixIcon = Icons.arrow_drop_down,
-    this.selectedItemBuilder,
-    this.optionSeparator,
-    this.inputDecoration,
-    this.hintStyle,
-    this.padding = const EdgeInsets.symmetric(
-      horizontal: 8,
-      vertical: 8,
-    ),
-    this.borderColor = Colors.grey,
-    this.borderWidth = 0.4,
-    this.borderRadius = 12.0,
-    this.radiusGeometry,
-  })  : networkConfig = null,
+  const MultiSelectDropDown(
+      {Key? key,
+      required this.onOptionSelected,
+      required this.options,
+      this.selectedOptionTextColor,
+      this.optionSeperator,
+      this.chipConfig = const ChipConfig(),
+      this.selectionType = SelectionType.multi,
+      this.hint = 'Select',
+      this.hintColor = Colors.grey,
+      this.hintFontSize = 14.0,
+      this.selectedOptions = const [],
+      this.disabledOptions = const [],
+      this.alwaysShowOptionIcon = false,
+      this.optionTextStyle,
+      this.selectedOptionIcon = const Icon(Icons.check),
+      this.selectedOptionBackgroundColor,
+      this.optionsBackgroundColor,
+      this.backgroundColor = Colors.white,
+      this.dropdownHeight = 200,
+      this.showChipInSingleSelectMode = false,
+      this.suffixIcon = Icons.arrow_drop_down,
+      this.selectedItemBuilder,
+      this.optionSeparator,
+      this.inputDecoration,
+      this.hintStyle,
+      this.padding = const EdgeInsets.symmetric(
+        horizontal: 8,
+        vertical: 8,
+      ),
+      this.borderColor = Colors.grey,
+      this.borderWidth = 0.4,
+      this.borderRadius = 12.0,
+      this.radiusGeometry,
+      this.showClearIcon = true})
+      : networkConfig = null,
         responseParser = null,
         responseErrorBuilder = null,
         super(key: key);
@@ -216,43 +218,44 @@ class MultiSelectDropDown extends StatefulWidget {
   /// [responseParser] is the parser that is used to parse the response from the network call.
   /// [responseErrorBuilder] is the builder that is used to build the error widget when the network call fails.
 
-  const MultiSelectDropDown.network({
-    Key? key,
-    required this.networkConfig,
-    required this.responseParser,
-    this.responseErrorBuilder,
-    required this.onOptionSelected,
-    this.selectedOptionTextColor,
-    this.optionSeperator,
-    this.chipConfig = const ChipConfig(),
-    this.selectionType = SelectionType.multi,
-    this.hint = 'Select',
-    this.hintColor = Colors.grey,
-    this.hintFontSize = 14.0,
-    this.selectedOptions = const [],
-    this.disabledOptions = const [],
-    this.alwaysShowOptionIcon = false,
-    this.optionTextStyle,
-    this.selectedOptionIcon = const Icon(Icons.check),
-    this.selectedOptionBackgroundColor,
-    this.optionsBackgroundColor,
-    this.backgroundColor = Colors.white,
-    this.dropdownHeight = 200,
-    this.showChipInSingleSelectMode = false,
-    this.suffixIcon = Icons.arrow_drop_down,
-    this.selectedItemBuilder,
-    this.optionSeparator,
-    this.inputDecoration,
-    this.hintStyle,
-    this.padding = const EdgeInsets.symmetric(
-      horizontal: 8,
-      vertical: 8,
-    ),
-    this.borderColor = Colors.grey,
-    this.borderWidth = 0.4,
-    this.borderRadius = 12.0,
-    this.radiusGeometry,
-  })  : options = const [],
+  const MultiSelectDropDown.network(
+      {Key? key,
+      required this.networkConfig,
+      required this.responseParser,
+      this.responseErrorBuilder,
+      required this.onOptionSelected,
+      this.selectedOptionTextColor,
+      this.optionSeperator,
+      this.chipConfig = const ChipConfig(),
+      this.selectionType = SelectionType.multi,
+      this.hint = 'Select',
+      this.hintColor = Colors.grey,
+      this.hintFontSize = 14.0,
+      this.selectedOptions = const [],
+      this.disabledOptions = const [],
+      this.alwaysShowOptionIcon = false,
+      this.optionTextStyle,
+      this.selectedOptionIcon = const Icon(Icons.check),
+      this.selectedOptionBackgroundColor,
+      this.optionsBackgroundColor,
+      this.backgroundColor = Colors.white,
+      this.dropdownHeight = 200,
+      this.showChipInSingleSelectMode = false,
+      this.suffixIcon = Icons.arrow_drop_down,
+      this.selectedItemBuilder,
+      this.optionSeparator,
+      this.inputDecoration,
+      this.hintStyle,
+      this.padding = const EdgeInsets.symmetric(
+        horizontal: 8,
+        vertical: 8,
+      ),
+      this.borderColor = Colors.grey,
+      this.borderWidth = 0.4,
+      this.borderRadius = 12.0,
+      this.radiusGeometry,
+      this.showClearIcon = true})
+      : options = const [],
         super(key: key);
 
   @override
@@ -292,6 +295,7 @@ class _MultiSelectDropDownState extends State<MultiSelectDropDown> {
   /// If the options are fetched from the network, then the network call is made.
   /// If the options are passed as a parameter, then the options are initialized.
   void _initialize() async {
+    if (!mounted) return;
     if (widget.networkConfig?.url != null) {
       await _fetchNetwork();
     } else {
@@ -364,7 +368,9 @@ class _MultiSelectDropDownState extends State<MultiSelectDropDown> {
         canRequestFocus: true,
         skipTraversal: true,
         focusNode: _focusNode,
-        child: GestureDetector(
+        child: InkWell(
+          splashColor: null,
+          splashFactory: null,
           onTap: () {
             _toggleFocus();
           },
@@ -377,16 +383,25 @@ class _MultiSelectDropDownState extends State<MultiSelectDropDown> {
             padding: widget.padding,
             decoration: _getContainerDecoration(),
             child: Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 Expanded(
                   child: _getContainerContent(),
                 ),
-                AnimatedRotation(
-                    turns: _selectionMode ? 0.5 : 0,
-                    duration: const Duration(milliseconds: 200),
-                    child: Icon(
-                      widget.suffixIcon,
-                    )),
+                widget.showClearIcon && _anyItemSelected
+                    ? InkWell(
+                        onTap: () => _clearSelection(),
+                        child: const Icon(
+                          Icons.close_outlined,
+                          size: 14,
+                        ),
+                      )
+                    : AnimatedRotation(
+                        turns: _selectionMode ? 0.5 : 0,
+                        duration: const Duration(milliseconds: 200),
+                        child: Icon(
+                          widget.suffixIcon,
+                        )),
               ],
             ),
           ),
@@ -412,6 +427,10 @@ class _MultiSelectDropDownState extends State<MultiSelectDropDown> {
 
     return _buildSelectedItems();
   }
+
+  /// check if single item is selected
+  /// return true if single item is selected and single select mode is enabled
+  bool get _anyItemSelected => _selectedOptions.length == 1;
 
   /// Container decoration for the dropdown.
   Decoration _getContainerDecoration() {
@@ -754,5 +773,18 @@ class _MultiSelectDropDownState extends State<MultiSelectDropDown> {
         );
       }));
     });
+  }
+
+  /// Clear the selected options.
+  /// If the dropdown is showing, the dropdown will be removed and a new one will be created.
+  void _clearSelection() {
+    _selectedOptions.clear();
+    widget.onOptionSelected?.call(_selectedOptions);
+    setState(() {});
+    if (_overlayEntry != null) {
+      _overlayEntry!.remove();
+      _overlayEntry = null;
+      _toggleFocus();
+    }
   }
 }

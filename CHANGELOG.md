@@ -27,3 +27,7 @@
 
 # 1.0.8
 * Updated dropdown to detect available space and show the dropdown above or below the field.
+
+# 1.0.9
+* Added clear button to dropdown field.
+* Added support focus on dropdown field.

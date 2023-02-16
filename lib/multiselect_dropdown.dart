@@ -292,6 +292,7 @@ class _MultiSelectDropDownState extends State<MultiSelectDropDown> {
   /// If the options are fetched from the network, then the network call is made.
   /// If the options are passed as a parameter, then the options are initialized.
   void _initialize() async {
+    if (!mounted) return;
     if (widget.networkConfig?.url != null) {
       await _fetchNetwork();
     } else {
@@ -364,7 +365,9 @@ class _MultiSelectDropDownState extends State<MultiSelectDropDown> {
         canRequestFocus: true,
         skipTraversal: true,
         focusNode: _focusNode,
-        child: GestureDetector(
+        child: InkWell(
+          splashColor: null,
+          splashFactory: null,
           onTap: () {
             _toggleFocus();
           },
@@ -377,16 +380,25 @@ class _MultiSelectDropDownState extends State<MultiSelectDropDown> {
             padding: widget.padding,
             decoration: _getContainerDecoration(),
             child: Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 Expanded(
                   child: _getContainerContent(),
                 ),
-                AnimatedRotation(
-                    turns: _selectionMode ? 0.5 : 0,
-                    duration: const Duration(milliseconds: 200),
-                    child: Icon(
-                      widget.suffixIcon,
-                    )),
+                _anyItemSelected
+                    ? InkWell(
+                        onTap: () => _clearSelection(),
+                        child: const Icon(
+                          Icons.close_outlined,
+                          size: 14,
+                        ),
+                      )
+                    : AnimatedRotation(
+                        turns: _selectionMode ? 0.5 : 0,
+                        duration: const Duration(milliseconds: 200),
+                        child: Icon(
+                          widget.suffixIcon,
+                        )),
               ],
             ),
           ),
@@ -412,6 +424,10 @@ class _MultiSelectDropDownState extends State<MultiSelectDropDown> {
 
     return _buildSelectedItems();
   }
+
+  /// check if single item is selected
+  /// return true if single item is selected and single select mode is enabled
+  bool get _anyItemSelected => _selectedOptions.length == 1;
 
   /// Container decoration for the dropdown.
   Decoration _getContainerDecoration() {
@@ -754,5 +770,18 @@ class _MultiSelectDropDownState extends State<MultiSelectDropDown> {
         );
       }));
     });
+  }
+
+  /// Clear the selected options.
+  /// If the dropdown is showing, the dropdown will be removed and a new one will be created.
+  void _clearSelection() {
+    _selectedOptions.clear();
+    widget.onOptionSelected?.call(_selectedOptions);
+    setState(() {});
+    if (_overlayEntry != null) {
+      _overlayEntry!.remove();
+      _overlayEntry = null;
+      _toggleFocus();
+    }
   }
 }

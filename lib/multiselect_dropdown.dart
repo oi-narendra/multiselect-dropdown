@@ -65,6 +65,7 @@ class MultiSelectDropDown extends StatefulWidget {
   final Color? borderColor;
   final double? borderWidth;
   final EdgeInsets? padding;
+  final bool showClearIcon;
 
   // network configuration
   final NetworkConfig? networkConfig;
@@ -172,41 +173,42 @@ class MultiSelectDropDown extends StatefulWidget {
   ///    );
   /// ```
 
-  const MultiSelectDropDown({
-    Key? key,
-    required this.onOptionSelected,
-    required this.options,
-    this.selectedOptionTextColor,
-    this.optionSeperator,
-    this.chipConfig = const ChipConfig(),
-    this.selectionType = SelectionType.multi,
-    this.hint = 'Select',
-    this.hintColor = Colors.grey,
-    this.hintFontSize = 14.0,
-    this.selectedOptions = const [],
-    this.disabledOptions = const [],
-    this.alwaysShowOptionIcon = false,
-    this.optionTextStyle,
-    this.selectedOptionIcon = const Icon(Icons.check),
-    this.selectedOptionBackgroundColor,
-    this.optionsBackgroundColor,
-    this.backgroundColor = Colors.white,
-    this.dropdownHeight = 200,
-    this.showChipInSingleSelectMode = false,
-    this.suffixIcon = Icons.arrow_drop_down,
-    this.selectedItemBuilder,
-    this.optionSeparator,
-    this.inputDecoration,
-    this.hintStyle,
-    this.padding = const EdgeInsets.symmetric(
-      horizontal: 8,
-      vertical: 8,
-    ),
-    this.borderColor = Colors.grey,
-    this.borderWidth = 0.4,
-    this.borderRadius = 12.0,
-    this.radiusGeometry,
-  })  : networkConfig = null,
+  const MultiSelectDropDown(
+      {Key? key,
+      required this.onOptionSelected,
+      required this.options,
+      this.selectedOptionTextColor,
+      this.optionSeperator,
+      this.chipConfig = const ChipConfig(),
+      this.selectionType = SelectionType.multi,
+      this.hint = 'Select',
+      this.hintColor = Colors.grey,
+      this.hintFontSize = 14.0,
+      this.selectedOptions = const [],
+      this.disabledOptions = const [],
+      this.alwaysShowOptionIcon = false,
+      this.optionTextStyle,
+      this.selectedOptionIcon = const Icon(Icons.check),
+      this.selectedOptionBackgroundColor,
+      this.optionsBackgroundColor,
+      this.backgroundColor = Colors.white,
+      this.dropdownHeight = 200,
+      this.showChipInSingleSelectMode = false,
+      this.suffixIcon = Icons.arrow_drop_down,
+      this.selectedItemBuilder,
+      this.optionSeparator,
+      this.inputDecoration,
+      this.hintStyle,
+      this.padding = const EdgeInsets.symmetric(
+        horizontal: 8,
+        vertical: 8,
+      ),
+      this.borderColor = Colors.grey,
+      this.borderWidth = 0.4,
+      this.borderRadius = 12.0,
+      this.radiusGeometry,
+      this.showClearIcon = true})
+      : networkConfig = null,
         responseParser = null,
         responseErrorBuilder = null,
         super(key: key);
@@ -216,43 +218,44 @@ class MultiSelectDropDown extends StatefulWidget {
   /// [responseParser] is the parser that is used to parse the response from the network call.
   /// [responseErrorBuilder] is the builder that is used to build the error widget when the network call fails.
 
-  const MultiSelectDropDown.network({
-    Key? key,
-    required this.networkConfig,
-    required this.responseParser,
-    this.responseErrorBuilder,
-    required this.onOptionSelected,
-    this.selectedOptionTextColor,
-    this.optionSeperator,
-    this.chipConfig = const ChipConfig(),
-    this.selectionType = SelectionType.multi,
-    this.hint = 'Select',
-    this.hintColor = Colors.grey,
-    this.hintFontSize = 14.0,
-    this.selectedOptions = const [],
-    this.disabledOptions = const [],
-    this.alwaysShowOptionIcon = false,
-    this.optionTextStyle,
-    this.selectedOptionIcon = const Icon(Icons.check),
-    this.selectedOptionBackgroundColor,
-    this.optionsBackgroundColor,
-    this.backgroundColor = Colors.white,
-    this.dropdownHeight = 200,
-    this.showChipInSingleSelectMode = false,
-    this.suffixIcon = Icons.arrow_drop_down,
-    this.selectedItemBuilder,
-    this.optionSeparator,
-    this.inputDecoration,
-    this.hintStyle,
-    this.padding = const EdgeInsets.symmetric(
-      horizontal: 8,
-      vertical: 8,
-    ),
-    this.borderColor = Colors.grey,
-    this.borderWidth = 0.4,
-    this.borderRadius = 12.0,
-    this.radiusGeometry,
-  })  : options = const [],
+  const MultiSelectDropDown.network(
+      {Key? key,
+      required this.networkConfig,
+      required this.responseParser,
+      this.responseErrorBuilder,
+      required this.onOptionSelected,
+      this.selectedOptionTextColor,
+      this.optionSeperator,
+      this.chipConfig = const ChipConfig(),
+      this.selectionType = SelectionType.multi,
+      this.hint = 'Select',
+      this.hintColor = Colors.grey,
+      this.hintFontSize = 14.0,
+      this.selectedOptions = const [],
+      this.disabledOptions = const [],
+      this.alwaysShowOptionIcon = false,
+      this.optionTextStyle,
+      this.selectedOptionIcon = const Icon(Icons.check),
+      this.selectedOptionBackgroundColor,
+      this.optionsBackgroundColor,
+      this.backgroundColor = Colors.white,
+      this.dropdownHeight = 200,
+      this.showChipInSingleSelectMode = false,
+      this.suffixIcon = Icons.arrow_drop_down,
+      this.selectedItemBuilder,
+      this.optionSeparator,
+      this.inputDecoration,
+      this.hintStyle,
+      this.padding = const EdgeInsets.symmetric(
+        horizontal: 8,
+        vertical: 8,
+      ),
+      this.borderColor = Colors.grey,
+      this.borderWidth = 0.4,
+      this.borderRadius = 12.0,
+      this.radiusGeometry,
+      this.showClearIcon = true})
+      : options = const [],
         super(key: key);
 
   @override
@@ -385,7 +388,7 @@ class _MultiSelectDropDownState extends State<MultiSelectDropDown> {
                 Expanded(
                   child: _getContainerContent(),
                 ),
-                _anyItemSelected
+                widget.showClearIcon && _anyItemSelected
                     ? InkWell(
                         onTap: () => _clearSelection(),
                         child: const Icon(

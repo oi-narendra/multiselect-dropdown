@@ -63,7 +63,9 @@ class MultiSelectDropDown extends StatefulWidget {
   final double? borderRadius;
   final BorderRadiusGeometry? radiusGeometry;
   final Color? borderColor;
+  final Color? focusedBorderColor;
   final double? borderWidth;
+  final double? focusedBorderWidth;
   final EdgeInsets? padding;
   final bool showClearIcon;
 
@@ -71,6 +73,9 @@ class MultiSelectDropDown extends StatefulWidget {
   final NetworkConfig? networkConfig;
   final Future<List<ValueItem>> Function(dynamic)? responseParser;
   final Widget Function(BuildContext, dynamic)? responseErrorBuilder;
+
+  /// focus node
+  final FocusNode? focusNode;
 
   /// MultiSelectDropDown is a widget that allows the user to select multiple options from a list of options. It is a dropdown that allows the user to select multiple options.
   ///
@@ -203,11 +208,14 @@ class MultiSelectDropDown extends StatefulWidget {
         horizontal: 8,
         vertical: 8,
       ),
+      this.focusedBorderColor = Colors.black54,
       this.borderColor = Colors.grey,
       this.borderWidth = 0.4,
+      this.focusedBorderWidth = 0.4,
       this.borderRadius = 12.0,
       this.radiusGeometry,
-      this.showClearIcon = true})
+      this.showClearIcon = true,
+      this.focusNode})
       : networkConfig = null,
         responseParser = null,
         responseErrorBuilder = null,
@@ -251,10 +259,13 @@ class MultiSelectDropDown extends StatefulWidget {
         vertical: 8,
       ),
       this.borderColor = Colors.grey,
+      this.focusedBorderColor = Colors.black54,
       this.borderWidth = 0.4,
+      this.focusedBorderWidth = 0.4,
       this.borderRadius = 12.0,
       this.radiusGeometry,
-      this.showClearIcon = true})
+      this.showClearIcon = true,
+      this.focusNode})
       : options = const [],
         super(key: key);
 
@@ -277,7 +288,7 @@ class _MultiSelectDropDownState extends State<MultiSelectDropDown> {
   OverlayEntry? _overlayEntry;
   bool _selectionMode = false;
 
-  final FocusNode _focusNode = FocusNode();
+  late final FocusNode _focusNode;
   final LayerLink _layerLink = LayerLink();
 
   /// Response from the network call.
@@ -289,6 +300,7 @@ class _MultiSelectDropDownState extends State<MultiSelectDropDown> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _initialize();
     });
+    _focusNode = widget.focusNode ?? FocusNode();
   }
 
   /// Initializes the options, selected options and disabled options.
@@ -314,17 +326,21 @@ class _MultiSelectDropDownState extends State<MultiSelectDropDown> {
 
   /// Handles the focus change to show/hide the dropdown.
   _handleFocusChange() {
-    if (_focusNode.hasFocus) {
+    debugPrint('Focus changed: ${_focusNode.hasFocus}, widget: ${widget.hint}');
+    if (_focusNode.hasFocus && mounted) {
       _overlayEntry = _reponseBody != null && widget.networkConfig != null
           ? _buildNetworkErrorOverlayEntry()
           : _buildOverlayEntry();
       Overlay.of(context).insert(_overlayEntry!);
       return;
     }
-    _overlayEntry?.remove();
-    setState(() {
-      _selectionMode = _focusNode.hasFocus;
-    });
+    debugPrint('Focus lost');
+    if (_overlayEntry != null) _overlayEntry?.remove();
+    if (mounted) {
+      setState(() {
+        _selectionMode = _focusNode.hasFocus;
+      });
+    }
   }
 
   /// Handles the widget rebuild when the options are changed externally.
@@ -439,10 +455,15 @@ class _MultiSelectDropDownState extends State<MultiSelectDropDown> {
           color: widget.backgroundColor ?? Colors.white,
           borderRadius: widget.radiusGeometry ??
               BorderRadius.circular(widget.borderRadius ?? 12.0),
-          border: Border.all(
-            color: widget.borderColor ?? Colors.grey,
-            width: widget.borderWidth ?? 0.4,
-          ),
+          border: _selectionMode
+              ? Border.all(
+                  color: widget.focusedBorderColor ?? Colors.grey,
+                  width: widget.focusedBorderWidth ?? 0.4,
+                )
+              : Border.all(
+                  color: widget.borderColor ?? Colors.grey,
+                  width: widget.borderWidth ?? 0.4,
+                ),
         );
   }
 
@@ -450,11 +471,12 @@ class _MultiSelectDropDownState extends State<MultiSelectDropDown> {
   @override
   void dispose() {
     if (_overlayEntry?.mounted == true) {
-      _overlayEntry?.remove();
-      _overlayEntry?.dispose();
+      if (_overlayState != null && _overlayEntry != null) {
+        _overlayEntry?.remove();
+      }
+      _overlayEntry = null;
       _overlayState?.dispose();
     }
-    _focusNode.dispose();
     super.dispose();
   }
 
@@ -563,21 +585,30 @@ class _MultiSelectDropDownState extends State<MultiSelectDropDown> {
 
   /// Create the overlay entry for the dropdown.
   OverlayEntry _buildOverlayEntry() {
+    // Calculate the offset and the size of the dropdown button
     final values = _calculateOffsetSize();
+    // Get the size from the first item in the values list
     final size = values[0] as Size;
+    // Get the showOnTop value from the second item in the values list
     final showOnTop = values[1] as bool;
+
+    // Get the visual density of the theme
     final visualDensity = Theme.of(context).visualDensity;
+
+    // Calculate the height of the tile
     final tileHeight = 48.0 + visualDensity.vertical;
+    // Calculate the current height of the dropdown button
     final currentHeight = tileHeight * _options.length;
 
+    // Check if the dropdown height is less than the current height and greater than 0
     final bool isScrollable =
         widget.dropdownHeight < currentHeight && widget.dropdownHeight > 0;
+    // Calculate the offset in the Y direction
     final offsetY = showOnTop
         ? isScrollable
             ? -widget.dropdownHeight - 5
             : -currentHeight - 5
         : size.height + 5;
-
     return OverlayEntry(builder: (context) {
       List<ValueItem> options = _options;
       List<ValueItem> selectedOptions = [..._selectedOptions];
@@ -621,9 +652,11 @@ class _MultiSelectDropDownState extends State<MultiSelectDropDown> {
                                       fontSize: widget.hintFontSize,
                                     )),
                             textColor: Colors.black,
+                            focusColor: Colors.red,
                             selectedColor:
                                 widget.selectedOptionTextColor ?? primaryColor,
                             selected: isSelected,
+                            autofocus: true,
                             dense: true,
                             tileColor:
                                 widget.optionsBackgroundColor ?? Colors.white,

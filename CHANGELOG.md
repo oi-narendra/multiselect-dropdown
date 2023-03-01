@@ -31,3 +31,9 @@
 # 1.0.9
 * Added clear button to dropdown field.
 * Added support focus on dropdown field.
+
+# 2.0.0-dev.1
+* Added support for controller.
+* Use controller to get/set selected options, disabled options, options, and enabled options.
+* Use controller to clear selected options, show/hide dropdown.
+* Added support for focusnode, use focusnode to focus/unfocus the dropdown field programmatically.

@@ -31,8 +31,22 @@ class MyApp extends StatelessWidget {
   }
 }
 
-class MyHomePage extends StatelessWidget {
+class MyHomePage extends StatefulWidget {
   const MyHomePage({Key? key}) : super(key: key);
+
+  @override
+  State<MyHomePage> createState() => _MyHomePageState();
+
+  static const _headerStyle = TextStyle(
+    fontSize: 12,
+    color: Colors.blue,
+  );
+}
+
+class _MyHomePageState extends State<MyHomePage> {
+  final MultiSelectController _controller = MultiSelectController();
+
+  final List<ValueItem> _selectedOptions = [];
 
   @override
   Widget build(BuildContext context) {
@@ -43,11 +57,13 @@ class MyHomePage extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text('WRAP', style: _headerStyle),
+            const Text('WRAP', style: MyHomePage._headerStyle),
             const SizedBox(
               height: 4,
             ),
             MultiSelectDropDown(
+              showClearIcon: true,
+              controller: _controller,
               onOptionSelected: (options) {
                 debugPrint(options.toString());
               },
@@ -59,6 +75,7 @@ class MyHomePage extends StatelessWidget {
                 ValueItem(label: 'Option 5', value: '5'),
                 ValueItem(label: 'Option 6', value: '6'),
               ],
+              disabledOptions: const [ValueItem(label: 'Option 1', value: '1')],
               selectionType: SelectionType.multi,
               chipConfig: const ChipConfig(
                   wrapType: WrapType.wrap, backgroundColor: Colors.red),
@@ -73,7 +90,58 @@ class MyHomePage extends StatelessWidget {
             const SizedBox(
               height: 50,
             ),
-            const Text('SCROLL', style: _headerStyle),
+            Wrap(
+              children: [
+                ElevatedButton(
+                  onPressed: () {
+                    _controller.clearAllSelection();
+                    setState(() {
+                      _selectedOptions.clear();
+                    });
+                  },
+                  child: const Text('CLEAR'),
+                ),
+                const SizedBox(
+                  width: 8,
+                ),
+                ElevatedButton(
+                  onPressed: () {
+                    setState(() {
+                      _selectedOptions.clear();
+                      _selectedOptions.addAll(_controller.selectedOptions);
+                    });
+                  },
+                  child: const Text('Get Selected Options'),
+                ),
+                const SizedBox(
+                  width: 8,
+                ),
+                ElevatedButton(
+                  onPressed: () {
+                    if (_controller.isDropdownOpen) {
+                      _controller.hideDropdown();
+                    } else {
+                      _controller.showDropdown();
+                    }
+                  },
+                  child: const Text('SHOW/HIDE DROPDOWN'),
+                ),
+              ],
+            ),
+            const SizedBox(
+              height: 12,
+            ),
+            Text(
+              'Selected Options: $_selectedOptions',
+              style: const TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            const SizedBox(
+              height: 50,
+            ),
+            const Text('SCROLL', style: MyHomePage._headerStyle),
             const SizedBox(
               height: 4,
             ),
@@ -98,7 +166,7 @@ class MyHomePage extends StatelessWidget {
             const SizedBox(
               height: 50,
             ),
-            const Text('FROM NETWORK', style: _headerStyle),
+            const Text('FROM NETWORK', style: MyHomePage._headerStyle),
             const SizedBox(
               height: 4,
             ),
@@ -135,14 +203,12 @@ class MyHomePage extends StatelessWidget {
                 );
               }),
             ),
+            const SizedBox(
+              height: 50,
+            ),
           ],
         ),
       ),
     ));
   }
-
-  static const _headerStyle = TextStyle(
-    fontSize: 12,
-    color: Colors.blue,
-  );
 }

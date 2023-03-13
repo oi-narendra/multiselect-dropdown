@@ -584,8 +584,13 @@ class _MultiSelectDropDownState extends State<MultiSelectDropDown> {
       onItemDelete: (removedItem) {
         if (_controller != null) {
           _controller!.clearSelection(removedItem);
+        } else {
+          debugPrint('Controller is null');
+          setState(() {
+            _selectedOptions.remove(removedItem);
+          });
+          widget.onOptionSelected?.call(_selectedOptions);
         }
-
         if (_focusNode.hasFocus) _focusNode.unfocus();
       },
     );
@@ -856,7 +861,14 @@ class _MultiSelectDropDownState extends State<MultiSelectDropDown> {
   /// Clear the selected options.
   /// [MultiSelectController] is used to clear the selected options.
   void clear() {
-    _controller?.setSelectedOptions([]);
+    if (_controller != null) {
+      _controller!.clearAllSelection();
+    } else {
+      setState(() {
+        _selectedOptions.clear();
+      });
+      widget.onOptionSelected?.call(_selectedOptions);
+    }
     if (_focusNode.hasFocus) _focusNode.unfocus();
   }
 

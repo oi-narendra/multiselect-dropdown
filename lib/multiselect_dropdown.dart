@@ -2,6 +2,7 @@ library multiselect_dropdown;
 
 import 'dart:convert';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 import 'package:multi_dropdown/models/network_config.dart';
@@ -364,10 +365,8 @@ class _MultiSelectDropDownState extends State<MultiSelectDropDown> {
   /// Handles the widget rebuild when the options are changed externally.
   @override
   void didUpdateWidget(covariant MultiSelectDropDown oldWidget) {
-    super.didUpdateWidget(oldWidget);
-
     // If the options are changed externally, then the options are updated.
-    if (widget.options != oldWidget.options) {
+    if (listEquals(widget.options, oldWidget.options) == false) {
       _options.clear();
       _options.addAll(widget.options);
 
@@ -378,7 +377,9 @@ class _MultiSelectDropDownState extends State<MultiSelectDropDown> {
     }
 
     // If the selected options are changed externally, then the selected options are updated.
-    if (widget.selectedOptions != oldWidget.selectedOptions) {
+    if (listEquals(widget.selectedOptions, oldWidget.selectedOptions) == false) {
+      debugPrint(
+          'didUpdateWidget: ${widget.selectedOptions}, ${oldWidget.selectedOptions}');
       _selectedOptions.clear();
       _selectedOptions.addAll(widget.selectedOptions);
 
@@ -389,7 +390,7 @@ class _MultiSelectDropDownState extends State<MultiSelectDropDown> {
     }
 
     // If the disabled options are changed externally, then the disabled options are updated.
-    if (widget.disabledOptions != oldWidget.disabledOptions) {
+    if (listEquals(widget.disabledOptions, oldWidget.disabledOptions) == false) {
       _disabledOptions.clear();
       _disabledOptions.addAll(widget.disabledOptions);
 
@@ -398,6 +399,8 @@ class _MultiSelectDropDownState extends State<MultiSelectDropDown> {
         _controller!.setDisabledOptions(_disabledOptions);
       }
     }
+
+    super.didUpdateWidget(oldWidget);
   }
 
   /// Calculate offset size for dropdown.

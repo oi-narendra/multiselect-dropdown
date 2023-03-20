@@ -52,3 +52,7 @@
 # 2.0.0-dev.2
 
 * Fixed issue where chips were not being cleared when controller not set.
+
+# 2.0.0-dev.3
+
+* Fixed issue where selecting an option after passing initial options would not work.

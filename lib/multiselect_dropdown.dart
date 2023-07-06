@@ -726,11 +726,12 @@ class _MultiSelectDropDownState extends State<MultiSelectDropDown> {
                                     _selectedOptions.remove(option);
                                   });
                                 } else {
-                                  final isReachMax = widget.maxItems == null
-                                      ? false
-                                      : (_selectedOptions.length + 1) >
-                                          widget.maxItems!;
-                                  if (isReachMax) return;
+                                  final bool hasReachMax =
+                                      widget.maxItems == null
+                                          ? false
+                                          : (_selectedOptions.length + 1) >
+                                              widget.maxItems!;
+                                  if (hasReachMax) return;
 
                                   dropdownState(() {
                                     selectedOptions.add(option);

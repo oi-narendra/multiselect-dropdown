@@ -1,4 +1,4 @@
-package com.narendra.example
+package com.oinarendra.multidropdownexample.example
 
 import io.flutter.embedding.android.FlutterActivity
 

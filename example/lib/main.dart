@@ -75,6 +75,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 ValueItem(label: 'Option 5', value: '5'),
                 ValueItem(label: 'Option 6', value: '6'),
               ],
+              maxItems: 4,
               disabledOptions: const [ValueItem(label: 'Option 1', value: '1')],
               selectionType: SelectionType.multi,
               chipConfig: const ChipConfig(

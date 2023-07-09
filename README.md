@@ -44,6 +44,7 @@ You can also get the options from a network request.
                 ValueItem(label: 'Option 5', value: '5'),
                 ValueItem(label: 'Option 6', value: '6'),
               ],
+              maxItems: 2,
               disabledOptions: const [ValueItem(label: 'Option 1', value: '1')],
               selectionType: SelectionType.multi,
               chipConfig: const ChipConfig(wrapType: WrapType.wrap),
@@ -354,6 +355,7 @@ _controller.hideDropdown(); /// Hide the dropdown if it is open
 | focusNode                     | FocusNode?                                 | Focus node                       |
 | radiusGeometry                | RadiusGeometry?                            | Radius geometry                  |
 | focusBorderWidth              | double?                                    | Focus border width               |
+| maxItems                      | int?                                       | Max items                        |
 
 
 

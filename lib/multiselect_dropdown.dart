@@ -69,6 +69,7 @@ class MultiSelectDropDown extends StatefulWidget {
   final double? focusedBorderWidth;
   final EdgeInsets? padding;
   final bool showClearIcon;
+  final int? maxItems;
 
   // network configuration
   final NetworkConfig? networkConfig;
@@ -217,6 +218,7 @@ class MultiSelectDropDown extends StatefulWidget {
       this.borderRadius = 12.0,
       this.radiusGeometry,
       this.showClearIcon = true,
+      this.maxItems,
       this.focusNode,
       this.controller})
       : networkConfig = null,
@@ -265,6 +267,7 @@ class MultiSelectDropDown extends StatefulWidget {
     this.borderRadius = 12.0,
     this.radiusGeometry,
     this.showClearIcon = true,
+    this.maxItems,
     this.focusNode,
     this.controller,
   })  : options = const [],
@@ -377,7 +380,8 @@ class _MultiSelectDropDownState extends State<MultiSelectDropDown> {
     }
 
     // If the selected options are changed externally, then the selected options are updated.
-    if (listEquals(widget.selectedOptions, oldWidget.selectedOptions) == false) {
+    if (listEquals(widget.selectedOptions, oldWidget.selectedOptions) ==
+        false) {
       debugPrint(
           'didUpdateWidget: ${widget.selectedOptions}, ${oldWidget.selectedOptions}');
       _selectedOptions.clear();
@@ -390,7 +394,8 @@ class _MultiSelectDropDownState extends State<MultiSelectDropDown> {
     }
 
     // If the disabled options are changed externally, then the disabled options are updated.
-    if (listEquals(widget.disabledOptions, oldWidget.disabledOptions) == false) {
+    if (listEquals(widget.disabledOptions, oldWidget.disabledOptions) ==
+        false) {
       _disabledOptions.clear();
       _disabledOptions.addAll(widget.disabledOptions);
 
@@ -721,6 +726,13 @@ class _MultiSelectDropDownState extends State<MultiSelectDropDown> {
                                     _selectedOptions.remove(option);
                                   });
                                 } else {
+                                  final bool hasReachMax =
+                                      widget.maxItems == null
+                                          ? false
+                                          : (_selectedOptions.length + 1) >
+                                              widget.maxItems!;
+                                  if (hasReachMax) return;
+
                                   dropdownState(() {
                                     selectedOptions.add(option);
                                   });

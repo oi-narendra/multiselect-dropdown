@@ -354,6 +354,7 @@ _controller.hideDropdown(); /// Hide the dropdown if it is open
 | focusNode                     | FocusNode?                                 | Focus node                       |
 | radiusGeometry                | RadiusGeometry?                            | Radius geometry                  |
 | focusBorderWidth              | double?                                    | Focus border width               |
+| maxItems                      | int?                                       | Max items                        |
 
 
 

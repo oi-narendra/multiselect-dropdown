@@ -56,3 +56,10 @@
 # 2.0.0-dev.3
 
 * Fixed issue where selecting an option after passing initial options would not work.
+
+# 2.0.0
+* Stable release.
+
+# 2.0.1
+* Added maxItems property to dropdown field. If max items is set, the dropdown field will not allow more than the specified number of items to be selected.
+* Upgraded http dependency to 1.0.0.

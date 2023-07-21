@@ -1,6 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:multi_dropdown/multiselect_dropdown.dart';
 
+class CustomObject {
+  final String field1;
+  final double field2;
+  CustomObject(this.field1, this.field2);
+
+  @override
+  String toString() {
+    return '(field1: $field1, field2: $field2)';
+  }
+}
+
+final List<CustomObject> _objects = [
+  CustomObject('Option 1', 1),
+  CustomObject('Option 2', 2),
+  CustomObject('Option 3', 3),
+];
+
 void main() {
   runApp(const MyApp());
 }
@@ -45,6 +62,7 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   final MultiSelectController _controller = MultiSelectController();
+  final MultiSelectController _controller2 = MultiSelectController();
 
   final List<ValueItem> _selectedOptions = [];
 
@@ -206,6 +224,42 @@ class _MyHomePageState extends State<MyHomePage> {
             ),
             const SizedBox(
               height: 50,
+            ),
+            const Text('With custom Object', style: MyHomePage._headerStyle),
+            const SizedBox(
+              height: 4,
+            ),
+            MultiSelectDropDown(
+              showClearIcon: true,
+              controller: _controller2,
+              onOptionSelected: (options) {
+                debugPrint(options.toString());
+              },
+              options: <ValueItem>[
+                ValueItem(label: _objects[0].field1, value: _objects[0]),
+                ValueItem(label: _objects[1].field1, value: _objects[1]),
+                ValueItem(label: _objects[2].field1, value: _objects[2]),
+              ],
+              selectionType: SelectionType.multi,
+              chipConfig: const ChipConfig(
+                  wrapType: WrapType.wrap, backgroundColor: Colors.red),
+              dropdownHeight: 300,
+              optionTextStyle: const TextStyle(fontSize: 16),
+              selectedOptionIcon: const Icon(
+                Icons.checklist,
+                color: Colors.pink,
+              ),
+              selectedOptionTextColor: Colors.blue,
+            ),
+            const SizedBox(
+              height: 8,
+            ),
+            ElevatedButton(
+              onPressed: () {
+                // ignore: avoid_print
+                print(_controller2.selectedOptions);
+              },
+              child: const Text('Get Selected Options'),
             ),
           ],
         ),

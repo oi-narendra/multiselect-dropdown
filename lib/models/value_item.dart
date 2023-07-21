@@ -12,39 +12,48 @@ class ValueItem {
   final String label;
 
   /// The value of the value item
-  final String? value;
+  final dynamic value;
 
   /// Default constructor for [ValueItem]
-  const ValueItem({required this.label, this.value});
+  const ValueItem({
+    required this.label,
+    this.value,
+  });
 
   /// toString method for [ValueItem]
   @override
   String toString() {
-    return 'ValueItem(label: $label, value: $value)';
+    return 'ValueItem(label: $label, value: ${value.toString()})';
   }
 
   /// toMap method for [ValueItem]
-  Map<String, dynamic> toMap() {
+  Map<String, dynamic> _toMap(Map<String, dynamic> Function(dynamic value)? customValueToMap) {
     return {
       'label': label,
-      'value': value,
+      'value': customValueToMap != null ? customValueToMap(value) : value,
     };
   }
 
   /// fromMap method for [ValueItem]
-  factory ValueItem.fromMap(Map<String, dynamic> map) {
+  factory ValueItem._fromMap(Map<String, dynamic> map,dynamic Function(Map<String, dynamic>)? customValueFromMap) {
     return ValueItem(
       label: map['label'] ?? '',
-      value: map['value'],
+      value: customValueFromMap != null
+        ? customValueFromMap(map['value'])
+        : map['value'],
     );
   }
 
   /// toJson method for [ValueItem]
-  String toJson() => json.encode(toMap());
+  /// 
+  /// [customValueToMap] is an optional toMap function to use if value is a custom class.
+  String toJson(Map<String, dynamic> Function(dynamic value)? customValueToMap) => json.encode(_toMap(customValueToMap));
 
   /// fromJson method for [ValueItem]
-  factory ValueItem.fromJson(String source) =>
-      ValueItem.fromMap(json.decode(source));
+  /// 
+  /// [customValueFromMap] is an optional fromMap function to use if value is a custom class.
+  factory ValueItem.fromJson(String source,dynamic Function(Map<String, dynamic>)? customValueFromMap) =>
+      ValueItem._fromMap(json.decode(source),customValueFromMap);
 
   /// Equality operator for [ValueItem]
   @override
@@ -61,7 +70,7 @@ class ValueItem {
   /// CopyWith method for [ValueItem]
   ValueItem copyWith({
     String? label,
-    String? value,
+    dynamic value,
   }) {
     return ValueItem(
       label: label ?? this.label,

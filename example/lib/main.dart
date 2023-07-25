@@ -67,6 +67,7 @@ class _MyHomePageState extends State<MyHomePage> {
               onOptionSelected: (options) {
                 debugPrint(options.toString());
               },
+              searchEnabled: true,
               options: const <ValueItem>[
                 ValueItem(label: 'Option 1', value: '1'),
                 ValueItem(label: 'Option 2', value: '2'),

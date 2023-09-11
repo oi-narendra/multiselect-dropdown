@@ -59,7 +59,8 @@ class MultiSelectDropDown extends StatefulWidget {
 
   // dropdownfield configuration
   final Color? backgroundColor;
-  final IconData? suffixIcon;
+  final Icon? suffixIcon;
+  final Icon? clearIcon;
   final Decoration? inputDecoration;
   final double? borderRadius;
   final BorderRadiusGeometry? radiusGeometry;
@@ -205,7 +206,8 @@ class MultiSelectDropDown extends StatefulWidget {
       this.backgroundColor = Colors.white,
       this.dropdownHeight = 200,
       this.showChipInSingleSelectMode = false,
-      this.suffixIcon = Icons.arrow_drop_down,
+      this.suffixIcon = const Icon(Icons.arrow_drop_down),
+      this.clearIcon = const Icon(Icons.close_outlined, size: 14),
       this.selectedItemBuilder,
       this.optionSeparator,
       this.inputDecoration,
@@ -254,7 +256,8 @@ class MultiSelectDropDown extends StatefulWidget {
     this.backgroundColor = Colors.white,
     this.dropdownHeight = 200,
     this.showChipInSingleSelectMode = false,
-    this.suffixIcon = Icons.arrow_drop_down,
+    this.suffixIcon = const Icon(Icons.arrow_drop_down),
+    this.clearIcon = const Icon(Icons.close_outlined, size: 14),
     this.selectedItemBuilder,
     this.optionSeparator,
     this.inputDecoration,
@@ -443,25 +446,27 @@ class _MultiSelectDropDownState extends State<MultiSelectDropDown> {
             padding: _getContainerPadding(),
             decoration: _getContainerDecoration(),
             child: Row(
-              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 Expanded(
                   child: _getContainerContent(),
                 ),
-                widget.showClearIcon && _anyItemSelected
-                    ? InkWell(
-                        onTap: () => clear(),
-                        child: const Icon(
-                          Icons.close_outlined,
-                          size: 14,
-                        ),
-                      )
-                    : AnimatedRotation(
-                        turns: _selectionMode ? 0.5 : 0,
-                        duration: const Duration(milliseconds: 200),
-                        child: Icon(
-                          widget.suffixIcon,
-                        )),
+                if (widget.showClearIcon && _anyItemSelected) ...[
+                  const SizedBox(width: 4),
+                  InkWell(
+                    onTap: () => clear(),
+                    child: const Icon(
+                      Icons.close_outlined,
+                      size: 20,
+                    ),
+                  ),
+                  const SizedBox(width: 4)
+                ],
+                if (!_selectionMode)
+                  AnimatedRotation(
+                    turns: _selectionMode ? 0.5 : 0,
+                    duration: const Duration(milliseconds: 200),
+                    child: widget.suffixIcon,
+                  ),
               ],
             ),
           ),
@@ -645,22 +650,22 @@ class _MultiSelectDropDownState extends State<MultiSelectDropDown> {
     final showOnTop = values[1] as bool;
 
     // Get the visual density of the theme
-    final visualDensity = Theme.of(context).visualDensity;
+    // final visualDensity = Theme.of(context).visualDensity;
 
     // Calculate the height of the tile
-    final tileHeight = 48.0 + visualDensity.vertical;
+    // final tileHeight = 48.0 + visualDensity.vertical;
     // Calculate the current height of the dropdown button
-    final currentHeight = tileHeight * _options.length;
+    // final currentHeight = tileHeight * _options.length;
 
     // Check if the dropdown height is less than the current height and greater than 0
-    final bool isScrollable =
-        widget.dropdownHeight < currentHeight && widget.dropdownHeight > 0;
+    // final bool isScrollable =
+    //     widget.dropdownHeight < currentHeight && widget.dropdownHeight > 0;
     // Calculate the offset in the Y direction
-    final offsetY = showOnTop
-        ? isScrollable
-            ? -widget.dropdownHeight - 5
-            : -currentHeight - 5
-        : size.height + 5;
+    // final _offsetY = showOnTop
+    //     ? isScrollable
+    //         ? -widget.dropdownHeight - 5
+    //         : -currentHeight - 5
+    //     : size.height + 5;
     return OverlayEntry(builder: (context) {
       List<ValueItem> options = _options;
       List<ValueItem> selectedOptions = [..._selectedOptions];
@@ -677,10 +682,14 @@ class _MultiSelectDropDownState extends State<MultiSelectDropDown> {
             )),
             CompositedTransformFollower(
               link: _layerLink,
-              showWhenUnlinked: false,
-              offset: Offset(0.0, offsetY),
+              showWhenUnlinked: true,
+              targetAnchor:
+                  showOnTop ? Alignment.topLeft : Alignment.bottomLeft,
+              followerAnchor:
+                  showOnTop ? Alignment.bottomLeft : Alignment.topLeft,
               child: Material(
                   elevation: 4,
+                  shadowColor: Colors.black,
                   child: Container(
                     constraints: BoxConstraints.loose(
                         Size(size.width, widget.dropdownHeight)),
@@ -832,7 +841,7 @@ class _MultiSelectDropDownState extends State<MultiSelectDropDown> {
     final size = values[0] as Size;
     final showOnTop = values[1] as bool;
 
-    final offsetY = showOnTop ? -(size.height + 5) : size.height + 5;
+    // final offsetY = showOnTop ? -(size.height + 5) : size.height + 5;
 
     return OverlayEntry(builder: (context) {
       return StatefulBuilder(builder: ((context, dropdownState) {
@@ -847,7 +856,10 @@ class _MultiSelectDropDownState extends State<MultiSelectDropDown> {
             )),
             CompositedTransformFollower(
                 link: _layerLink,
-                offset: Offset(0.0, offsetY),
+                targetAnchor:
+                    showOnTop ? Alignment.topLeft : Alignment.bottomLeft,
+                followerAnchor:
+                    showOnTop ? Alignment.bottomLeft : Alignment.topLeft,
                 child: Material(
                     elevation: 4,
                     child: Container(

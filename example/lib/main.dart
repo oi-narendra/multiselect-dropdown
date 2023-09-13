@@ -144,31 +144,31 @@ class _MyHomePageState extends State<MyHomePage> {
                 const SizedBox(
                   height: 50,
                 ),
-                // const Text('SCROLL', style: MyHomePage._headerStyle),
-                // const SizedBox(
-                //   height: 4,
-                // ),
-                // MultiSelectDropDown(
-                //   onOptionSelected: (options) {
-                //     debugPrint(options.toString());
-                //   },
-                //   options: const <ValueItem>[
-                //     ValueItem(label: 'Option 1', value: '1'),
-                //     ValueItem(label: 'Option 2', value: '2'),
-                //     ValueItem(label: 'Option 3', value: '3'),
-                //     ValueItem(label: 'Option 4', value: '4'),
-                //     ValueItem(label: 'Option 5', value: '5'),
-                //     ValueItem(label: 'Option 6', value: '6'),
-                //   ],
-                //   selectionType: SelectionType.multi,
-                //   chipConfig: const ChipConfig(wrapType: WrapType.scroll),
-                //   dropdownHeight: 400,
-                //   optionTextStyle: const TextStyle(fontSize: 16),
-                //   selectedOptionIcon: const Icon(Icons.check_circle),
-                // ),
-                // const SizedBox(
-                //   height: 50,
-                // ),
+                const Text('SCROLL', style: MyHomePage._headerStyle),
+                const SizedBox(
+                  height: 4,
+                ),
+                MultiSelectDropDown(
+                  onOptionSelected: (options) {
+                    debugPrint(options.toString());
+                  },
+                  options: const <ValueItem>[
+                    ValueItem(label: 'Option 1', value: '1'),
+                    ValueItem(label: 'Option 2', value: '2'),
+                    ValueItem(label: 'Option 3', value: '3'),
+                    ValueItem(label: 'Option 4', value: '4'),
+                    ValueItem(label: 'Option 5', value: '5'),
+                    ValueItem(label: 'Option 6', value: '6'),
+                  ],
+                  selectionType: SelectionType.multi,
+                  chipConfig: const ChipConfig(wrapType: WrapType.scroll),
+                  dropdownHeight: 400,
+                  optionTextStyle: const TextStyle(fontSize: 16),
+                  selectedOptionIcon: const Icon(Icons.check_circle),
+                ),
+                const SizedBox(
+                  height: 50,
+                ),
                 const Text('FROM NETWORK', style: MyHomePage._headerStyle),
                 const SizedBox(
                   height: 4,

@@ -1,6 +1,4 @@
-A dropddown package for flutter that allows you to select multiple items from a list.
-You can customize the dropdown list items, the dropdown list style, and the dropdown field style.
-You can also get the options from a network request.
+The MultiSelect Dropdown for Flutter is a powerful and customizable widget that empowers you to effortlessly manage and search through multiple items in a dropdown list. Whether you're selecting multiple options for filtering data or picking various preferences, this package provides a seamless user experience. It also supports fetching the data from a URL.
 
 ## Preview
 
@@ -58,9 +56,13 @@ You can also get the options from a network request.
 [<img src="https://raw.githubusercontent.com/oi-narendra/multiselect-dropdown/main/screenshots/sample2.gif" width="300"/>](sample2.gif)
 [<img src="https://raw.githubusercontent.com/oi-narendra/multiselect-dropdown/main/screenshots/sample3.gif" width="300"/>](sample3.gif)
 
+`Search`
+
+[<img src="https://raw.githubusercontent.com/oi-narendra/multiselect-dropdown/main/screenshots/sample6.gif" width="300"/>](sample6.gif)
+
 `Network Request`
 
-``` dart
+```dart
 MultiSelectDropDown.network(
               onOptionSelected: (options) {},
               networkConfig: NetworkConfig(
@@ -91,21 +93,22 @@ MultiSelectDropDown.network(
               }),
             )
 ```
+
 [<img src="https://raw.githubusercontent.com/oi-narendra/multiselect-dropdown/main/screenshots/sample4.png" width="300"/>](sample4.png)
 [<img src="https://raw.githubusercontent.com/oi-narendra/multiselect-dropdown/main/screenshots/sample5.png" width="300"/>](sample5.png)
 
-
 ## Features
--  Allows you to select multiple/single items from a list.
--  Allows to fetch the data from a URL.
--  Shows the selected items as chips. You can customize the chip style.
--  Disable the dropdown items.
--  Preselect the dropdown items.
--  Customize dropdown list items.
--  Customize selected item builder.
--  Customize dropdown field style.
--  Callback when dropdown items are selected/unselected.
--  Use controller to programmatically select/unselect items, clear the selection, and get the selected items, set disabled items, show/hide the dropdown.
+
+- Allows you to select multiple/single items from a list.
+- Allows to fetch the data from a URL.
+- Shows the selected items as chips. You can customize the chip style.
+- Disable the dropdown items.
+- Preselect the dropdown items.
+- Customize dropdown list items.
+- Customize selected item builder.
+- Customize dropdown field style.
+- Callback when dropdown items are selected/unselected.
+- Use controller to programmatically select/unselect items, clear the selection, and get the selected items, set disabled items, show/hide the dropdown.
 
 ## Getting started
 
@@ -314,7 +317,6 @@ _controller.hideDropdown(); /// Hide the dropdown if it is open
 
 ```
 
-
 ## Parameters
 
 | Name                          | Type                                       | Description                      |
@@ -342,7 +344,8 @@ _controller.hideDropdown(); /// Hide the dropdown if it is open
 | optionSeparator               | Widget?                                    | Option separator                 |
 | alwaysShowOptionIcon          | bool                                       | Always show option icon          |
 | backgroundColor               | Color?                                     | Background color                 |
-| suffixIcon                    | IconData?                                  | Suffix icon                      |
+| suffixIcon                    | Icon?                                      | Suffix icon                      |
+| clearIcon                     | Icon?                                      | Clear icon                       |
 | inputDecoration               | Decoration?                                | Input decoration                 |
 | borderRadius                  | double?                                    | Border radius                    |
 | borderColor                   | Color?                                     | Border color                     |
@@ -356,8 +359,4 @@ _controller.hideDropdown(); /// Hide the dropdown if it is open
 | radiusGeometry                | RadiusGeometry?                            | Radius geometry                  |
 | focusBorderWidth              | double?                                    | Focus border width               |
 | maxItems                      | int?                                       | Max items                        |
-
-
-
-
-
+| searchEnabled                 | bool                                       | Allow dropdown search            |

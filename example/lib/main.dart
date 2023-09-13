@@ -69,6 +69,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   onOptionSelected: (options) {
                     debugPrint(options.toString());
                   },
+                  searchEnabled: true,
                   options: const <ValueItem>[
                     ValueItem(label: 'Option 1', value: '1'),
                     ValueItem(label: 'Option 2', value: '2'),
@@ -87,7 +88,6 @@ class _MyHomePageState extends State<MyHomePage> {
                     Icons.check_circle,
                     color: Colors.pink,
                   ),
-                  suffixIcon: const Icon(Icons.dry_outlined),
                   selectedOptionTextColor: Colors.blue,
                 ),
                 const SizedBox(
@@ -174,10 +174,11 @@ class _MyHomePageState extends State<MyHomePage> {
                   height: 4,
                 ),
                 MultiSelectDropDown.network(
-                  dropdownHeight: 200,
+                  dropdownHeight: 300,
                   onOptionSelected: (options) {
                     debugPrint(options.toString());
                   },
+                  searchEnabled: true,
                   networkConfig: NetworkConfig(
                     url: 'https://jsonplaceholder.typicode.com/users',
                     method: RequestMethod.get,

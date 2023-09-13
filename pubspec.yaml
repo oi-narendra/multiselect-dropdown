@@ -1,6 +1,6 @@
 name: multi_dropdown
-description: "A Flutter widget that allows the user to select one or more options from a list, and displays the selected options as chips. The use can also fetch options from a remote source."
-version: 2.0.2
+description: "Streamlined Flutter widget for versatile multi-selection with extensive customization."
+version: 2.1.0
 homepage: "https://github.com/oi-narendra/multiselect-dropdown"
 
 environment:
@@ -22,7 +22,6 @@ dev_dependencies:
 
 # The following section is specific to Flutter.
 flutter:
-
   # To add assets to your package, add an assets section, like this:
   # assets:
   #   - images/a_dot_burr.jpeg
@@ -53,3 +52,10 @@ flutter:
   #
   # For details regarding fonts in packages, see
   # https://flutter.dev/custom-fonts/#from-packages
+
+screenshots:
+  - description: "Example screenshot 1"
+    path: screenshots/sample1.gif
+
+  - description: "Example screenshot 2"
+    path: screenshots/sample6.gif

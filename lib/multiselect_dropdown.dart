@@ -310,6 +310,9 @@ class _MultiSelectDropDownState extends State<MultiSelectDropDown> {
   /// value notifier that is used for controller.
   MultiSelectController? _controller;
 
+  /// search field focus node
+  FocusNode? _searchFocusNode;
+
   @override
   void initState() {
     super.initState();
@@ -335,6 +338,11 @@ class _MultiSelectDropDownState extends State<MultiSelectDropDown> {
     _addOptions();
     _overlayState ??= Overlay.of(context);
     _focusNode.addListener(_handleFocusChange);
+
+    if (widget.searchEnabled) {
+      _searchFocusNode = FocusNode();
+      _searchFocusNode!.addListener(_handleFocusChange);
+    }
   }
 
   /// Adds the selected options and disabled options to the options list.
@@ -362,15 +370,22 @@ class _MultiSelectDropDownState extends State<MultiSelectDropDown> {
       Overlay.of(context).insert(_overlayEntry!);
       return;
     }
-    if (_overlayEntry != null) _overlayEntry?.remove();
+
+    if ((_searchFocusNode == null || _searchFocusNode?.hasFocus == false) &&
+        _overlayEntry != null) {
+      _overlayEntry?.remove();
+    }
+
     if (mounted) {
       setState(() {
-        _selectionMode = _focusNode.hasFocus;
+        _selectionMode =
+            _focusNode.hasFocus || _searchFocusNode?.hasFocus == true;
       });
     }
 
     if (_controller != null) {
-      _controller!.value._isDropdownOpen = _focusNode.hasFocus;
+      _controller!.value._isDropdownOpen =
+          _focusNode.hasFocus || _searchFocusNode?.hasFocus == true;
     }
   }
 
@@ -391,8 +406,6 @@ class _MultiSelectDropDownState extends State<MultiSelectDropDown> {
     // If the selected options are changed externally, then the selected options are updated.
     if (listEquals(widget.selectedOptions, oldWidget.selectedOptions) ==
         false) {
-      debugPrint(
-          'didUpdateWidget: ${widget.selectedOptions}, ${oldWidget.selectedOptions}');
       _selectedOptions.clear();
       _selectedOptions.addAll(widget.selectedOptions);
 
@@ -592,6 +605,9 @@ class _MultiSelectDropDownState extends State<MultiSelectDropDown> {
 
   /// Handle the focus change on tap outside of the dropdown.
   void _onOutSideTap() {
+    if (_searchFocusNode != null) {
+      _searchFocusNode!.unfocus();
+    }
     _focusNode.unfocus();
   }
 
@@ -604,7 +620,6 @@ class _MultiSelectDropDownState extends State<MultiSelectDropDown> {
         if (_controller != null) {
           _controller!.clearSelection(removedItem);
         } else {
-          debugPrint('Controller is null');
           setState(() {
             _selectedOptions.remove(removedItem);
           });
@@ -672,11 +687,11 @@ class _MultiSelectDropDownState extends State<MultiSelectDropDown> {
     //         ? -widget.dropdownHeight - 5
     //         : -currentHeight - 5
     //     : size.height + 5;
+
     return OverlayEntry(builder: (context) {
       List<ValueItem> options = _options;
       List<ValueItem> selectedOptions = [..._selectedOptions];
-
-      final FocusNode focusNode = FocusNode();
+      final searchController = TextEditingController();
 
       return StatefulBuilder(builder: ((context, dropdownState) {
         return Stack(
@@ -705,38 +720,53 @@ class _MultiSelectDropDownState extends State<MultiSelectDropDown> {
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         if (widget.searchEnabled) ...[
-                          GestureDetector(
-                            onTap: () {
-                              focusNode.requestFocus();
-                            },
-                            child: Container(
-                              color:
-                                  widget.optionsBackgroundColor ?? Colors.white,
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 16, vertical: 8),
-                              height: 48,
-                              child: TextFormField(
-                                focusNode: focusNode,
-                                decoration: InputDecoration(
-                                  hintText: 'Search',
-                                  border: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(8),
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: TextFormField(
+                              controller: searchController,
+                              focusNode: _searchFocusNode,
+                              decoration: InputDecoration(
+                                fillColor: Colors.grey.shade200,
+                                isDense: true,
+                                hintText: 'Search',
+                                enabledBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                  borderSide: BorderSide(
+                                    color: Colors.grey.shade300,
+                                    width: 0.8,
                                   ),
                                 ),
-                                onChanged: (value) {
-                                  dropdownState(() {
-                                    options = _options
-                                        .where((element) => element.label
-                                            .toLowerCase()
-                                            .contains(value.toLowerCase()))
-                                        .toList();
-                                  });
-                                },
+                                focusedBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                  borderSide: BorderSide(
+                                    color: Theme.of(context).primaryColor,
+                                    width: 0.8,
+                                  ),
+                                ),
+                                suffixIcon: IconButton(
+                                  icon: const Icon(Icons.close),
+                                  onPressed: () {
+                                    searchController.clear();
+                                    dropdownState(() {
+                                      options = _options;
+                                    });
+                                  },
+                                ),
                               ),
+                              onChanged: (value) {
+                                debugPrint('search value changed: $value');
+                                dropdownState(() {
+                                  options = _options
+                                      .where((element) => element.label
+                                          .toLowerCase()
+                                          .contains(value.toLowerCase()))
+                                      .toList();
+                                });
+                              },
                             ),
                           ),
                           const Divider(
-                            height: 0,
+                            height: 1,
                           ),
                         ],
                         Expanded(

@@ -73,6 +73,6 @@
 - Fixed the issue where the dropdown would not follow the dropdown field when the dropdown field is scrolled.
 - Updated http dependency to 1.1.0.
 
-# 2.0.3
+# 2.1.0
 
 - Added support for search in dropdown options.

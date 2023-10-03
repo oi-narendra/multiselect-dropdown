@@ -20,9 +20,9 @@ export 'models/chip_config.dart';
 export 'models/value_item.dart';
 export 'models/network_config.dart';
 
-typedef OnOptionSelected = void Function(List<ValueItem> selectedOptions);
+typedef OnOptionSelected<T> = void Function(List<ValueItem<T>> selectedOptions);
 
-class MultiSelectDropDown extends StatefulWidget {
+class MultiSelectDropDown<T> extends StatefulWidget {
   // selection type of the dropdown
   final SelectionType selectionType;
 
@@ -33,17 +33,16 @@ class MultiSelectDropDown extends StatefulWidget {
   final TextStyle? hintStyle;
 
   // Options
-  final List<ValueItem> options;
-  final List<ValueItem> selectedOptions;
-  final List<ValueItem> disabledOptions;
-
-  final OnOptionSelected? onOptionSelected;
+  final List<ValueItem<T>> options;
+  final List<ValueItem<T>> selectedOptions;
+  final List<ValueItem<T>> disabledOptions;
+  final OnOptionSelected<T>? onOptionSelected;
 
   // selected option
   final Icon? selectedOptionIcon;
   final Color? selectedOptionTextColor;
   final Color? selectedOptionBackgroundColor;
-  final Widget Function(BuildContext, ValueItem)? selectedItemBuilder;
+  final Widget Function(BuildContext, ValueItem<T>)? selectedItemBuilder;
 
   // chip configuration
   final bool showChipInSingleSelectMode;
@@ -74,7 +73,7 @@ class MultiSelectDropDown extends StatefulWidget {
 
   // network configuration
   final NetworkConfig? networkConfig;
-  final Future<List<ValueItem>> Function(dynamic)? responseParser;
+  final Future<List<ValueItem<T>>> Function(dynamic)? responseParser;
   final Widget Function(BuildContext, dynamic)? responseErrorBuilder;
 
   /// focus node
@@ -82,7 +81,7 @@ class MultiSelectDropDown extends StatefulWidget {
 
   /// Controller for the dropdown
   /// [controller] is the controller for the dropdown. It can be used to programmatically open and close the dropdown.
-  final MultiSelectController? controller;
+  final MultiSelectController<T>? controller;
 
   /// Enable search
   /// [searchEnabled] is the flag to enable search in dropdown. It is used to show search bar in dropdown.
@@ -283,18 +282,18 @@ class MultiSelectDropDown extends StatefulWidget {
         super(key: key);
 
   @override
-  State<MultiSelectDropDown> createState() => _MultiSelectDropDownState();
+  State<MultiSelectDropDown<T>> createState() => _MultiSelectDropDownState<T>();
 }
 
-class _MultiSelectDropDownState extends State<MultiSelectDropDown> {
+class _MultiSelectDropDownState<T> extends State<MultiSelectDropDown<T>> {
   /// Options list that is used to display the options.
-  final List<ValueItem> _options = [];
+  final List<ValueItem<T>> _options = [];
 
   /// Selected options list that is used to display the selected options.
-  final List<ValueItem> _selectedOptions = [];
+  final List<ValueItem<T>> _selectedOptions = [];
 
   /// Disabled options list that is used to display the disabled options.
-  final List<ValueItem> _disabledOptions = [];
+  final List<ValueItem<T>> _disabledOptions = [];
 
   /// The controller for the dropdown.
   OverlayState? _overlayState;
@@ -308,7 +307,7 @@ class _MultiSelectDropDownState extends State<MultiSelectDropDown> {
   dynamic _reponseBody;
 
   /// value notifier that is used for controller.
-  MultiSelectController? _controller;
+  MultiSelectController<T>? _controller;
 
   /// search field focus node
   FocusNode? _searchFocusNode;
@@ -391,7 +390,7 @@ class _MultiSelectDropDownState extends State<MultiSelectDropDown> {
 
   /// Handles the widget rebuild when the options are changed externally.
   @override
-  void didUpdateWidget(covariant MultiSelectDropDown oldWidget) {
+  void didUpdateWidget(covariant MultiSelectDropDown<T> oldWidget) {
     // If the options are changed externally, then the options are updated.
     if (listEquals(widget.options, oldWidget.options) == false) {
       _options.clear();
@@ -407,7 +406,8 @@ class _MultiSelectDropDownState extends State<MultiSelectDropDown> {
     if (listEquals(widget.selectedOptions, oldWidget.selectedOptions) ==
         false) {
       _selectedOptions.clear();
-      _selectedOptions.addAll(widget.selectedOptions);
+      _selectedOptions.addAll(widget.options
+          .where((element) => widget.selectedOptions.contains(element.value)));
 
       // If the controller is not null, then the selected options are updated in the controller.
       if (_controller != null) {
@@ -419,7 +419,8 @@ class _MultiSelectDropDownState extends State<MultiSelectDropDown> {
     if (listEquals(widget.disabledOptions, oldWidget.disabledOptions) ==
         false) {
       _disabledOptions.clear();
-      _disabledOptions.addAll(widget.disabledOptions);
+      _disabledOptions.addAll(widget.options
+          .where((element) => widget.disabledOptions.contains(element.value)));
 
       // If the controller is not null, then the disabled options are updated in the controller.
       if (_controller != null) {
@@ -582,8 +583,8 @@ class _MultiSelectDropDownState extends State<MultiSelectDropDown> {
   }
 
   /// Util method to map with index.
-  Iterable<E> mapIndexed<E, T>(
-      Iterable<T> items, E Function(int index, T item) f) sync* {
+  Iterable<E> mapIndexed<E, F>(
+      Iterable<F> items, E Function(int index, F item) f) sync* {
     var index = 0;
 
     for (final item in items) {
@@ -612,8 +613,8 @@ class _MultiSelectDropDownState extends State<MultiSelectDropDown> {
   }
 
   /// Buid the selected item chip.
-  Widget _buildChip(ValueItem item, ChipConfig chipConfig) {
-    return SelectionChip(
+  Widget _buildChip(ValueItem<T> item, ChipConfig chipConfig) {
+    return SelectionChip<T>(
       item: item,
       chipConfig: chipConfig,
       onItemDelete: (removedItem) {
@@ -689,8 +690,8 @@ class _MultiSelectDropDownState extends State<MultiSelectDropDown> {
     //     : size.height + 5;
 
     return OverlayEntry(builder: (context) {
-      List<ValueItem> options = _options;
-      List<ValueItem> selectedOptions = [..._selectedOptions];
+      List<ValueItem<T>> options = _options;
+      List<ValueItem<T>> selectedOptions = [..._selectedOptions];
       final searchController = TextEditingController();
 
       return StatefulBuilder(builder: ((context, dropdownState) {
@@ -800,8 +801,12 @@ class _MultiSelectDropDownState extends State<MultiSelectDropDown> {
     });
   }
 
-  ListTile _buildOption(ValueItem option, Color primaryColor, bool isSelected,
-      StateSetter dropdownState, List<ValueItem> selectedOptions) {
+  ListTile _buildOption(
+      ValueItem<T> option,
+      Color primaryColor,
+      bool isSelected,
+      StateSetter dropdownState,
+      List<ValueItem<T>> selectedOptions) {
     return ListTile(
         title: Text(option.label,
             style: widget.optionTextStyle ??
@@ -869,7 +874,8 @@ class _MultiSelectDropDownState extends State<MultiSelectDropDown> {
     http.get(Uri.parse(widget.networkConfig!.url));
     if (result.statusCode == 200) {
       final data = json.decode(result.body);
-      final List<ValueItem> parsedOptions = await widget.responseParser!(data);
+      final List<ValueItem<T>> parsedOptions =
+          await widget.responseParser!(data);
       _reponseBody = null;
       _options.addAll(parsedOptions);
     } else {
@@ -1034,15 +1040,16 @@ class _MultiSelectDropDownState extends State<MultiSelectDropDown> {
 /// This class is used to control the state of the MultiSelectDropdown widget.
 /// This is just base class. The implementation of this class is in the MultiSelectController class.
 /// The implementation of this class is hidden from the user.
-class _MultiSelectController {
-  final List<ValueItem> _disabledOptions = [];
-  final List<ValueItem> _options = [];
-  final List<ValueItem> _selectedOptions = [];
+class _MultiSelectController<T> {
+  final List<ValueItem<T>> _disabledOptions = [];
+  final List<ValueItem<T>> _options = [];
+  final List<ValueItem<T>> _selectedOptions = [];
   bool _isDropdownOpen = false;
 }
 
 /// implementation of the MultiSelectController class.
-class MultiSelectController extends ValueNotifier<_MultiSelectController> {
+class MultiSelectController<T>
+    extends ValueNotifier<_MultiSelectController<T>> {
   MultiSelectController() : super(_MultiSelectController());
 
   /// Clear the selected options.
@@ -1054,7 +1061,7 @@ class MultiSelectController extends ValueNotifier<_MultiSelectController> {
 
   /// clear specific selected option
   /// [MultiSelectController] is used to clear specific selected option.
-  void clearSelection(ValueItem option) {
+  void clearSelection(ValueItem<T> option) {
     if (!value._selectedOptions.contains(option)) return;
 
     if (value._disabledOptions.contains(option)) {
@@ -1072,7 +1079,7 @@ class MultiSelectController extends ValueNotifier<_MultiSelectController> {
 
   /// select the options
   /// [MultiSelectController] is used to select the options.
-  void setSelectedOptions(List<ValueItem> options) {
+  void setSelectedOptions(List<ValueItem<T>> options) {
     if (options.any((element) => value._disabledOptions.contains(element))) {
       throw Exception('Cannot select disabled options');
     }
@@ -1088,7 +1095,7 @@ class MultiSelectController extends ValueNotifier<_MultiSelectController> {
 
   /// add selected option
   /// [MultiSelectController] is used to add selected option.
-  void addSelectedOption(ValueItem option) {
+  void addSelectedOption(ValueItem<T> option) {
     if (value._disabledOptions.contains(option)) {
       throw Exception('Cannot select disabled option');
     }
@@ -1103,7 +1110,7 @@ class MultiSelectController extends ValueNotifier<_MultiSelectController> {
 
   /// set disabled options
   /// [MultiSelectController] is used to set disabled options.
-  void setDisabledOptions(List<ValueItem> disabledOptions) {
+  void setDisabledOptions(List<ValueItem<T>> disabledOptions) {
     if (disabledOptions.any((element) => !value._options.contains(element))) {
       throw Exception(
           'Cannot disable options that are not in the options list');
@@ -1116,7 +1123,7 @@ class MultiSelectController extends ValueNotifier<_MultiSelectController> {
 
   /// setDisabledOption method
   /// [MultiSelectController] is used to set disabled option.
-  void setDisabledOption(ValueItem disabledOption) {
+  void setDisabledOption(ValueItem<T> disabledOption) {
     if (!value._options.contains(disabledOption)) {
       throw Exception('Cannot disable option that is not in the options list');
     }
@@ -1127,25 +1134,25 @@ class MultiSelectController extends ValueNotifier<_MultiSelectController> {
 
   /// set options
   /// [MultiSelectController] is used to set options.
-  void setOptions(List<ValueItem> options) {
+  void setOptions(List<ValueItem<T>> options) {
     value._options.clear();
     value._options.addAll(options);
     notifyListeners();
   }
 
   /// get disabled options
-  List<ValueItem> get disabledOptions => value._disabledOptions;
+  List<ValueItem<T>> get disabledOptions => value._disabledOptions;
 
   /// get enabled options
-  List<ValueItem> get enabledOptions => value._options
+  List<ValueItem<T>> get enabledOptions => value._options
       .where((element) => !value._disabledOptions.contains(element))
       .toList();
 
   /// get options
-  List<ValueItem> get options => value._options;
+  List<ValueItem<T>> get options => value._options;
 
   /// get selected options
-  List<ValueItem> get selectedOptions => value._selectedOptions;
+  List<ValueItem<T>> get selectedOptions => value._selectedOptions;
 
   /// get is dropdown open
   bool get isDropdownOpen => value._isDropdownOpen;

@@ -5,15 +5,15 @@ The MultiSelect Dropdown for Flutter is a powerful and customizable widget that 
 `Selection mode: single`
 
 ```dart
- MultiSelectDropDown(
+ MultiSelectDropDown<int>(
               onOptionSelected: (List<ValueItem> selectedOptions) {},
               options: const <ValueItem>[
-                ValueItem(label: 'Option 1', value: '1'),
-                ValueItem(label: 'Option 2', value: '2'),
-                ValueItem(label: 'Option 3', value: '3'),
-                ValueItem(label: 'Option 4', value: '4'),
-                ValueItem(label: 'Option 5', value: '5'),
-                ValueItem(label: 'Option 6', value: '6'),
+                ValueItem(label: 'Option 1', value: 1),
+                ValueItem(label: 'Option 2', value: 2),
+                ValueItem(label: 'Option 3', value: 3),
+                ValueItem(label: 'Option 4', value: 4),
+                ValueItem(label: 'Option 5', value: 5),
+                ValueItem(label: 'Option 6', value: 6),
               ],
               selectionType: SelectionType.single,
               chipConfig: const ChipConfig(wrapType: WrapType.wrap),

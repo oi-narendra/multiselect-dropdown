@@ -7,15 +7,15 @@ import 'dart:convert';
 /// const ValueItem(label: 'Option 1', value: '1')
 /// ```
 
-class ValueItem {
+class ValueItem<T> {
   /// The label of the value item
   final String label;
 
   /// The value of the value item
-  final String? value;
+  final T value;
 
   /// Default constructor for [ValueItem]
-  const ValueItem({required this.label, this.value});
+  const ValueItem({required this.label, required this.value});
 
   /// toString method for [ValueItem]
   @override
@@ -61,7 +61,7 @@ class ValueItem {
   /// CopyWith method for [ValueItem]
   ValueItem copyWith({
     String? label,
-    String? value,
+    dynamic value,
   }) {
     return ValueItem(
       label: label ?? this.label,

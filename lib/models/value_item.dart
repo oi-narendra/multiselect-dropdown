@@ -33,7 +33,7 @@ class ValueItem<T> {
 
   /// fromMap method for [ValueItem]
   factory ValueItem.fromMap(Map<String, dynamic> map) {
-    return ValueItem(
+    return ValueItem<T>(
       label: map['label'] ?? '',
       value: map['value'],
     );
@@ -44,14 +44,16 @@ class ValueItem<T> {
 
   /// fromJson method for [ValueItem]
   factory ValueItem.fromJson(String source) =>
-      ValueItem.fromMap(json.decode(source));
+      ValueItem<T>.fromMap(json.decode(source));
 
   /// Equality operator for [ValueItem]
   @override
   bool operator ==(Object other) {
     if (identical(this, other)) return true;
 
-    return other is ValueItem && other.label == label && other.value == value;
+    return other is ValueItem<T> &&
+        other.label == label &&
+        other.value == value;
   }
 
   /// Hashcode for [ValueItem]
@@ -59,11 +61,11 @@ class ValueItem<T> {
   int get hashCode => label.hashCode ^ value.hashCode;
 
   /// CopyWith method for [ValueItem]
-  ValueItem copyWith({
+  ValueItem<T> copyWith({
     String? label,
-    dynamic value,
+    T? value,
   }) {
-    return ValueItem(
+    return ValueItem<T>(
       label: label ?? this.label,
       value: value ?? this.value,
     );

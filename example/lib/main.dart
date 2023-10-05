@@ -44,8 +44,20 @@ class MyHomePage extends StatefulWidget {
   );
 }
 
+class User {
+  final String name;
+  final int id;
+
+  User({required this.name, required this.id});
+
+  @override
+  String toString() {
+    return 'User(name: $name, id: $id)';
+  }
+}
+
 class _MyHomePageState extends State<MyHomePage> {
-  final MultiSelectController _controller = MultiSelectController();
+  final MultiSelectController<User> _controller = MultiSelectController();
 
   final List<ValueItem> _selectedOptions = [];
 
@@ -63,20 +75,23 @@ class _MyHomePageState extends State<MyHomePage> {
                 const SizedBox(
                   height: 4,
                 ),
-                MultiSelectDropDown(
+                MultiSelectDropDown<User>(
                   showClearIcon: true,
                   controller: _controller,
                   onOptionSelected: (options) {
                     debugPrint(options.toString());
                   },
-                  searchEnabled: true,
-                  options: const <ValueItem>[
-                    ValueItem(label: 'Option 1', value: '1'),
-                    ValueItem(label: 'Option 2', value: '2'),
-                    ValueItem(label: 'Option 3', value: '3'),
-                    ValueItem(label: 'Option 4', value: '4'),
-                    ValueItem(label: 'Option 5', value: '5'),
-                    ValueItem(label: 'Option 6', value: '6'),
+                  options: <ValueItem<User>>[
+                    ValueItem(
+                        label: 'Option 1', value: User(name: 'User 1', id: 1)),
+                    ValueItem(
+                        label: 'Option 2', value: User(name: 'User 2', id: 2)),
+                    ValueItem(
+                        label: 'Option 3', value: User(name: 'User 3', id: 3)),
+                    ValueItem(
+                        label: 'Option 4', value: User(name: 'User 4', id: 4)),
+                    ValueItem(
+                        label: 'Option 5', value: User(name: 'User 5', id: 5)),
                   ],
                   maxItems: 4,
                   selectionType: SelectionType.multi,

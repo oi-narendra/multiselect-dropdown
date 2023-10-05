@@ -3,10 +3,10 @@ import 'package:multi_dropdown/multiselect_dropdown.dart';
 
 /// [SelectionChip] is a selected option chip builder.
 /// It is used to build the selected option chip.
-class SelectionChip extends StatelessWidget {
+class SelectionChip<T> extends StatelessWidget {
   final ChipConfig chipConfig;
-  final Function(ValueItem) onItemDelete;
-  final ValueItem item;
+  final Function(ValueItem<T>) onItemDelete;
+  final ValueItem<T> item;
 
   const SelectionChip({
     Key? key,

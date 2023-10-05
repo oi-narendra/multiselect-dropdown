@@ -12,7 +12,7 @@ class ValueItem<T> {
   final String label;
 
   /// The value of the value item
-  final T value;
+  final T? value;
 
   /// Default constructor for [ValueItem]
   const ValueItem({required this.label, required this.value});

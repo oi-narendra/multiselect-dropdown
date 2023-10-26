@@ -790,6 +790,9 @@ class _MultiSelectDropDownState<T> extends State<MultiSelectDropDown<T>> {
         selected: isSelected,
         autofocus: true,
         dense: true,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(10),
+        ),
         tileColor: widget.optionsBackgroundColor ?? Colors.white,
         selectedTileColor: widget.selectedOptionBackgroundColor ?? Colors.grey.shade200,
         enabled: !_disabledOptions.contains(option),

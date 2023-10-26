@@ -363,28 +363,23 @@ class _MultiSelectDropDownState<T> extends State<MultiSelectDropDown<T>> {
   /// Handles the focus change to show/hide the dropdown.
   _handleFocusChange() {
     if (_focusNode.hasFocus && mounted) {
-      _overlayEntry = _reponseBody != null && widget.networkConfig != null
-          ? _buildNetworkErrorOverlayEntry()
-          : _buildOverlayEntry();
+      _overlayEntry = _reponseBody != null && widget.networkConfig != null ? _buildNetworkErrorOverlayEntry() : _buildOverlayEntry();
       Overlay.of(context).insert(_overlayEntry!);
       return;
     }
 
-    if ((_searchFocusNode == null || _searchFocusNode?.hasFocus == false) &&
-        _overlayEntry != null) {
+    if ((_searchFocusNode == null || _searchFocusNode?.hasFocus == false) && _overlayEntry != null) {
       _overlayEntry?.remove();
     }
 
     if (mounted) {
       setState(() {
-        _selectionMode =
-            _focusNode.hasFocus || _searchFocusNode?.hasFocus == true;
+        _selectionMode = _focusNode.hasFocus || _searchFocusNode?.hasFocus == true;
       });
     }
 
     if (_controller != null) {
-      _controller!.value._isDropdownOpen =
-          _focusNode.hasFocus || _searchFocusNode?.hasFocus == true;
+      _controller!.value._isDropdownOpen = _focusNode.hasFocus || _searchFocusNode?.hasFocus == true;
     }
   }
 
@@ -403,11 +398,9 @@ class _MultiSelectDropDownState<T> extends State<MultiSelectDropDown<T>> {
     }
 
     // If the selected options are changed externally, then the selected options are updated.
-    if (listEquals(widget.selectedOptions, oldWidget.selectedOptions) ==
-        false) {
+    if (listEquals(widget.selectedOptions, oldWidget.selectedOptions) == false) {
       _selectedOptions.clear();
-      _selectedOptions.addAll(widget.options
-          .where((element) => widget.selectedOptions.contains(element.value)));
+      _selectedOptions.addAll(widget.options.where((element) => widget.selectedOptions.contains(element.value)));
 
       // If the controller is not null, then the selected options are updated in the controller.
       if (_controller != null) {
@@ -416,11 +409,9 @@ class _MultiSelectDropDownState<T> extends State<MultiSelectDropDown<T>> {
     }
 
     // If the disabled options are changed externally, then the disabled options are updated.
-    if (listEquals(widget.disabledOptions, oldWidget.disabledOptions) ==
-        false) {
+    if (listEquals(widget.disabledOptions, oldWidget.disabledOptions) == false) {
       _disabledOptions.clear();
-      _disabledOptions.addAll(widget.options
-          .where((element) => widget.disabledOptions.contains(element.value)));
+      _disabledOptions.addAll(widget.options.where((element) => widget.disabledOptions.contains(element.value)));
 
       // If the controller is not null, then the disabled options are updated in the controller.
       if (_controller != null) {
@@ -474,10 +465,7 @@ class _MultiSelectDropDownState<T> extends State<MultiSelectDropDown<T>> {
                   const SizedBox(width: 4),
                   InkWell(
                     onTap: () => clear(),
-                    child: const Icon(
-                      Icons.close_outlined,
-                      size: 20,
-                    ),
+                    child: widget.clearIcon,
                   ),
                   const SizedBox(width: 4)
                 ],
@@ -505,8 +493,7 @@ class _MultiSelectDropDownState<T> extends State<MultiSelectDropDown<T>> {
       );
     }
 
-    if (widget.selectionType == SelectionType.single &&
-        !widget.showChipInSingleSelectMode) {
+    if (widget.selectionType == SelectionType.single && !widget.showChipInSingleSelectMode) {
       return SingleSelectedItem(label: _selectedOptions.first.label);
     }
 
@@ -521,8 +508,7 @@ class _MultiSelectDropDownState<T> extends State<MultiSelectDropDown<T>> {
     return widget.inputDecoration ??
         BoxDecoration(
           color: widget.backgroundColor ?? Colors.white,
-          borderRadius: widget.radiusGeometry ??
-              BorderRadius.circular(widget.borderRadius ?? 12.0),
+          borderRadius: widget.radiusGeometry ?? BorderRadius.circular(widget.borderRadius ?? 12.0),
           border: _selectionMode
               ? Border.all(
                   color: widget.focusedBorderColor ?? Colors.grey,
@@ -556,8 +542,7 @@ class _MultiSelectDropDownState<T> extends State<MultiSelectDropDown<T>> {
   Widget _buildSelectedItems() {
     if (widget.chipConfig.wrapType == WrapType.scroll) {
       return ListView.separated(
-        separatorBuilder: (context, index) =>
-            _getChipSeparator(widget.chipConfig),
+        separatorBuilder: (context, index) => _getChipSeparator(widget.chipConfig),
         scrollDirection: Axis.horizontal,
         itemCount: _selectedOptions.length,
         shrinkWrap: true,
@@ -575,16 +560,14 @@ class _MultiSelectDropDownState<T> extends State<MultiSelectDropDown<T>> {
         runSpacing: widget.chipConfig.runSpacing,
         children: mapIndexed(_selectedOptions, (index, item) {
           if (widget.selectedItemBuilder != null) {
-            return widget.selectedItemBuilder!(
-                context, _selectedOptions[index]);
+            return widget.selectedItemBuilder!(context, _selectedOptions[index]);
           }
           return _buildChip(_selectedOptions[index], widget.chipConfig);
         }).toList());
   }
 
   /// Util method to map with index.
-  Iterable<E> mapIndexed<E, F>(
-      Iterable<F> items, E Function(int index, F item) f) sync* {
+  Iterable<E> mapIndexed<E, F>(Iterable<F> items, E Function(int index, F item) f) sync* {
     var index = 0;
 
     for (final item in items) {
@@ -707,16 +690,13 @@ class _MultiSelectDropDownState<T> extends State<MultiSelectDropDown<T>> {
             CompositedTransformFollower(
               link: _layerLink,
               showWhenUnlinked: true,
-              targetAnchor:
-                  showOnTop ? Alignment.topLeft : Alignment.bottomLeft,
-              followerAnchor:
-                  showOnTop ? Alignment.bottomLeft : Alignment.topLeft,
+              targetAnchor: showOnTop ? Alignment.topLeft : Alignment.bottomLeft,
+              followerAnchor: showOnTop ? Alignment.bottomLeft : Alignment.topLeft,
               child: Material(
                   elevation: 4,
                   shadowColor: Colors.black,
                   child: Container(
-                    constraints: BoxConstraints.loose(
-                        Size(size.width, widget.dropdownHeight)),
+                    constraints: BoxConstraints.loose(Size(size.width, widget.dropdownHeight)),
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [
@@ -757,11 +737,7 @@ class _MultiSelectDropDownState<T> extends State<MultiSelectDropDown<T>> {
                               onChanged: (value) {
                                 debugPrint('search value changed: $value');
                                 dropdownState(() {
-                                  options = _options
-                                      .where((element) => element.label
-                                          .toLowerCase()
-                                          .contains(value.toLowerCase()))
-                                      .toList();
+                                  options = _options.where((element) => element.label.toLowerCase().contains(value.toLowerCase())).toList();
                                 });
                               },
                             ),
@@ -773,21 +749,17 @@ class _MultiSelectDropDownState<T> extends State<MultiSelectDropDown<T>> {
                         Expanded(
                           child: ListView.separated(
                             separatorBuilder: (context, index) {
-                              return widget.optionSeparator ??
-                                  const SizedBox(height: 0);
+                              return widget.optionSeparator ?? const SizedBox(height: 0);
                             },
                             shrinkWrap: true,
                             padding: EdgeInsets.zero,
                             itemCount: options.length,
                             itemBuilder: (context, index) {
                               final option = options[index];
-                              final isSelected =
-                                  selectedOptions.contains(option);
-                              final primaryColor =
-                                  Theme.of(context).primaryColor;
+                              final isSelected = selectedOptions.contains(option);
+                              final primaryColor = Theme.of(context).primaryColor;
 
-                              return _buildOption(option, primaryColor,
-                                  isSelected, dropdownState, selectedOptions);
+                              return _buildOption(option, primaryColor, isSelected, dropdownState, selectedOptions);
                             },
                           ),
                         ),
@@ -802,11 +774,7 @@ class _MultiSelectDropDownState<T> extends State<MultiSelectDropDown<T>> {
   }
 
   ListTile _buildOption(
-      ValueItem<T> option,
-      Color primaryColor,
-      bool isSelected,
-      StateSetter dropdownState,
-      List<ValueItem<T>> selectedOptions) {
+      ValueItem<T> option, Color primaryColor, bool isSelected, StateSetter dropdownState, List<ValueItem<T>> selectedOptions) {
     return ListTile(
         title: Text(option.label,
             style: widget.optionTextStyle ??
@@ -820,8 +788,7 @@ class _MultiSelectDropDownState<T> extends State<MultiSelectDropDown<T>> {
         autofocus: true,
         dense: true,
         tileColor: widget.optionsBackgroundColor ?? Colors.white,
-        selectedTileColor:
-            widget.selectedOptionBackgroundColor ?? Colors.grey.shade200,
+        selectedTileColor: widget.selectedOptionBackgroundColor ?? Colors.grey.shade200,
         enabled: !_disabledOptions.contains(option),
         onTap: () {
           if (widget.selectionType == SelectionType.multi) {
@@ -833,9 +800,7 @@ class _MultiSelectDropDownState<T> extends State<MultiSelectDropDown<T>> {
                 _selectedOptions.remove(option);
               });
             } else {
-              final bool hasReachMax = widget.maxItems == null
-                  ? false
-                  : (_selectedOptions.length + 1) > widget.maxItems!;
+              final bool hasReachMax = widget.maxItems == null ? false : (_selectedOptions.length + 1) > widget.maxItems!;
               if (hasReachMax) return;
 
               dropdownState(() {
@@ -874,8 +839,7 @@ class _MultiSelectDropDownState<T> extends State<MultiSelectDropDown<T>> {
     http.get(Uri.parse(widget.networkConfig!.url));
     if (result.statusCode == 200) {
       final data = json.decode(result.body);
-      final List<ValueItem<T>> parsedOptions =
-          await widget.responseParser!(data);
+      final List<ValueItem<T>> parsedOptions = await widget.responseParser!(data);
       _reponseBody = null;
       _options.addAll(parsedOptions);
     } else {
@@ -943,26 +907,21 @@ class _MultiSelectDropDownState<T> extends State<MultiSelectDropDown<T>> {
             )),
             CompositedTransformFollower(
                 link: _layerLink,
-                targetAnchor:
-                    showOnTop ? Alignment.topLeft : Alignment.bottomLeft,
-                followerAnchor:
-                    showOnTop ? Alignment.bottomLeft : Alignment.topLeft,
+                targetAnchor: showOnTop ? Alignment.topLeft : Alignment.bottomLeft,
+                followerAnchor: showOnTop ? Alignment.bottomLeft : Alignment.topLeft,
                 child: Material(
                     elevation: 4,
                     child: Container(
                         width: size.width,
-                        constraints: BoxConstraints.loose(
-                            Size(size.width, widget.dropdownHeight)),
+                        constraints: BoxConstraints.loose(Size(size.width, widget.dropdownHeight)),
                         child: Column(
                           mainAxisSize: MainAxisSize.min,
                           children: [
                             widget.responseErrorBuilder != null
-                                ? widget.responseErrorBuilder!(
-                                    context, _reponseBody)
+                                ? widget.responseErrorBuilder!(context, _reponseBody)
                                 : Padding(
                                     padding: const EdgeInsets.all(16.0),
-                                    child: Text(
-                                        'Error fetching data: $_reponseBody'),
+                                    child: Text('Error fetching data: $_reponseBody'),
                                   ),
                           ],
                         ))))
@@ -1048,8 +1007,7 @@ class _MultiSelectController<T> {
 }
 
 /// implementation of the MultiSelectController class.
-class MultiSelectController<T>
-    extends ValueNotifier<_MultiSelectController<T>> {
+class MultiSelectController<T> extends ValueNotifier<_MultiSelectController<T>> {
   MultiSelectController() : super(_MultiSelectController());
 
   /// Clear the selected options.
@@ -1069,8 +1027,7 @@ class MultiSelectController<T>
     }
 
     if (!value._options.contains(option)) {
-      throw Exception(
-          'Cannot clear selection of an option that is not in the options list');
+      throw Exception('Cannot clear selection of an option that is not in the options list');
     }
 
     value._selectedOptions.remove(option);
@@ -1112,8 +1069,7 @@ class MultiSelectController<T>
   /// [MultiSelectController] is used to set disabled options.
   void setDisabledOptions(List<ValueItem<T>> disabledOptions) {
     if (disabledOptions.any((element) => !value._options.contains(element))) {
-      throw Exception(
-          'Cannot disable options that are not in the options list');
+      throw Exception('Cannot disable options that are not in the options list');
     }
 
     value._disabledOptions.clear();
@@ -1144,9 +1100,7 @@ class MultiSelectController<T>
   List<ValueItem<T>> get disabledOptions => value._disabledOptions;
 
   /// get enabled options
-  List<ValueItem<T>> get enabledOptions => value._options
-      .where((element) => !value._disabledOptions.contains(element))
-      .toList();
+  List<ValueItem<T>> get enabledOptions => value._options.where((element) => !value._disabledOptions.contains(element)).toList();
 
   /// get options
   List<ValueItem<T>> get options => value._options;

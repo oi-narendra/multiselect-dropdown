@@ -16,16 +16,13 @@ class HintText extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 10.0),
-      child: Text(
-        hintText,
-        style: hintStyle ??
-            TextStyle(
-              fontSize: 13,
-              color: hintColor ?? Colors.grey.shade300,
-            ),
-      ),
+    return Text(
+      hintText,
+      style: hintStyle ??
+          TextStyle(
+            fontSize: 13,
+            color: hintColor ?? Colors.grey.shade300,
+          ),
     );
   }
 }

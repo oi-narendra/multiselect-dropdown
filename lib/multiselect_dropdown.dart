@@ -694,8 +694,11 @@ class _MultiSelectDropDownState<T> extends State<MultiSelectDropDown<T>> {
               followerAnchor: showOnTop ? Alignment.bottomLeft : Alignment.topLeft,
               child: Material(
                   elevation: 4,
+                  borderRadius: const BorderRadius.all(Radius.circular(10)),
                   shadowColor: Colors.black,
                   child: Container(
+                    decoration: BoxDecoration(
+                        color: widget.optionsBackgroundColor ?? Colors.white, borderRadius: const BorderRadius.all(Radius.circular(10))),
                     constraints: BoxConstraints.loose(Size(size.width, widget.dropdownHeight)),
                     child: Column(
                       mainAxisSize: MainAxisSize.min,

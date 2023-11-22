@@ -51,7 +51,6 @@ class MultiSelectDropDown<T> extends StatefulWidget {
   // options configuration
   final Color? optionsBackgroundColor;
   final TextStyle? optionTextStyle;
-  final Widget? optionSeperator;
   final double dropdownHeight;
   final Widget? optionSeparator;
   final bool alwaysShowOptionIcon;
@@ -70,6 +69,10 @@ class MultiSelectDropDown<T> extends StatefulWidget {
   final EdgeInsets? padding;
   final bool showClearIcon;
   final int? maxItems;
+
+  // dropdown border radius
+  final double? dropdownBorderRadius;
+  final double? dropdownMargin;
 
   // network configuration
   final NetworkConfig? networkConfig;
@@ -188,46 +191,47 @@ class MultiSelectDropDown<T> extends StatefulWidget {
   ///    );
   /// ```
 
-  const MultiSelectDropDown({
-    Key? key,
-    required this.onOptionSelected,
-    required this.options,
-    this.selectedOptionTextColor,
-    this.optionSeperator,
-    this.chipConfig = const ChipConfig(),
-    this.selectionType = SelectionType.multi,
-    this.hint = 'Select',
-    this.hintColor = Colors.grey,
-    this.hintFontSize = 14.0,
-    this.selectedOptions = const [],
-    this.disabledOptions = const [],
-    this.alwaysShowOptionIcon = false,
-    this.optionTextStyle,
-    this.selectedOptionIcon = const Icon(Icons.check),
-    this.selectedOptionBackgroundColor,
-    this.optionsBackgroundColor,
-    this.backgroundColor = Colors.white,
-    this.dropdownHeight = 200,
-    this.showChipInSingleSelectMode = false,
-    this.suffixIcon = const Icon(Icons.arrow_drop_down),
-    this.clearIcon = const Icon(Icons.close_outlined, size: 14),
-    this.selectedItemBuilder,
-    this.optionSeparator,
-    this.inputDecoration,
-    this.hintStyle,
-    this.padding,
-    this.focusedBorderColor = Colors.black54,
-    this.borderColor = Colors.grey,
-    this.borderWidth = 0.4,
-    this.focusedBorderWidth = 0.4,
-    this.borderRadius = 12.0,
-    this.radiusGeometry,
-    this.showClearIcon = true,
-    this.maxItems,
-    this.focusNode,
-    this.controller,
-    this.searchEnabled = false,
-  })  : networkConfig = null,
+  const MultiSelectDropDown(
+      {Key? key,
+      required this.onOptionSelected,
+      required this.options,
+      this.selectedOptionTextColor,
+      this.chipConfig = const ChipConfig(),
+      this.selectionType = SelectionType.multi,
+      this.hint = 'Select',
+      this.hintColor = Colors.grey,
+      this.hintFontSize = 14.0,
+      this.selectedOptions = const [],
+      this.disabledOptions = const [],
+      this.alwaysShowOptionIcon = false,
+      this.optionTextStyle,
+      this.selectedOptionIcon = const Icon(Icons.check),
+      this.selectedOptionBackgroundColor,
+      this.optionsBackgroundColor,
+      this.backgroundColor = Colors.white,
+      this.dropdownHeight = 200,
+      this.showChipInSingleSelectMode = false,
+      this.suffixIcon = const Icon(Icons.arrow_drop_down),
+      this.clearIcon = const Icon(Icons.close_outlined, size: 14),
+      this.selectedItemBuilder,
+      this.optionSeparator,
+      this.inputDecoration,
+      this.hintStyle,
+      this.padding,
+      this.focusedBorderColor = Colors.black54,
+      this.borderColor = Colors.grey,
+      this.borderWidth = 0.4,
+      this.focusedBorderWidth = 0.4,
+      this.borderRadius = 12.0,
+      this.radiusGeometry,
+      this.showClearIcon = true,
+      this.maxItems,
+      this.focusNode,
+      this.controller,
+      this.searchEnabled = false,
+      this.dropdownBorderRadius,
+      this.dropdownMargin})
+      : networkConfig = null,
         responseParser = null,
         responseErrorBuilder = null,
         super(key: key);
@@ -244,7 +248,6 @@ class MultiSelectDropDown<T> extends StatefulWidget {
       this.responseErrorBuilder,
       required this.onOptionSelected,
       this.selectedOptionTextColor,
-      this.optionSeperator,
       this.chipConfig = const ChipConfig(),
       this.selectionType = SelectionType.multi,
       this.hint = 'Select',
@@ -277,7 +280,9 @@ class MultiSelectDropDown<T> extends StatefulWidget {
       this.maxItems,
       this.focusNode,
       this.controller,
-      this.searchEnabled = false})
+      this.searchEnabled = false,
+      this.dropdownBorderRadius,
+      this.dropdownMargin})
       : options = const [],
         super(key: key);
 
@@ -467,9 +472,7 @@ class _MultiSelectDropDownState<T> extends State<MultiSelectDropDown<T>> {
         child: InkWell(
           splashColor: null,
           splashFactory: null,
-          onTap: () {
-            _toggleFocus();
-          },
+          onTap: _toggleFocus,
           child: Container(
             height: widget.chipConfig.wrapType == WrapType.wrap ? null : 52,
             constraints: BoxConstraints(
@@ -687,24 +690,6 @@ class _MultiSelectDropDownState<T> extends State<MultiSelectDropDown<T>> {
     // Get the showOnTop value from the second item in the values list
     final showOnTop = values[1] as bool;
 
-    // Get the visual density of the theme
-    // final visualDensity = Theme.of(context).visualDensity;
-
-    // Calculate the height of the tile
-    // final tileHeight = 48.0 + visualDensity.vertical;
-    // Calculate the current height of the dropdown button
-    // final currentHeight = tileHeight * _options.length;
-
-    // Check if the dropdown height is less than the current height and greater than 0
-    // final bool isScrollable =
-    //     widget.dropdownHeight < currentHeight && widget.dropdownHeight > 0;
-    // Calculate the offset in the Y direction
-    // final _offsetY = showOnTop
-    //     ? isScrollable
-    //         ? -widget.dropdownHeight - 5
-    //         : -currentHeight - 5
-    //     : size.height + 5;
-
     return OverlayEntry(builder: (context) {
       List<ValueItem<T>> options = _options;
       List<ValueItem<T>> selectedOptions = [..._selectedOptions];
@@ -715,6 +700,7 @@ class _MultiSelectDropDownState<T> extends State<MultiSelectDropDown<T>> {
           children: [
             Positioned.fill(
                 child: GestureDetector(
+              behavior: HitTestBehavior.translucent,
               onTap: _onOutSideTap,
               child: Container(
                 color: Colors.transparent,
@@ -727,10 +713,21 @@ class _MultiSelectDropDownState<T> extends State<MultiSelectDropDown<T>> {
                   showOnTop ? Alignment.topLeft : Alignment.bottomLeft,
               followerAnchor:
                   showOnTop ? Alignment.bottomLeft : Alignment.topLeft,
+              offset: widget.dropdownMargin != null
+                  ? Offset(
+                      0,
+                      showOnTop
+                          ? -widget.dropdownMargin!
+                          : widget.dropdownMargin!)
+                  : Offset.zero,
               child: Material(
+                  borderRadius: widget.dropdownBorderRadius != null
+                      ? BorderRadius.circular(widget.dropdownBorderRadius!)
+                      : null,
                   elevation: 4,
                   shadowColor: Colors.black,
                   child: Container(
+                    padding: const EdgeInsets.only(top: 5.0),
                     constraints: BoxConstraints.loose(
                         Size(size.width, widget.dropdownHeight)),
                     child: Column(
@@ -771,7 +768,6 @@ class _MultiSelectDropDownState<T> extends State<MultiSelectDropDown<T>> {
                                 ),
                               ),
                               onChanged: (value) {
-                                debugPrint('search value changed: $value');
                                 dropdownState(() {
                                   options = _options
                                       .where((element) => element.label
@@ -788,10 +784,9 @@ class _MultiSelectDropDownState<T> extends State<MultiSelectDropDown<T>> {
                         ],
                         Expanded(
                           child: ListView.separated(
-                            separatorBuilder: (context, index) {
-                              return widget.optionSeparator ??
-                                  const SizedBox(height: 0);
-                            },
+                            separatorBuilder: (_, __) =>
+                                widget.optionSeparator ??
+                                const SizedBox(height: 0),
                             shrinkWrap: true,
                             padding: EdgeInsets.zero,
                             itemCount: options.length,
@@ -963,7 +958,17 @@ class _MultiSelectDropDownState<T> extends State<MultiSelectDropDown<T>> {
                     showOnTop ? Alignment.topLeft : Alignment.bottomLeft,
                 followerAnchor:
                     showOnTop ? Alignment.bottomLeft : Alignment.topLeft,
+                offset: widget.dropdownMargin != null
+                    ? Offset(
+                        0,
+                        showOnTop
+                            ? -widget.dropdownMargin!
+                            : widget.dropdownMargin!)
+                    : Offset.zero,
                 child: Material(
+                    borderRadius: widget.dropdownBorderRadius != null
+                        ? BorderRadius.circular(widget.dropdownBorderRadius!)
+                        : null,
                     elevation: 4,
                     child: Container(
                         width: size.width,

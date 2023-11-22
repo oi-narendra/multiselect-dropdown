@@ -104,6 +104,14 @@ class _MyHomePageState extends State<MyHomePage> {
                     color: Colors.pink,
                   ),
                   selectedOptionTextColor: Colors.blue,
+                  searchEnabled: true,
+                  dropdownMargin: 2,
+                  optionSeparator: const SizedBox(
+                    height: 1,
+                    child: Divider(
+                      color: Colors.black,
+                    ),
+                  ),
                 ),
                 const SizedBox(
                   height: 50,

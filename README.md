@@ -339,7 +339,7 @@ _controller.hideDropdown(); /// Hide the dropdown if it is open
 | chipConfig                    | ChipConfig                                 | Chip configuration               |
 | optionsBackgroundColor        | Color?                                     | Options background color         |
 | optionTextStyle               | TextStyle?                                 | Option text style                |
-| optionSeperator               | Widget?                                    | Option seperator                 |
+| optionSeparator               | Widget?                                    | Option seperator                 |
 | dropdownHeight                | double                                     | Dropdown height                  |
 | optionSeparator               | Widget?                                    | Option separator                 |
 | alwaysShowOptionIcon          | bool                                       | Always show option icon          |
@@ -360,3 +360,5 @@ _controller.hideDropdown(); /// Hide the dropdown if it is open
 | focusBorderWidth              | double?                                    | Focus border width               |
 | maxItems                      | int?                                       | Max items                        |
 | searchEnabled                 | bool                                       | Allow dropdown search            |
+| dropdownBorderRadius          | double?                                    | Dropdown border radius           |
+| dropdownMargin                | double?                                    | Dropdown vertical margin         |

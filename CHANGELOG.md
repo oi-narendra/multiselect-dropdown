@@ -76,3 +76,9 @@
 # 2.1.0
 
 - Added support for search in dropdown options.
+
+# 2.1.1
+
+- Added dropdown margin property. Use this property to set the margin between the dropdown field and the dropdown.
+- Added dropdownborderradius property. Use this property to set the border radius of the dropdown.
+- Fixed controller being used after being disposed.

@@ -188,46 +188,46 @@ class MultiSelectDropDown<T> extends StatefulWidget {
   ///    );
   /// ```
 
-  const MultiSelectDropDown(
-      {Key? key,
-      required this.onOptionSelected,
-      required this.options,
-      this.selectedOptionTextColor,
-      this.optionSeperator,
-      this.chipConfig = const ChipConfig(),
-      this.selectionType = SelectionType.multi,
-      this.hint = 'Select',
-      this.hintColor = Colors.grey,
-      this.hintFontSize = 14.0,
-      this.selectedOptions = const [],
-      this.disabledOptions = const [],
-      this.alwaysShowOptionIcon = false,
-      this.optionTextStyle,
-      this.selectedOptionIcon = const Icon(Icons.check),
-      this.selectedOptionBackgroundColor,
-      this.optionsBackgroundColor,
-      this.backgroundColor = Colors.white,
-      this.dropdownHeight = 200,
-      this.showChipInSingleSelectMode = false,
-      this.suffixIcon = const Icon(Icons.arrow_drop_down),
-      this.clearIcon = const Icon(Icons.close_outlined, size: 14),
-      this.selectedItemBuilder,
-      this.optionSeparator,
-      this.inputDecoration,
-      this.hintStyle,
-      this.padding,
-      this.focusedBorderColor = Colors.black54,
-      this.borderColor = Colors.grey,
-      this.borderWidth = 0.4,
-      this.focusedBorderWidth = 0.4,
-      this.borderRadius = 12.0,
-      this.radiusGeometry,
-      this.showClearIcon = true,
-      this.maxItems,
-      this.focusNode,
-      this.controller,
-      this.searchEnabled = false})
-      : networkConfig = null,
+  const MultiSelectDropDown({
+    Key? key,
+    required this.onOptionSelected,
+    required this.options,
+    this.selectedOptionTextColor,
+    this.optionSeperator,
+    this.chipConfig = const ChipConfig(),
+    this.selectionType = SelectionType.multi,
+    this.hint = 'Select',
+    this.hintColor = Colors.grey,
+    this.hintFontSize = 14.0,
+    this.selectedOptions = const [],
+    this.disabledOptions = const [],
+    this.alwaysShowOptionIcon = false,
+    this.optionTextStyle,
+    this.selectedOptionIcon = const Icon(Icons.check),
+    this.selectedOptionBackgroundColor,
+    this.optionsBackgroundColor,
+    this.backgroundColor = Colors.white,
+    this.dropdownHeight = 200,
+    this.showChipInSingleSelectMode = false,
+    this.suffixIcon = const Icon(Icons.arrow_drop_down),
+    this.clearIcon = const Icon(Icons.close_outlined, size: 14),
+    this.selectedItemBuilder,
+    this.optionSeparator,
+    this.inputDecoration,
+    this.hintStyle,
+    this.padding,
+    this.focusedBorderColor = Colors.black54,
+    this.borderColor = Colors.grey,
+    this.borderWidth = 0.4,
+    this.focusedBorderWidth = 0.4,
+    this.borderRadius = 12.0,
+    this.radiusGeometry,
+    this.showClearIcon = true,
+    this.maxItems,
+    this.focusNode,
+    this.controller,
+    this.searchEnabled = false,
+  })  : networkConfig = null,
         responseParser = null,
         responseErrorBuilder = null,
         super(key: key);
@@ -319,9 +319,7 @@ class _MultiSelectDropDownState<T> extends State<MultiSelectDropDown<T>> {
       _initialize();
     });
     _focusNode = widget.focusNode ?? FocusNode();
-    if (widget.controller != null) {
-      _controller = widget.controller;
-    }
+    _controller = widget.controller ?? MultiSelectController<T>();
   }
 
   /// Initializes the options, selected options and disabled options.
@@ -332,7 +330,9 @@ class _MultiSelectDropDownState<T> extends State<MultiSelectDropDown<T>> {
     if (widget.networkConfig?.url != null) {
       await _fetchNetwork();
     } else {
-      _options.addAll(widget.options);
+      _options.addAll(_controller?.options.isNotEmpty == true
+          ? _controller!.options
+          : widget.options);
     }
     _addOptions();
     _overlayState ??= Overlay.of(context);
@@ -347,17 +347,23 @@ class _MultiSelectDropDownState<T> extends State<MultiSelectDropDown<T>> {
   /// Adds the selected options and disabled options to the options list.
   void _addOptions() {
     setState(() {
-      _selectedOptions.addAll(widget.selectedOptions);
-      _disabledOptions.addAll(widget.disabledOptions);
+      _selectedOptions.addAll(_controller?.selectedOptions.isNotEmpty == true
+          ? _controller!.selectedOptions
+          : widget.selectedOptions);
+      _disabledOptions.addAll(_controller?.disabledOptions.isNotEmpty == true
+          ? _controller!.disabledOptions
+          : widget.disabledOptions);
     });
 
-    if (_controller != null) {
-      _controller!.setOptions(_options);
-      _controller!.setSelectedOptions(_selectedOptions);
-      _controller!.setDisabledOptions(_disabledOptions);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (_controller != null && _controller?._isDisposed == false) {
+        _controller!.setOptions(_options);
+        _controller!.setSelectedOptions(_selectedOptions);
+        _controller!.setDisabledOptions(_disabledOptions);
 
-      _controller!.addListener(_handleControllerChange);
-    }
+        _controller!.addListener(_handleControllerChange);
+      }
+    });
   }
 
   /// Handles the focus change to show/hide the dropdown.
@@ -391,6 +397,13 @@ class _MultiSelectDropDownState<T> extends State<MultiSelectDropDown<T>> {
   /// Handles the widget rebuild when the options are changed externally.
   @override
   void didUpdateWidget(covariant MultiSelectDropDown<T> oldWidget) {
+    if (widget.controller == null && oldWidget.controller != null) {
+      _controller = MultiSelectController<T>();
+    } else if (widget.controller != null && oldWidget.controller == null) {
+      _controller!.dispose();
+      _controller = null;
+    }
+
     // If the options are changed externally, then the options are updated.
     if (listEquals(widget.options, oldWidget.options) == false) {
       _options.clear();
@@ -546,9 +559,12 @@ class _MultiSelectDropDownState<T> extends State<MultiSelectDropDown<T>> {
       _overlayState?.dispose();
     }
     _focusNode.dispose();
-    if (_controller != null) {
+    _controller?.removeListener(_handleControllerChange);
+
+    if (widget.controller == null || widget.controller?.isDisposed == true) {
       _controller!.dispose();
     }
+
     super.dispose();
   }
 
@@ -975,7 +991,7 @@ class _MultiSelectDropDownState<T> extends State<MultiSelectDropDown<T>> {
   /// Clear the selected options.
   /// [MultiSelectController] is used to clear the selected options.
   void clear() {
-    if (_controller != null) {
+    if (_controller != null && !_controller!._isDisposed) {
       _controller!.clearAllSelection();
     } else {
       setState(() {
@@ -989,7 +1005,7 @@ class _MultiSelectDropDownState<T> extends State<MultiSelectDropDown<T>> {
   /// handle the controller change.
   void _handleControllerChange() {
     // if the controller is null, return.
-    if (_controller == null) return;
+    if (_controller == null || _controller?.isDisposed == true) return;
 
     // if current disabled options are not equal to the controller's disabled options, update the state.
     if (_disabledOptions != _controller!.value._disabledOptions) {
@@ -1051,6 +1067,17 @@ class _MultiSelectController<T> {
 class MultiSelectController<T>
     extends ValueNotifier<_MultiSelectController<T>> {
   MultiSelectController() : super(_MultiSelectController());
+
+  bool _isDisposed = false;
+
+  bool get isDisposed => _isDisposed;
+
+  /// set the dispose method.
+  @override
+  void dispose() {
+    super.dispose();
+    _isDisposed = true;
+  }
 
   /// Clear the selected options.
   /// [MultiSelectController] is used to clear the selected options.

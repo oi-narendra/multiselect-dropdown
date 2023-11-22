@@ -203,8 +203,6 @@ class _MyHomePageState extends State<MyHomePage> {
                   ),
                   chipConfig: const ChipConfig(wrapType: WrapType.wrap),
                   responseParser: (response) {
-                    debugPrint('Response: $response');
-
                     final list = (response as List<dynamic>).map((e) {
                       final item = e as Map<String, dynamic>;
                       return ValueItem(

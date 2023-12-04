@@ -561,7 +561,10 @@ class _MultiSelectDropDownState<T> extends State<MultiSelectDropDown<T>> {
       _overlayEntry = null;
       _overlayState?.dispose();
     }
+    _focusNode.removeListener(_handleFocusChange);
+    _searchFocusNode?.removeListener(_handleFocusChange);
     _focusNode.dispose();
+    _searchFocusNode?.dispose();
     _controller?.removeListener(_handleControllerChange);
 
     if (widget.controller == null || widget.controller?.isDisposed == true) {
@@ -727,9 +730,11 @@ class _MultiSelectDropDownState<T> extends State<MultiSelectDropDown<T>> {
                   elevation: 4,
                   shadowColor: Colors.black,
                   child: Container(
-                    padding: const EdgeInsets.only(top: 5.0),
-                    constraints: BoxConstraints.loose(
-                        Size(size.width, widget.dropdownHeight)),
+                    constraints: widget.searchEnabled
+                        ? BoxConstraints.loose(
+                            Size(size.width, widget.dropdownHeight + 50))
+                        : BoxConstraints.loose(
+                            Size(size.width, widget.dropdownHeight)),
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [
@@ -738,6 +743,10 @@ class _MultiSelectDropDownState<T> extends State<MultiSelectDropDown<T>> {
                             padding: const EdgeInsets.all(8.0),
                             child: TextFormField(
                               controller: searchController,
+                              onTapOutside: (_) {},
+                              scrollPadding: EdgeInsets.only(
+                                  bottom:
+                                      MediaQuery.of(context).viewInsets.bottom),
                               focusNode: _searchFocusNode,
                               decoration: InputDecoration(
                                 fillColor: Colors.grey.shade200,
@@ -948,6 +957,7 @@ class _MultiSelectDropDownState<T> extends State<MultiSelectDropDown<T>> {
             Positioned.fill(
                 child: GestureDetector(
               onTap: _onOutSideTap,
+              behavior: HitTestBehavior.opaque,
               child: Container(
                 color: Colors.transparent,
               ),

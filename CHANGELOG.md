@@ -82,3 +82,7 @@
 - Added dropdown margin property. Use this property to set the margin between the dropdown field and the dropdown.
 - Added dropdownborderradius property. Use this property to set the border radius of the dropdown.
 - Fixed controller being used after being disposed.
+
+# 2.1.2
+- Fixed dropdown dismiss issue when search is enabled and option is/are selected on web.
+- Fixed the issue where the selected options were ignored when the widget is rebuilt.

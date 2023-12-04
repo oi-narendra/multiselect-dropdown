@@ -425,7 +425,7 @@ class _MultiSelectDropDownState<T> extends State<MultiSelectDropDown<T>> {
         false) {
       _selectedOptions.clear();
       _selectedOptions.addAll(widget.options
-          .where((element) => widget.selectedOptions.contains(element.value)));
+          .where((element) => widget.selectedOptions.contains(element)));
 
       // If the controller is not null, then the selected options are updated in the controller.
       if (_controller != null) {
@@ -438,7 +438,7 @@ class _MultiSelectDropDownState<T> extends State<MultiSelectDropDown<T>> {
         false) {
       _disabledOptions.clear();
       _disabledOptions.addAll(widget.options
-          .where((element) => widget.disabledOptions.contains(element.value)));
+          .where((element) => widget.disabledOptions.contains(element)));
 
       // If the controller is not null, then the disabled options are updated in the controller.
       if (_controller != null) {

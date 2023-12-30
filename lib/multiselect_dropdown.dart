@@ -38,6 +38,16 @@ class MultiSelectDropDown<T> extends StatefulWidget {
   final List<ValueItem<T>> disabledOptions;
   final OnOptionSelected<T>? onOptionSelected;
 
+  /// [onOptionRemoved] is the callback that is called when an option is removed.The callback takes two arguments, the index of the removed option and the removed option.
+  /// This will be called only when the delete icon is clicked on the option chip.
+  ///
+  /// This will not be called when the option is removed programmatically.
+  ///
+  /// ```index``` is the index of the removed option.
+  ///
+  /// ```option``` is the removed option.
+  final void Function(int index, ValueItem<T> option)? onOptionRemoved;
+
   // selected option
   final Icon? selectedOptionIcon;
   final Color? selectedOptionTextColor;
@@ -199,6 +209,7 @@ class MultiSelectDropDown<T> extends StatefulWidget {
       {Key? key,
       required this.onOptionSelected,
       required this.options,
+      this.onOptionRemoved,
       this.selectedOptionTextColor,
       this.chipConfig = const ChipConfig(),
       this.selectionType = SelectionType.multi,
@@ -248,10 +259,11 @@ class MultiSelectDropDown<T> extends StatefulWidget {
 
   const MultiSelectDropDown.network(
       {Key? key,
+      required this.onOptionSelected,
       required this.networkConfig,
       required this.responseParser,
+      this.onOptionRemoved,
       this.responseErrorBuilder,
-      required this.onOptionSelected,
       this.selectedOptionTextColor,
       this.chipConfig = const ChipConfig(),
       this.selectionType = SelectionType.multi,
@@ -657,6 +669,9 @@ class _MultiSelectDropDownState<T> extends State<MultiSelectDropDown<T>> {
       item: item,
       chipConfig: chipConfig,
       onItemDelete: (removedItem) {
+        widget.onOptionRemoved?.call(_options.indexOf(removedItem),
+            _selectedOptions[_selectedOptions.indexOf(removedItem)]);
+
         if (_controller != null) {
           _controller!.clearSelection(removedItem);
         } else {

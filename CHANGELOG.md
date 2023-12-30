@@ -86,3 +86,8 @@
 # 2.1.2
 - Fixed dropdown dismiss issue when search is enabled and option is/are selected on web.
 - Fixed the issue where the selected options were ignored when the widget is rebuilt.
+
+# 2.1.3
+- Added dropdown background color property, search field background color property, and search field label property.
+- Added onDelete callback to dropdown field. This callback is called when option is deleted from the dropdown field using 
+the delete icon/button in chips.

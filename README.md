@@ -330,6 +330,7 @@ _controller.hideDropdown(); /// Hide the dropdown if it is open
 | options                       | List<ValueItem>                            | Options                          |
 | selectedOptions               | List<ValueItem>                            | Selected options                 |
 | disabledOptions               | List<ValueItem>                            | Disabled options                 |
+| onOptionRemoved               | Function(int index, ValueItem<T> option)?  | On option removed                |
 | onOptionSelected              | Function(List<ValueItem>)?                 | On option selected               |
 | selectedOptionIcon            | Icon?                                      | Selected option icon             |
 | selectedOptionTextColor       | Color?                                     | Selected option text color       |
@@ -337,7 +338,7 @@ _controller.hideDropdown(); /// Hide the dropdown if it is open
 | selectedItemBuilder           | Widget Function(BuildContext, ValueItem)?  | Selected item builder            |
 | showChipInSingleSelectMode    | bool                                       | Show chip in single select mode  |
 | chipConfig                    | ChipConfig                                 | Chip configuration               |
-| optionsBackgroundColor        | Color?                                     | Options background color         |
+| fieldBackgroundColor          | Color?                                     | Dropdown field background color  |
 | optionTextStyle               | TextStyle?                                 | Option text style                |
 | optionSeparator               | Widget?                                    | Option seperator                 |
 | dropdownHeight                | double                                     | Dropdown height                  |
@@ -362,3 +363,6 @@ _controller.hideDropdown(); /// Hide the dropdown if it is open
 | searchEnabled                 | bool                                       | Allow dropdown search            |
 | dropdownBorderRadius          | double?                                    | Dropdown border radius           |
 | dropdownMargin                | double?                                    | Dropdown vertical margin         |
+| searchBackgroundColor         | Color?                                     | Search field background color    |
+| dropdownBackgroundColor       | Color?                                     | Dropdown background color        |
+| searchLabel                   | String?                                    | Search label                     |

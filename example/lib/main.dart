@@ -112,6 +112,9 @@ class _MyHomePageState extends State<MyHomePage> {
                       color: Colors.black,
                     ),
                   ),
+                  onOptionRemoved: (index, option) {
+                    debugPrint('Removed: $option');
+                  },
                 ),
                 const SizedBox(
                   height: 50,

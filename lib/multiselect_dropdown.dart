@@ -90,6 +90,10 @@ class MultiSelectDropDown<T> extends StatefulWidget {
   /// [searchEnabled] is the flag to enable search in dropdown. It is used to show search bar in dropdown.
   final bool searchEnabled;
 
+  /// Search label
+  /// [searchLabel] is the label for search bar in dropdown.
+  final String? searchLabel;
+
   /// MultiSelectDropDown is a widget that allows the user to select multiple options from a list of options. It is a dropdown that allows the user to select multiple options.
   ///
   ///  **Selection Type**
@@ -230,7 +234,8 @@ class MultiSelectDropDown<T> extends StatefulWidget {
       this.controller,
       this.searchEnabled = false,
       this.dropdownBorderRadius,
-      this.dropdownMargin})
+      this.dropdownMargin,
+      this.searchLabel = 'Search'})
       : networkConfig = null,
         responseParser = null,
         responseErrorBuilder = null,
@@ -282,7 +287,8 @@ class MultiSelectDropDown<T> extends StatefulWidget {
       this.controller,
       this.searchEnabled = false,
       this.dropdownBorderRadius,
-      this.dropdownMargin})
+      this.dropdownMargin,
+      this.searchLabel = 'Search'})
       : options = const [],
         super(key: key);
 
@@ -340,7 +346,18 @@ class _MultiSelectDropDownState<T> extends State<MultiSelectDropDown<T>> {
           : widget.options);
     }
     _addOptions();
+    if (mounted) {
+      _initializeOverlay();
+    } else {
+      WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+        _initializeOverlay();
+      });
+    }
+  }
+
+  void _initializeOverlay() {
     _overlayState ??= Overlay.of(context);
+
     _focusNode.addListener(_handleFocusChange);
 
     if (widget.searchEnabled) {
@@ -751,7 +768,7 @@ class _MultiSelectDropDownState<T> extends State<MultiSelectDropDown<T>> {
                               decoration: InputDecoration(
                                 fillColor: Colors.grey.shade200,
                                 isDense: true,
-                                hintText: 'Search',
+                                hintText: widget.searchLabel,
                                 enabledBorder: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(12),
                                   borderSide: BorderSide(

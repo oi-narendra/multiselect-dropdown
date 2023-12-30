@@ -97,7 +97,6 @@ class _MyHomePageState extends State<MyHomePage> {
                   selectionType: SelectionType.multi,
                   chipConfig: const ChipConfig(
                       wrapType: WrapType.wrap, backgroundColor: Colors.red),
-                  dropdownHeight: 300,
                   optionTextStyle: const TextStyle(fontSize: 16),
                   selectedOptionIcon: const Icon(
                     Icons.check_circle,
@@ -106,12 +105,6 @@ class _MyHomePageState extends State<MyHomePage> {
                   selectedOptionTextColor: Colors.blue,
                   searchEnabled: true,
                   dropdownMargin: 2,
-                  optionSeparator: const SizedBox(
-                    height: 1,
-                    child: Divider(
-                      color: Colors.black,
-                    ),
-                  ),
                   onOptionRemoved: (index, option) {
                     debugPrint('Removed: $option');
                   },

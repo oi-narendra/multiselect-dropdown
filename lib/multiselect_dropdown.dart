@@ -66,7 +66,7 @@ class MultiSelectDropDown<T> extends StatefulWidget {
   final bool alwaysShowOptionIcon;
 
   // dropdownfield configuration
-  final Color? backgroundColor;
+  final Color? fieldBackgroundColor;
   final Icon? suffixIcon;
   final Icon? clearIcon;
   final Decoration? inputDecoration;
@@ -79,6 +79,9 @@ class MultiSelectDropDown<T> extends StatefulWidget {
   final EdgeInsets? padding;
   final bool showClearIcon;
   final int? maxItems;
+
+  final Color? dropdownBackgroundColor;
+  final Color? searchBackgroundColor;
 
   // dropdown border radius
   final double? dropdownBorderRadius;
@@ -150,7 +153,7 @@ class MultiSelectDropDown<T> extends StatefulWidget {
   ///
   ///  **Dropdown Configuration**
   ///
-  /// [backgroundColor] is the background color of the dropdown. The default is [Colors.white].
+  /// [fieldBackgroundColor] is the background color of the dropdown. The default is [Colors.white].
   ///
   /// [suffixIcon] is the icon that is used to indicate the dropdown. The default is [Icons.arrow_drop_down].
   ///
@@ -223,7 +226,7 @@ class MultiSelectDropDown<T> extends StatefulWidget {
       this.selectedOptionIcon = const Icon(Icons.check),
       this.selectedOptionBackgroundColor,
       this.optionsBackgroundColor,
-      this.backgroundColor = Colors.white,
+      this.fieldBackgroundColor = Colors.white,
       this.dropdownHeight = 200,
       this.showChipInSingleSelectMode = false,
       this.suffixIcon = const Icon(Icons.arrow_drop_down),
@@ -246,6 +249,8 @@ class MultiSelectDropDown<T> extends StatefulWidget {
       this.searchEnabled = false,
       this.dropdownBorderRadius,
       this.dropdownMargin,
+      this.dropdownBackgroundColor,
+      this.searchBackgroundColor,
       this.searchLabel = 'Search'})
       : networkConfig = null,
         responseParser = null,
@@ -277,7 +282,7 @@ class MultiSelectDropDown<T> extends StatefulWidget {
       this.selectedOptionIcon = const Icon(Icons.check),
       this.selectedOptionBackgroundColor,
       this.optionsBackgroundColor,
-      this.backgroundColor = Colors.white,
+      this.fieldBackgroundColor = Colors.white,
       this.dropdownHeight = 200,
       this.showChipInSingleSelectMode = false,
       this.suffixIcon = const Icon(Icons.arrow_drop_down),
@@ -300,6 +305,8 @@ class MultiSelectDropDown<T> extends StatefulWidget {
       this.searchEnabled = false,
       this.dropdownBorderRadius,
       this.dropdownMargin,
+      this.dropdownBackgroundColor,
+      this.searchBackgroundColor,
       this.searchLabel = 'Search'})
       : options = const [],
         super(key: key);
@@ -565,7 +572,7 @@ class _MultiSelectDropDownState<T> extends State<MultiSelectDropDown<T>> {
   Decoration _getContainerDecoration() {
     return widget.inputDecoration ??
         BoxDecoration(
-          color: widget.backgroundColor ?? Colors.white,
+          color: widget.fieldBackgroundColor ?? Colors.white,
           borderRadius: widget.radiusGeometry ??
               BorderRadius.circular(widget.borderRadius ?? 12.0),
           border: _selectionMode
@@ -756,12 +763,25 @@ class _MultiSelectDropDownState<T> extends State<MultiSelectDropDown<T>> {
                           : widget.dropdownMargin!)
                   : Offset.zero,
               child: Material(
-                  borderRadius: widget.dropdownBorderRadius != null
-                      ? BorderRadius.circular(widget.dropdownBorderRadius!)
-                      : null,
+                  color: widget.dropdownBackgroundColor ?? Colors.white,
+                  // borderRadius: widget.dropdownBorderRadius != null
+                  //     ? BorderRadius.circular(widget.dropdownBorderRadius!)
+                  //     : null,
                   elevation: 4,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.all(
+                      Radius.circular(widget.dropdownBorderRadius ?? 0),
+                    ),
+                  ),
                   shadowColor: Colors.black,
                   child: Container(
+                    decoration: BoxDecoration(
+                      backgroundBlendMode: BlendMode.dstATop,
+                      color: widget.dropdownBackgroundColor ?? Colors.white,
+                      borderRadius: widget.dropdownBorderRadius != null
+                          ? BorderRadius.circular(widget.dropdownBorderRadius!)
+                          : null,
+                    ),
                     constraints: widget.searchEnabled
                         ? BoxConstraints.loose(
                             Size(size.width, widget.dropdownHeight + 50))
@@ -781,8 +801,10 @@ class _MultiSelectDropDownState<T> extends State<MultiSelectDropDown<T>> {
                                       MediaQuery.of(context).viewInsets.bottom),
                               focusNode: _searchFocusNode,
                               decoration: InputDecoration(
-                                fillColor: Colors.grey.shade200,
+                                fillColor: widget.searchBackgroundColor ??
+                                    Colors.grey.shade200,
                                 isDense: true,
+                                filled: widget.searchBackgroundColor != null,
                                 hintText: widget.searchLabel,
                                 enabledBorder: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(12),
@@ -866,7 +888,6 @@ class _MultiSelectDropDownState<T> extends State<MultiSelectDropDown<T>> {
                   fontSize: widget.hintFontSize,
                 )),
         textColor: Colors.black,
-        focusColor: Colors.red,
         selectedColor: widget.selectedOptionTextColor ?? primaryColor,
         selected: isSelected,
         autofocus: true,

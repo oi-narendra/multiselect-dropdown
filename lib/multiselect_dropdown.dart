@@ -230,7 +230,7 @@ class MultiSelectDropDown<T> extends StatefulWidget {
       this.dropdownHeight = 200,
       this.showChipInSingleSelectMode = false,
       this.suffixIcon = const Icon(Icons.arrow_drop_down),
-      this.clearIcon = const Icon(Icons.close_outlined, size: 14),
+      this.clearIcon = const Icon(Icons.close_outlined, size: 20),
       this.selectedItemBuilder,
       this.optionSeparator,
       this.inputDecoration,
@@ -526,10 +526,7 @@ class _MultiSelectDropDownState<T> extends State<MultiSelectDropDown<T>> {
                   const SizedBox(width: 4),
                   InkWell(
                     onTap: () => clear(),
-                    child: const Icon(
-                      Icons.close_outlined,
-                      size: 20,
-                    ),
+                    child: widget.clearIcon,
                   ),
                   const SizedBox(width: 4)
                 ],

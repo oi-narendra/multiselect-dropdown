@@ -31,6 +31,7 @@ class MultiSelectDropDown<T> extends StatefulWidget {
   final Color? hintColor;
   final double? hintFontSize;
   final TextStyle? hintStyle;
+  final EdgeInsetsGeometry? hintPadding;
 
   // Options
   final List<ValueItem<T>> options;
@@ -219,6 +220,7 @@ class MultiSelectDropDown<T> extends StatefulWidget {
       this.hint = 'Select',
       this.hintColor = Colors.grey,
       this.hintFontSize = 14.0,
+      this.hintPadding = HintText.hintPaddingDefault,
       this.selectedOptions = const [],
       this.disabledOptions = const [],
       this.alwaysShowOptionIcon = false,
@@ -291,6 +293,7 @@ class MultiSelectDropDown<T> extends StatefulWidget {
       this.optionSeparator,
       this.inputDecoration,
       this.hintStyle,
+      this.hintPadding = HintText.hintPaddingDefault,
       this.padding,
       this.borderColor = Colors.grey,
       this.focusedBorderColor = Colors.black54,
@@ -551,6 +554,7 @@ class _MultiSelectDropDownState<T> extends State<MultiSelectDropDown<T>> {
         hintText: widget.hint,
         hintColor: widget.hintColor,
         hintStyle: widget.hintStyle,
+        hintPadding: widget.hintPadding,
       );
     }
 

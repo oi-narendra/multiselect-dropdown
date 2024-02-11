@@ -97,3 +97,4 @@ the delete icon/button in chips.
 - Removed ```showClearIcon``` property from dropdown field. Use clearIcon property to set the clear icon. If clearIcon is null, the clear icon will not be shown.
 - Added ```singleSelectItemStyle``` property to dropdown field. Use this property to set the style of the selected item in single select dropdown.
 - Fixed suffixIcon animation issue in dropdown field, also added ```animateSuffixIcon``` property to enable/disable suffix icon animation.
+- Added ```optionBuilder``` property to dropdown field. Use this property to build custom dropdown options.

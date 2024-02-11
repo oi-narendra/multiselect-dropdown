@@ -107,12 +107,18 @@ class _MyHomePageState extends State<MyHomePage> {
                       Icons.check_circle,
                       color: Colors.pink,
                     ),
-                    selectionType: SelectionType.multi,
                     selectedOptionBackgroundColor: Colors.grey.shade300,
                     selectedOptionTextColor: Colors.blue,
                     dropdownMargin: 2,
-                    onOptionRemoved: (index, option) {
-                      debugPrint('Removed: $option');
+                    onOptionRemoved: (index, option) {},
+                    optionBuilder: (context, valueItem, isSelected) {
+                      return ListTile(
+                        title: Text(valueItem.label),
+                        subtitle: Text(valueItem.value.toString()),
+                        trailing: isSelected
+                            ? const Icon(Icons.check_circle)
+                            : const Icon(Icons.radio_button_unchecked),
+                      );
                     },
                   ),
                   const SizedBox(
@@ -233,30 +239,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   ),
                   ElevatedButton(
                     onPressed: () {
-                      showModalBottomSheet(
-                        context: context,
-                        isScrollControlled: true,
-                        builder: (context) {
-                          final _focusNode = FocusNode();
-                          return StatefulBuilder(
-                              builder: (context, setModalState) {
-                            return Container(
-                              // Bottom sheet content
-                              child: TextField(
-                                focusNode: _focusNode,
-                                decoration: InputDecoration(
-                                  hintText: 'Add comments...',
-                                ),
-                                textInputAction: TextInputAction.done,
-                                onEditingComplete: () async {
-                                  _focusNode.unfocus();
-                                  // Additional logic after editing is complete
-                                },
-                              ),
-                            );
-                          });
-                        },
-                      );
+                      _controller.clearAllSelection();
                     },
                     child: const Text('CLEAR'),
                   ),

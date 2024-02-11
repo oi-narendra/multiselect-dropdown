@@ -355,7 +355,6 @@ _controller.hideDropdown(); /// Hide the dropdown if it is open
 | networkConfig                 | NetworkConfig?                             | Network configuration            |
 | responseParser                | Future<List<ValueItem>> Function(dynamic)? | Response parser                  |
 | responseErrorBuilder          | Widget Function(BuildContext, dynamic)?    | Response error builder           |
-| showClearIcon                 | bool                                       | Show clear icon                  |
 | focusNode                     | FocusNode?                                 | Focus node                       |
 | radiusGeometry                | RadiusGeometry?                            | Radius geometry                  |
 | focusBorderWidth              | double?                                    | Focus border width               |
@@ -366,3 +365,6 @@ _controller.hideDropdown(); /// Hide the dropdown if it is open
 | searchBackgroundColor         | Color?                                     | Search field background color    |
 | dropdownBackgroundColor       | Color?                                     | Dropdown background color        |
 | searchLabel                   | String?                                    | Search label                     |
+| animateSuffixIcon             | bool                                       | Animate Suffix Icon              |
+| singleSelectItemStyle         | TextStyle?                                 | Single select item style         |
+| optionBuilder                 | Widget Function(ctx, ValueItem<T>, bool)?  | Option builder                   |

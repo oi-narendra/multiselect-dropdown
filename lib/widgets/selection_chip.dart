@@ -5,7 +5,7 @@ import 'package:multi_dropdown/multiselect_dropdown.dart';
 /// It is used to build the selected option chip.
 class SelectionChip<T> extends StatelessWidget {
   final ChipConfig chipConfig;
-  final Function(ValueItem<T>) onItemDelete;
+  final Function(ValueItem<T>)? onItemDelete;
   final ValueItem<T> item;
 
   const SelectionChip({
@@ -18,19 +18,21 @@ class SelectionChip<T> extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Chip(
-      padding: chipConfig.padding,
+      padding: chipConfig.padding.copyWith(right: chipConfig.padding.right + (onItemDelete == null ? 8 : 0)),
       label: Text(item.label),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(chipConfig.radius),
       ),
-      deleteIcon: chipConfig.deleteIcon,
+      deleteIcon: onItemDelete == null ? null : chipConfig.deleteIcon,
       deleteIconColor: chipConfig.deleteIconColor,
       labelPadding: chipConfig.labelPadding,
-      backgroundColor:
+      backgroundColor: onItemDelete == null ? chipConfig.backgroundDisabledColor ?? Theme.of(context).disabledColor:
           chipConfig.backgroundColor ?? Theme.of(context).primaryColor,
-      labelStyle: chipConfig.labelStyle ??
-          TextStyle(color: chipConfig.labelColor, fontSize: 14),
-      onDeleted: () => onItemDelete(item),
+      labelStyle: chipConfig.labelStyle?.copyWith(color: onItemDelete == null ? chipConfig.labelDisabledColor :
+      chipConfig.labelColor) ??
+          TextStyle(color: onItemDelete == null ? chipConfig.labelDisabledColor : chipConfig.labelColor, fontSize: 14),
+      onDeleted: onItemDelete == null ? null : () => onItemDelete!(item),
+      side: chipConfig.borderSide,
     );
   }
 }

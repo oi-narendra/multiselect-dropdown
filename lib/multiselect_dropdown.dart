@@ -605,7 +605,11 @@ class _MultiSelectDropDownState<T> extends State<MultiSelectDropDown<T>> {
           if (widget.selectedItemBuilder != null) {
             return widget.selectedItemBuilder!(context, option);
           }
-          return _buildChip(option, widget.chipConfig);
+          return _buildChip(
+            option,
+            widget.chipConfig,
+            !_disabledOptions.contains(_selectedOptions[index]),
+          );
         },
       );
     }
@@ -617,7 +621,11 @@ class _MultiSelectDropDownState<T> extends State<MultiSelectDropDown<T>> {
             return widget.selectedItemBuilder!(
                 context, _selectedOptions[index]);
           }
-          return _buildChip(_selectedOptions[index], widget.chipConfig);
+          return _buildChip(
+            _selectedOptions[index],
+            widget.chipConfig,
+            !_disabledOptions.contains(_selectedOptions[index]),
+          );
         }).toList());
   }
 
@@ -652,17 +660,17 @@ class _MultiSelectDropDownState<T> extends State<MultiSelectDropDown<T>> {
   }
 
   /// Buid the selected item chip.
-  Widget _buildChip(ValueItem<T> item, ChipConfig chipConfig) {
+  Widget _buildChip(ValueItem<T> item, ChipConfig chipConfig, isEnabled) {
     return SelectionChip<T>(
       item: item,
       chipConfig: chipConfig,
-      onItemDelete: (removedItem) {
+      onItemDelete: isEnabled ?(removedItem) {
         widget.onOptionRemoved?.call(_options.indexOf(removedItem),
             _selectedOptions[_selectedOptions.indexOf(removedItem)]);
 
         _controller.clearSelection(removedItem);
         if (_focusNode.hasFocus) _focusNode.unfocus();
-      },
+      } : null,
     );
   }
 

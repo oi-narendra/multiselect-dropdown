@@ -258,7 +258,7 @@ class MultiSelectDropDown<T> extends StatefulWidget {
       this.focusedBorderColor = Colors.black54,
       this.borderColor = Colors.grey,
       this.borderWidth = 0.4,
-      this.focusedBorderWidth = 0.4,
+      this.focusedBorderWidth = 0.8,
       this.borderRadius = 12.0,
       this.radiusGeometry,
       this.maxItems,
@@ -318,7 +318,7 @@ class MultiSelectDropDown<T> extends StatefulWidget {
       this.borderColor = Colors.grey,
       this.focusedBorderColor = Colors.black54,
       this.borderWidth = 0.4,
-      this.focusedBorderWidth = 0.4,
+      this.focusedBorderWidth = 0.8,
       this.borderRadius = 12.0,
       this.radiusGeometry,
       this.maxItems,
@@ -582,24 +582,25 @@ class _MultiSelectDropDownState<T> extends State<MultiSelectDropDown<T>> {
         InputDecoration(
           label: widget.label,
           contentPadding: _getContentPadding(),
-          focusedBorder: OutlineInputBorder(
-            borderSide: BorderSide(
-              color: widget.focusedBorderColor ?? Colors.grey,
-              width: widget.focusedBorderWidth ?? 0.4,
-            ),
-            borderRadius: BorderRadius.circular(
-              widget.borderRadius ?? 12.0,
-            ),
-          ),
-          enabledBorder: OutlineInputBorder(
-            borderSide: BorderSide(
-              color: widget.borderColor ?? Colors.grey,
-              width: widget.borderWidth ?? 0.4,
-            ),
-            borderRadius: BorderRadius.circular(
-              widget.borderRadius ?? 12.0,
-            ),
-          ),
+          enabledBorder: _selectionMode
+              ? OutlineInputBorder(
+                  borderSide: BorderSide(
+                    color: widget.focusedBorderColor ?? Colors.grey,
+                    width: widget.focusedBorderWidth ?? 0.8,
+                  ),
+                  borderRadius: BorderRadius.circular(
+                    widget.borderRadius ?? 12.0,
+                  ),
+                )
+              : OutlineInputBorder(
+                  borderSide: BorderSide(
+                    color: widget.borderColor ?? Colors.grey,
+                    width: widget.borderWidth ?? 0.4,
+                  ),
+                  borderRadius: BorderRadius.circular(
+                    widget.borderRadius ?? 12.0,
+                  ),
+                ),
         );
   }
 

@@ -25,6 +25,9 @@ class MultiSelectDropDown<T> extends StatefulWidget {
   // selection type of the dropdown
   final SelectionType selectionType;
 
+  // Label
+  final Text? label;
+
   // Hint
   final String hint;
   final Color? hintColor;
@@ -79,7 +82,7 @@ class MultiSelectDropDown<T> extends StatefulWidget {
   final Icon suffixIcon;
   final bool animateSuffixIcon;
   final Icon? clearIcon;
-  final Decoration? inputDecoration;
+  final InputDecoration? inputDecoration;
   final double? borderRadius;
   final BorderRadiusGeometry? radiusGeometry;
   final Color? borderColor;
@@ -226,6 +229,7 @@ class MultiSelectDropDown<T> extends StatefulWidget {
       {Key? key,
       required this.onOptionSelected,
       required this.options,
+      this.label,
       this.onOptionRemoved,
       this.selectedOptionTextColor,
       this.chipConfig = const ChipConfig(),
@@ -254,7 +258,7 @@ class MultiSelectDropDown<T> extends StatefulWidget {
       this.focusedBorderColor = Colors.black54,
       this.borderColor = Colors.grey,
       this.borderWidth = 0.4,
-      this.focusedBorderWidth = 0.4,
+      this.focusedBorderWidth = 0.8,
       this.borderRadius = 12.0,
       this.radiusGeometry,
       this.maxItems,
@@ -284,6 +288,7 @@ class MultiSelectDropDown<T> extends StatefulWidget {
       required this.onOptionSelected,
       required this.networkConfig,
       required this.responseParser,
+      this.label,
       this.onOptionRemoved,
       this.responseErrorBuilder,
       this.selectedOptionTextColor,
@@ -313,7 +318,7 @@ class MultiSelectDropDown<T> extends StatefulWidget {
       this.borderColor = Colors.grey,
       this.focusedBorderColor = Colors.black54,
       this.borderWidth = 0.4,
-      this.focusedBorderWidth = 0.4,
+      this.focusedBorderWidth = 0.8,
       this.borderRadius = 12.0,
       this.radiusGeometry,
       this.maxItems,
@@ -489,23 +494,26 @@ class _MultiSelectDropDownState<T> extends State<MultiSelectDropDown<T>> {
                 minWidth: MediaQuery.of(context).size.width,
                 minHeight: 52,
               ),
-              padding: _getContainerPadding(),
-              decoration: _getContainerDecoration(),
-              child: Row(
-                children: [
-                  Expanded(
-                    child: _getContainerContent(),
-                  ),
-                  if (widget.clearIcon != null && _anyItemSelected) ...[
-                    const SizedBox(width: 4),
-                    InkWell(
-                      onTap: () => clear(),
-                      child: widget.clearIcon,
+              // padding: _getContentPadding(),
+              // decoration: _getContainerDecoration(),
+              child: InputDecorator(
+                decoration: _getInputDecoration(),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: _getContainerContent(),
                     ),
-                    const SizedBox(width: 4)
+                    if (widget.clearIcon != null && _anyItemSelected) ...[
+                      const SizedBox(width: 4),
+                      InkWell(
+                        onTap: () => clear(),
+                        child: widget.clearIcon,
+                      ),
+                      const SizedBox(width: 4)
+                    ],
+                    _buildSuffixIcon(),
                   ],
-                  _buildSuffixIcon(),
-                ],
+                ),
               ),
             ),
           ),
@@ -550,20 +558,48 @@ class _MultiSelectDropDownState<T> extends State<MultiSelectDropDown<T>> {
   bool get _anyItemSelected => _selectedOptions.isNotEmpty;
 
   /// Container decoration for the dropdown.
-  Decoration _getContainerDecoration() {
+  // Decoration _getContainerDecoration() {
+  //   return widget.inputDecoration ??
+  //       BoxDecoration(
+  //         color: widget.fieldBackgroundColor ?? Colors.white,
+  //         borderRadius: widget.radiusGeometry ??
+  //             BorderRadius.circular(widget.borderRadius ?? 12.0),
+  //         border: _selectionMode
+  //             ? Border.all(
+  //                 color: widget.focusedBorderColor ?? Colors.grey,
+  //                 width: widget.focusedBorderWidth ?? 0.4,
+  //               )
+  //             : Border.all(
+  //                 color: widget.borderColor ?? Colors.grey,
+  //                 width: widget.borderWidth ?? 0.4,
+  //               ),
+  //       );
+  // }
+
+  /// InputDecoration for the DropDown
+  InputDecoration _getInputDecoration() {
     return widget.inputDecoration ??
-        BoxDecoration(
-          color: widget.fieldBackgroundColor ?? Colors.white,
-          borderRadius: widget.radiusGeometry ??
-              BorderRadius.circular(widget.borderRadius ?? 12.0),
-          border: _selectionMode
-              ? Border.all(
-                  color: widget.focusedBorderColor ?? Colors.grey,
-                  width: widget.focusedBorderWidth ?? 0.4,
+        InputDecoration(
+          label: widget.label,
+          contentPadding: _getContentPadding(),
+          enabledBorder: _selectionMode
+              ? OutlineInputBorder(
+                  borderSide: BorderSide(
+                    color: widget.focusedBorderColor ?? Colors.grey,
+                    width: widget.focusedBorderWidth ?? 0.8,
+                  ),
+                  borderRadius: BorderRadius.circular(
+                    widget.borderRadius ?? 12.0,
+                  ),
                 )
-              : Border.all(
-                  color: widget.borderColor ?? Colors.grey,
-                  width: widget.borderWidth ?? 0.4,
+              : OutlineInputBorder(
+                  borderSide: BorderSide(
+                    color: widget.borderColor ?? Colors.grey,
+                    width: widget.borderWidth ?? 0.4,
+                  ),
+                  borderRadius: BorderRadius.circular(
+                    widget.borderRadius ?? 12.0,
+                  ),
                 ),
         );
   }
@@ -1103,13 +1139,13 @@ class _MultiSelectDropDownState<T> extends State<MultiSelectDropDown<T>> {
   }
 
   // get the container padding.
-  EdgeInsetsGeometry _getContainerPadding() {
+  EdgeInsetsGeometry _getContentPadding() {
     if (widget.padding != null) {
       return widget.padding!;
     }
     return widget.selectionType == SelectionType.single
         ? const EdgeInsets.symmetric(horizontal: 8.0, vertical: 8.0)
-        : const EdgeInsets.symmetric(horizontal: 8.0, vertical: 0);
+        : const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0);
   }
 }
 

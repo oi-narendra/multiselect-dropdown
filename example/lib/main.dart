@@ -72,12 +72,15 @@ class _MyHomePageState extends State<MyHomePage> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text('WRAP', style: MyHomePage._headerStyle),
                   const SizedBox(
                     height: 4,
                   ),
                   MultiSelectDropDown<User>(
                     controller: _controller,
+                    label: const Text(
+                      'WRAP',
+                      style: MyHomePage._headerStyle,
+                    ),
                     clearIcon: const Icon(Icons.reddit),
                     onOptionSelected: (options) {},
                     options: <ValueItem<User>>[
@@ -176,11 +179,14 @@ class _MyHomePageState extends State<MyHomePage> {
                   const SizedBox(
                     height: 50,
                   ),
-                  const Text('SCROLL', style: MyHomePage._headerStyle),
                   const SizedBox(
                     height: 4,
                   ),
                   MultiSelectDropDown(
+                    label: const Text(
+                      'SCROLL',
+                      style: MyHomePage._headerStyle,
+                    ),
                     onOptionSelected: (options) {
                       debugPrint(options.toString());
                     },
@@ -201,11 +207,14 @@ class _MyHomePageState extends State<MyHomePage> {
                   const SizedBox(
                     height: 50,
                   ),
-                  const Text('FROM NETWORK', style: MyHomePage._headerStyle),
                   const SizedBox(
                     height: 4,
                   ),
                   MultiSelectDropDown.network(
+                    label: const Text(
+                      'FROM NETWORK',
+                      style: MyHomePage._headerStyle,
+                    ),
                     dropdownHeight: 300,
                     onOptionSelected: (options) {
                       debugPrint(options.toString());

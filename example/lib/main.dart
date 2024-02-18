@@ -107,19 +107,13 @@ class _MyHomePageState extends State<MyHomePage> {
                       Icons.check_circle,
                       color: Colors.pink,
                     ),
-                    selectedOptionBackgroundColor: Colors.grey.shade300,
+                    searchEnabled: true,
+                    dropdownBorderRadius: 10,
+                    dropdownBackgroundColor: Colors.white,
+                    selectedOptionBackgroundColor: Colors.orange,
                     selectedOptionTextColor: Colors.blue,
                     dropdownMargin: 2,
                     onOptionRemoved: (index, option) {},
-                    optionBuilder: (context, valueItem, isSelected) {
-                      return ListTile(
-                        title: Text(valueItem.label),
-                        subtitle: Text(valueItem.value.toString()),
-                        trailing: isSelected
-                            ? const Icon(Icons.check_circle)
-                            : const Icon(Icons.radio_button_unchecked),
-                      );
-                    },
                   ),
                   const SizedBox(
                     height: 50,

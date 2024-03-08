@@ -3,21 +3,23 @@ library multiselect_dropdown;
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 import 'package:http/http.dart';
 import 'package:multi_dropdown/models/network_config.dart';
 import 'package:multi_dropdown/widgets/hint_text.dart';
 import 'package:multi_dropdown/widgets/selection_chip.dart';
 import 'package:multi_dropdown/widgets/single_selected_item.dart';
-import 'package:http/http.dart' as http;
 
-import 'models/chip_config.dart';
-import 'models/value_item.dart';
 import 'enum/app_enums.dart';
+import 'models/chip_config.dart';
+import 'models/custom_network_response.dart';
+import 'models/value_item.dart';
 
 export 'enum/app_enums.dart';
 export 'models/chip_config.dart';
-export 'models/value_item.dart';
+export 'models/custom_network_response.dart';
 export 'models/network_config.dart';
+export 'models/value_item.dart';
 
 typedef OnOptionSelected<T> = void Function(List<ValueItem<T>> selectedOptions);
 
@@ -103,6 +105,7 @@ class MultiSelectDropDown<T> extends StatefulWidget {
   final NetworkConfig? networkConfig;
   final Future<List<ValueItem<T>>> Function(dynamic)? responseParser;
   final Widget Function(BuildContext, dynamic)? responseErrorBuilder;
+  final Future<CustomNetworkResponse> Function()? customNetworkRequest;
 
   /// focus node
   final FocusNode? focusNode;
@@ -272,17 +275,25 @@ class MultiSelectDropDown<T> extends StatefulWidget {
       : networkConfig = null,
         responseParser = null,
         responseErrorBuilder = null,
+        customNetworkRequest = null,
         super(key: key);
 
   /// Constructor for MultiSelectDropDown that fetches the options from a network call.
+  ///
   /// [networkConfig] is the configuration for the network call.
+  ///
   /// [responseParser] is the parser that is used to parse the response from the network call.
+  ///
   /// [responseErrorBuilder] is the builder that is used to build the error widget when the network call fails.
+  ///
+  /// [customNetworkRequest] is a custom network request function. It returns
+  /// an instance of [CustomNetworkResponse]
 
   const MultiSelectDropDown.network(
       {Key? key,
       required this.onOptionSelected,
-      required this.networkConfig,
+      this.networkConfig,
+      this.customNetworkRequest,
       required this.responseParser,
       this.onOptionRemoved,
       this.responseErrorBuilder,
@@ -329,6 +340,10 @@ class MultiSelectDropDown<T> extends StatefulWidget {
       this.optionBuilder,
       this.searchLabel = 'Search'})
       : options = const [],
+        assert(!(customNetworkRequest == null && networkConfig == null),
+            'Either customNetworkRequest or networkConfig must be provided.'),
+        assert(!(customNetworkRequest != null && networkConfig != null),
+            'Only one of customNetworkRequest or networkConfig should be provided.'),
         super(key: key);
 
   @override
@@ -377,7 +392,8 @@ class _MultiSelectDropDownState<T> extends State<MultiSelectDropDown<T>> {
   /// If the options are passed as a parameter, then the options are initialized.
   void _initialize() async {
     if (!mounted) return;
-    if (widget.networkConfig?.url != null) {
+    if (widget.networkConfig?.url != null ||
+        widget.customNetworkRequest != null) {
       await _fetchNetwork();
     } else {
       _options.addAll(_controller.options.isNotEmpty == true
@@ -951,16 +967,26 @@ class _MultiSelectDropDownState<T> extends State<MultiSelectDropDown<T>> {
   /// Make a request to the provided url.
   /// The response then is parsed to a list of ValueItem objects.
   Future<void> _fetchNetwork() async {
-    final result = await _performNetworkRequest();
-    http.get(Uri.parse(widget.networkConfig!.url));
-    if (result.statusCode == 200) {
-      final data = json.decode(result.body);
-      final List<ValueItem<T>> parsedOptions =
-          await widget.responseParser!(data);
-      _reponseBody = null;
-      _options.addAll(parsedOptions);
+    if (widget.customNetworkRequest != null) {
+      final result = await widget.customNetworkRequest!();
+      if (result.statusCode >= 200 && result.statusCode < 299) {
+        final parsedOptions = await widget.responseParser!(result.body);
+        _reponseBody = null;
+        _options.addAll(parsedOptions);
+      } else {
+        _reponseBody = result.body;
+      }
     } else {
-      _reponseBody = result.body;
+      final result = await _performNetworkRequest();
+      if (result.statusCode == 200) {
+        final data = json.decode(result.body);
+        final List<ValueItem<T>> parsedOptions =
+            await widget.responseParser!(data);
+        _reponseBody = null;
+        _options.addAll(parsedOptions);
+      } else {
+        _reponseBody = result.body;
+      }
     }
   }
 

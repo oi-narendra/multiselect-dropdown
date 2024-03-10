@@ -952,7 +952,6 @@ class _MultiSelectDropDownState<T> extends State<MultiSelectDropDown<T>> {
   /// The response then is parsed to a list of ValueItem objects.
   Future<void> _fetchNetwork() async {
     final result = await _performNetworkRequest();
-    http.get(Uri.parse(widget.networkConfig!.url));
     if (result.statusCode == 200) {
       final data = json.decode(result.body);
       final List<ValueItem<T>> parsedOptions =

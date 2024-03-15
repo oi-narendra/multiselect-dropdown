@@ -205,31 +205,41 @@ class _MyHomePageState extends State<MyHomePage> {
                       debugPrint(options.toString());
                     },
                     searchEnabled: true,
-                    networkConfig: NetworkConfig(
-                      url: 'https://jsonplaceholder.typicode.com/users',
-                      method: RequestMethod.get,
-                      headers: {
-                        'Content-Type': 'application/json',
+                    networkRequest: NetworkRequest(
+                      // customRequest: () async {
+                      //   await Future.delayed(const Duration(seconds: 2));
+                      //   return const <ValueItem>[
+                      //     ValueItem(label: 'Option 1', value: '1'),
+                      //     ValueItem(label: 'Option 2', value: '2'),
+                      //     ValueItem(label: 'Option 3', value: '3'),
+                      //     ValueItem(label: 'Option 4', value: '4'),
+                      //     ValueItem(label: 'Option 5', value: '5'),
+                      //     ValueItem(label: 'Option 6', value: '6'),
+                      //   ];
+                      // },
+                      // responseErrorBuilder: ((context, body) {
+                      //   return const Padding(
+                      //     padding: EdgeInsets.all(16.0),
+                      //     child: Text('Error fetching the data'),
+                      //   );
+                      // }),
+                      url: 'https://jsonplaceholder.typicode.com/usersss',
+                      responseParser: (response) async {
+                        final List<ValueItem> items = [];
+                        for (final item in response) {
+                          items.add(ValueItem(
+                              label: item['name'], value: item['id']));
+                        }
+                        return items;
+                      },
+                      responseErrorBuilder: (context, body) {
+                        return const Padding(
+                          padding: EdgeInsets.all(16.0),
+                          child: Text('Error fetching the data'),
+                        );
                       },
                     ),
                     chipConfig: const ChipConfig(wrapType: WrapType.wrap),
-                    responseParser: (response) {
-                      final list = (response as List<dynamic>).map((e) {
-                        final item = e as Map<String, dynamic>;
-                        return ValueItem(
-                          label: item['name'],
-                          value: item['id'].toString(),
-                        );
-                      }).toList();
-
-                      return Future.value(list);
-                    },
-                    responseErrorBuilder: ((context, body) {
-                      return const Padding(
-                        padding: EdgeInsets.all(16.0),
-                        child: Text('Error fetching the data'),
-                      );
-                    }),
                   ),
                   ElevatedButton(
                     onPressed: () {

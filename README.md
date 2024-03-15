@@ -76,32 +76,32 @@ The MultiSelect Dropdown for Flutter is a powerful and customizable widget that 
 ```dart
 MultiSelectDropDown.network(
               onOptionSelected: (options) {},
-              networkConfig: NetworkConfig(
+              networkConfig: NetworkConfig(       // use .custom factory constructor for custom request
                 url: 'https://jsonplaceholder.typicode.com/users',
                 method: RequestMethod.get,
                 headers: {
                   'Content-Type': 'application/json',
                 },
+                responseParser: (response) {
+                    final list = (response as List<dynamic>).map((e) {
+                      final item = e as Map<String, dynamic>;
+                      return ValueItem(
+                        label: item['name'],
+                        value: item['id'].toString(),
+                      );
+                    }).toList();
+
+                  return Future.value(list);
+                },
+                responseErrorBuilder: ((context, body) {
+                  return const Padding(
+                    padding: EdgeInsets.all(16.0),
+                    child: Text('Error fetching the data'),
+                  );
+                }),
               ),
               chipConfig: const ChipConfig(wrapType: WrapType.wrap),
-              responseParser: (response) {
 
-                final list = (response as List<dynamic>).map((e) {
-                  final item = e as Map<String, dynamic>;
-                  return ValueItem(
-                    label: item['name'],
-                    value: item['id'].toString(),
-                  );
-                }).toList();
-
-                return Future.value(list);
-              },
-              responseErrorBuilder: ((context, body) {
-                return const Padding(
-                  padding: EdgeInsets.all(16.0),
-                  child: Text('Error fetching the data'),
-                );
-              }),
             )
 ```
 
@@ -265,25 +265,24 @@ class MyHomePage extends StatelessWidget {
                 headers: {
                   'Content-Type': 'application/json',
                 },
-              ),
-              chipConfig: const ChipConfig(wrapType: WrapType.wrap),
-              responseParser: (response) {
-                final list = (response as List<dynamic>).map((e) {
-                  final item = e as Map<String, dynamic>;
-                  return ValueItem(
-                    label: item['name'],
-                    value: item['id'].toString(),
-                  );
-                }).toList();
+                responseParser: (response) {
+                                final list = (response as List<dynamic>).map((e) {
+                                  final item = e as Map<String, dynamic>;
+                                  return ValueItem(
+                                    label: item['name'],
+                                    value: item['id'].toString(),
+                                  );
+                                }).toList();
 
-                return Future.value(list);
-              },
+                                return Future.value(list);
+                              },
               responseErrorBuilder: ((context, body) {
                 return const Padding(
                   padding: EdgeInsets.all(16.0),
                   child: Text('Error fetching the data'),
                 );
               }),
+              chipConfig: const ChipConfig(wrapType: WrapType.wrap),
             ),
           ],
         ),

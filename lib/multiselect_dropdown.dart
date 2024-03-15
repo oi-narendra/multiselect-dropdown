@@ -4,7 +4,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
-import 'package:multi_dropdown/models/network_config.dart';
+import 'package:multi_dropdown/models/network_request.dart';
 import 'package:multi_dropdown/widgets/hint_text.dart';
 import 'package:multi_dropdown/widgets/selection_chip.dart';
 import 'package:multi_dropdown/widgets/single_selected_item.dart';
@@ -17,7 +17,7 @@ import 'enum/app_enums.dart';
 export 'enum/app_enums.dart';
 export 'models/chip_config.dart';
 export 'models/value_item.dart';
-export 'models/network_config.dart';
+export 'models/network_request.dart';
 
 typedef OnOptionSelected<T> = void Function(List<ValueItem<T>> selectedOptions);
 
@@ -100,9 +100,7 @@ class MultiSelectDropDown<T> extends StatefulWidget {
   final double? dropdownMargin;
 
   // network configuration
-  final NetworkConfig? networkConfig;
-  final Future<List<ValueItem<T>>> Function(dynamic)? responseParser;
-  final Widget Function(BuildContext, dynamic)? responseErrorBuilder;
+  final NetworkRequest<T>? networkRequest;
 
   /// focus node
   final FocusNode? focusNode;
@@ -269,23 +267,19 @@ class MultiSelectDropDown<T> extends StatefulWidget {
       this.singleSelectItemStyle,
       this.optionBuilder,
       this.searchLabel = 'Search'})
-      : networkConfig = null,
-        responseParser = null,
-        responseErrorBuilder = null,
+      : networkRequest = null,
         super(key: key);
 
   /// Constructor for MultiSelectDropDown that fetches the options from a network call.
-  /// [networkConfig] is the configuration for the network call.
+  /// [networkRequest] is the configuration for the network call.
   /// [responseParser] is the parser that is used to parse the response from the network call.
   /// [responseErrorBuilder] is the builder that is used to build the error widget when the network call fails.
 
   const MultiSelectDropDown.network(
       {Key? key,
       required this.onOptionSelected,
-      required this.networkConfig,
-      required this.responseParser,
+      required this.networkRequest,
       this.onOptionRemoved,
-      this.responseErrorBuilder,
       this.selectedOptionTextColor,
       this.chipConfig = const ChipConfig(),
       this.selectionType = SelectionType.multi,
@@ -356,6 +350,9 @@ class _MultiSelectDropDownState<T> extends State<MultiSelectDropDown<T>> {
   /// Response from the network call.
   dynamic _reponseBody;
 
+  /// Network progress
+  bool _fetching = false;
+
   /// value notifier that is used for controller.
   late MultiSelectController<T> _controller;
 
@@ -377,8 +374,20 @@ class _MultiSelectDropDownState<T> extends State<MultiSelectDropDown<T>> {
   /// If the options are passed as a parameter, then the options are initialized.
   void _initialize() async {
     if (!mounted) return;
-    if (widget.networkConfig?.url != null) {
-      await _fetchNetwork();
+    if (widget.networkRequest != null) {
+      if (widget.networkRequest?.customRequest != null) {
+        setState(() {
+          _fetching = true;
+        });
+        widget.networkRequest!.customRequest!()?.then((value) {
+          setState(() {
+            _fetching = false;
+            _options.addAll(value);
+          });
+        });
+      } else {
+        _fetchNetwork();
+      }
     } else {
       _options.addAll(_controller.options.isNotEmpty == true
           ? _controller.options
@@ -429,8 +438,10 @@ class _MultiSelectDropDownState<T> extends State<MultiSelectDropDown<T>> {
 
   /// Handles the focus change to show/hide the dropdown.
   void _handleFocusChange() {
+    if (widget.networkRequest != null && _fetching) return;
+
     if (_focusNode.hasFocus && mounted) {
-      _overlayEntry = _reponseBody != null && widget.networkConfig != null
+      _overlayEntry = widget.networkRequest?.url != null && _reponseBody != null
           ? _buildNetworkErrorOverlayEntry()
           : _buildOverlayEntry();
       Overlay.of(context).insert(_overlayEntry!);
@@ -515,6 +526,10 @@ class _MultiSelectDropDownState<T> extends State<MultiSelectDropDown<T>> {
   }
 
   Widget _buildSuffixIcon() {
+    if (widget.networkRequest != null && _fetching) {
+      return const CircularProgressIndicator.adaptive();
+    }
+
     if (widget.animateSuffixIcon) {
       return AnimatedRotation(
         turns: _selectionMode ? 0.5 : 0,
@@ -951,53 +966,59 @@ class _MultiSelectDropDownState<T> extends State<MultiSelectDropDown<T>> {
   /// Make a request to the provided url.
   /// The response then is parsed to a list of ValueItem objects.
   Future<void> _fetchNetwork() async {
+    setState(() {
+      _fetching = true;
+    });
     final result = await _performNetworkRequest();
     if (result.statusCode == 200) {
       final data = json.decode(result.body);
       final List<ValueItem<T>> parsedOptions =
-          await widget.responseParser!(data);
+          await widget.networkRequest!.responseParser!(data);
       _reponseBody = null;
       _options.addAll(parsedOptions);
     } else {
       _reponseBody = result.body;
     }
+    setState(() {
+      _fetching = false;
+    });
   }
 
   /// Perform the network request according to the provided configuration.
   Future<Response> _performNetworkRequest() async {
-    switch (widget.networkConfig!.method) {
+    switch (widget.networkRequest!.method) {
       case RequestMethod.get:
         return await http.get(
-          Uri.parse(widget.networkConfig!.url),
-          headers: widget.networkConfig!.headers,
+          Uri.parse(widget.networkRequest!.url),
+          headers: widget.networkRequest!.headers,
         );
       case RequestMethod.post:
         return await http.post(
-          Uri.parse(widget.networkConfig!.url),
-          body: widget.networkConfig!.body,
-          headers: widget.networkConfig!.headers,
+          Uri.parse(widget.networkRequest!.url),
+          body: widget.networkRequest!.body,
+          headers: widget.networkRequest!.headers,
         );
       case RequestMethod.put:
         return await http.put(
-          Uri.parse(widget.networkConfig!.url),
-          body: widget.networkConfig!.body,
-          headers: widget.networkConfig!.headers,
+          Uri.parse(widget.networkRequest!.url),
+          body: widget.networkRequest!.body,
+          headers: widget.networkRequest!.headers,
         );
       case RequestMethod.patch:
         return await http.patch(
-          Uri.parse(widget.networkConfig!.url),
-          body: widget.networkConfig!.body,
-          headers: widget.networkConfig!.headers,
+          Uri.parse(widget.networkRequest!.url),
+          body: widget.networkRequest!.body,
+          headers: widget.networkRequest!.headers,
         );
       case RequestMethod.delete:
         return await http.delete(
-          Uri.parse(widget.networkConfig!.url),
-          headers: widget.networkConfig!.headers,
+          Uri.parse(widget.networkRequest!.url),
+          headers: widget.networkRequest!.headers,
         );
       default:
         return await http.get(
-          Uri.parse(widget.networkConfig!.url),
-          headers: widget.networkConfig!.headers,
+          Uri.parse(widget.networkRequest!.url),
+          headers: widget.networkRequest!.headers,
         );
     }
   }
@@ -1010,8 +1031,8 @@ class _MultiSelectDropDownState<T> extends State<MultiSelectDropDown<T>> {
 
     // final offsetY = showOnTop ? -(size.height + 5) : size.height + 5;
 
-    return OverlayEntry(builder: (context) {
-      return StatefulBuilder(builder: ((context, dropdownState) {
+    return OverlayEntry(builder: (_) {
+      return StatefulBuilder(builder: ((_, dropdownState) {
         return Stack(
           children: [
             Positioned.fill(
@@ -1023,40 +1044,42 @@ class _MultiSelectDropDownState<T> extends State<MultiSelectDropDown<T>> {
               ),
             )),
             CompositedTransformFollower(
-                link: _layerLink,
-                targetAnchor:
-                    showOnTop ? Alignment.topLeft : Alignment.bottomLeft,
-                followerAnchor:
-                    showOnTop ? Alignment.bottomLeft : Alignment.topLeft,
-                offset: widget.dropdownMargin != null
-                    ? Offset(
-                        0,
-                        showOnTop
-                            ? -widget.dropdownMargin!
-                            : widget.dropdownMargin!)
-                    : Offset.zero,
-                child: Material(
-                    borderRadius: widget.dropdownBorderRadius != null
-                        ? BorderRadius.circular(widget.dropdownBorderRadius!)
-                        : null,
-                    elevation: 4,
-                    child: Container(
-                        width: size.width,
-                        constraints: BoxConstraints.loose(
-                            Size(size.width, widget.dropdownHeight)),
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            widget.responseErrorBuilder != null
-                                ? widget.responseErrorBuilder!(
-                                    context, _reponseBody)
-                                : Padding(
-                                    padding: const EdgeInsets.all(16.0),
-                                    child: Text(
-                                        'Error fetching data: $_reponseBody'),
-                                  ),
-                          ],
-                        ))))
+              link: _layerLink,
+              targetAnchor:
+                  showOnTop ? Alignment.topLeft : Alignment.bottomLeft,
+              followerAnchor:
+                  showOnTop ? Alignment.bottomLeft : Alignment.topLeft,
+              offset: widget.dropdownMargin != null
+                  ? Offset(
+                      0,
+                      showOnTop
+                          ? -widget.dropdownMargin!
+                          : widget.dropdownMargin!)
+                  : Offset.zero,
+              child: Material(
+                borderRadius: widget.dropdownBorderRadius != null
+                    ? BorderRadius.circular(widget.dropdownBorderRadius!)
+                    : null,
+                elevation: 4,
+                child: Container(
+                  width: size.width,
+                  constraints: BoxConstraints.loose(
+                      Size(size.width, widget.dropdownHeight)),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      widget.networkRequest?.responseErrorBuilder != null
+                          ? widget.networkRequest!.responseErrorBuilder!(
+                              context, _reponseBody)
+                          : Padding(
+                              padding: const EdgeInsets.all(16.0),
+                              child: Text('Error fetching data: $_reponseBody'),
+                            ),
+                    ],
+                  ),
+                ),
+              ),
+            )
           ],
         );
       }));

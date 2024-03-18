@@ -1,4 +1,7 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:http/http.dart';
 import 'package:multi_dropdown/multiselect_dropdown.dart';
 
 void main() {
@@ -57,7 +60,14 @@ class User {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  final MultiSelectController<User> _controller = MultiSelectController();
+  final MultiSelectController<User> _controller =
+      MultiSelectController(options: [
+    ValueItem(label: 'Option 1', value: User(name: 'User 1', id: 1)),
+    ValueItem(label: 'Option 2', value: User(name: 'User 2', id: 2)),
+    ValueItem(label: 'Option 3', value: User(name: 'User 3', id: 3)),
+    ValueItem(label: 'Option 4', value: User(name: 'User 4', id: 4)),
+    ValueItem(label: 'Option 5', value: User(name: 'User 5', id: 5)),
+  ]);
 
   final List<ValueItem> _selectedOptions = [];
 
@@ -79,24 +89,6 @@ class _MyHomePageState extends State<MyHomePage> {
                   MultiSelectDropDown<User>(
                     controller: _controller,
                     clearIcon: const Icon(Icons.reddit),
-                    onOptionSelected: (options) {},
-                    options: <ValueItem<User>>[
-                      ValueItem(
-                          label: 'Option 1',
-                          value: User(name: 'User 1', id: 1)),
-                      ValueItem(
-                          label: 'Option 2',
-                          value: User(name: 'User 2', id: 2)),
-                      ValueItem(
-                          label: 'Option 3',
-                          value: User(name: 'User 3', id: 3)),
-                      ValueItem(
-                          label: 'Option 4',
-                          value: User(name: 'User 4', id: 4)),
-                      ValueItem(
-                          label: 'Option 5',
-                          value: User(name: 'User 5', id: 5)),
-                    ],
                     maxItems: 4,
                     singleSelectItemStyle: const TextStyle(
                         fontSize: 16, fontWeight: FontWeight.bold),
@@ -113,7 +105,9 @@ class _MyHomePageState extends State<MyHomePage> {
                     selectedOptionBackgroundColor: Colors.orange,
                     selectedOptionTextColor: Colors.blue,
                     dropdownMargin: 2,
-                    onOptionRemoved: (index, option) {},
+                    onChanged: (options) {
+                      debugPrint(options.toString());
+                    },
                   ),
                   const SizedBox(
                     height: 50,
@@ -191,6 +185,9 @@ class _MyHomePageState extends State<MyHomePage> {
                     dropdownHeight: 400,
                     optionTextStyle: const TextStyle(fontSize: 16),
                     selectedOptionIcon: const Icon(Icons.check_circle),
+                    onOptionRemoved: (index, option) {
+                      debugPrint(option.toString());
+                    },
                   ),
                   const SizedBox(
                     height: 50,
@@ -199,37 +196,42 @@ class _MyHomePageState extends State<MyHomePage> {
                   const SizedBox(
                     height: 4,
                   ),
-                  MultiSelectDropDown.network(
+                  MultiSelectDropDown.async(
                     dropdownHeight: 300,
                     onOptionSelected: (options) {
                       debugPrint(options.toString());
                     },
                     searchEnabled: true,
-                    networkConfig: NetworkConfig(
-                      url: 'https://jsonplaceholder.typicode.com/users',
-                      method: RequestMethod.get,
-                      headers: {
-                        'Content-Type': 'application/json',
-                      },
-                    ),
-                    chipConfig: const ChipConfig(wrapType: WrapType.wrap),
-                    responseParser: (response) {
-                      final list = (response as List<dynamic>).map((e) {
-                        final item = e as Map<String, dynamic>;
-                        return ValueItem(
-                          label: item['name'],
-                          value: item['id'].toString(),
-                        );
-                      }).toList();
-
-                      return Future.value(list);
+                    asyncOptions: (search) async {
+                      var response = await get(
+                        Uri.parse('https://jsonplaceholder.typicode.com/users'),
+                        headers: {
+                          'Content-Type': 'application/json',
+                        },
+                      );
+                      return (jsonDecode(response.body) as List<dynamic>)
+                          .map((e) {
+                            final item = e as Map<String, dynamic>;
+                            return ValueItem(
+                              label: item['name'],
+                              value: item['id'].toString(),
+                            );
+                          })
+                          .where((element) => element.label
+                              .toLowerCase()
+                              .contains(search.toLowerCase()))
+                          .toList();
                     },
+                    chipConfig: const ChipConfig(wrapType: WrapType.wrap),
                     responseErrorBuilder: ((context, body) {
                       return const Padding(
                         padding: EdgeInsets.all(16.0),
                         child: Text('Error fetching the data'),
                       );
                     }),
+                    onOptionRemoved: (index, option) {
+                      debugPrint(option.toString());
+                    },
                   ),
                   ElevatedButton(
                     onPressed: () {

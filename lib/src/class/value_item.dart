@@ -19,25 +19,19 @@ class ValueItem<T> {
 
   /// toString method for [ValueItem]
   @override
-  String toString() {
-    return 'ValueItem(label: $label, value: $value)';
-  }
+  String toString() => 'ValueItem(label: $label, value: $value)';
 
   /// toMap method for [ValueItem]
-  Map<String, dynamic> toMap() {
-    return {
-      'label': label,
-      'value': value,
-    };
-  }
+  Map<String, dynamic> toMap() => {
+        'label': label,
+        'value': value,
+      };
 
   /// fromMap method for [ValueItem]
-  factory ValueItem.fromMap(Map<String, dynamic> map) {
-    return ValueItem<T>(
-      label: map['label'] ?? '',
-      value: map['value'],
-    );
-  }
+  factory ValueItem.fromMap(Map<String, dynamic> map) => ValueItem<T>(
+        label: map['label'] ?? '',
+        value: map['value'],
+      );
 
   /// toJson method for [ValueItem]
   String toJson() => json.encode(toMap());
@@ -64,10 +58,9 @@ class ValueItem<T> {
   ValueItem<T> copyWith({
     String? label,
     T? value,
-  }) {
-    return ValueItem<T>(
-      label: label ?? this.label,
-      value: value ?? this.value,
-    );
-  }
+  }) =>
+      ValueItem<T>(
+        label: label ?? this.label,
+        value: value ?? this.value,
+      );
 }

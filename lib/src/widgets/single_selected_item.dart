@@ -15,17 +15,15 @@ class SingleSelectedItem extends StatelessWidget {
   }) : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 10.0),
-      child: Text(
-        label,
-        style: style ??
-            TextStyle(
-              fontSize: 13,
-              color: Colors.grey.shade700,
-            ),
-      ),
-    );
-  }
+  Widget build(BuildContext context) => Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 10.0),
+        child: Text(
+          label,
+          style: style ??
+              TextStyle(
+                fontSize: 13,
+                color: Colors.grey.shade700,
+              ),
+        ),
+      );
 }

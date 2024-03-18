@@ -34,24 +34,24 @@ class _UsageWithFormState extends State<UsageWithForm> {
                   mainAxisSize: MainAxisSize.min,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    MultiSelectDropDown<User>(
+                    MultiSelectDropDown<ExampleValueOption<User>>(
                       onOptionSelected: (options) {
                         field.didChange(options.map((e) => e.value!).toList());
                       },
-                      options: <ValueItem<User>>[
-                        ValueItem(
+                      options: <ExampleValueOption<User>>[
+                        ExampleValueOption(
                             label: 'Option 1',
                             value: User(name: 'User 1', id: 1)),
-                        ValueItem(
+                        ExampleValueOption(
                             label: 'Option 2',
                             value: User(name: 'User 2', id: 2)),
-                        ValueItem(
+                        ExampleValueOption(
                             label: 'Option 3',
                             value: User(name: 'User 3', id: 3)),
-                        ValueItem(
+                        ExampleValueOption(
                             label: 'Option 4',
                             value: User(name: 'User 4', id: 4)),
-                        ValueItem(
+                        ExampleValueOption(
                             label: 'Option 5',
                             value: User(name: 'User 5', id: 5)),
                       ],
@@ -91,4 +91,12 @@ class _UsageWithFormState extends State<UsageWithForm> {
       ),
     );
   }
+}
+
+class ExampleValueOption<T> {
+  final String label;
+
+  final T? value;
+
+  const ExampleValueOption({required this.label, required this.value});
 }

@@ -20,17 +20,15 @@ class HintText extends StatelessWidget {
       EdgeInsets.symmetric(horizontal: 10.0);
 
   @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: hintPadding ?? hintPaddingDefault,
-      child: Text(
-        hintText,
-        style: hintStyle ??
-            TextStyle(
-              fontSize: 13,
-              color: hintColor ?? Colors.grey.shade300,
-            ),
-      ),
-    );
-  }
+  Widget build(BuildContext context) => Padding(
+        padding: hintPadding ?? hintPaddingDefault,
+        child: Text(
+          hintText,
+          style: hintStyle ??
+              TextStyle(
+                fontSize: 13,
+                color: hintColor ?? Colors.grey.shade300,
+              ),
+        ),
+      );
 }

@@ -1,4 +1,22 @@
 include: package:flutter_lints/flutter.yaml
 
-# Additional information about this file can be found at
-# https://dart.dev/guides/language/analysis-options
+linter:
+  rules:
+    # avoid_print: false  # Uncomment to disable the `avoid_print` rule
+    # prefer_single_quotes: true  # Uncomment to enable the `prefer_single_quotes` rule
+    - always_declare_return_types
+    - avoid_unused_constructor_parameters
+    - directives_ordering
+    - omit_local_variable_types
+    - prefer_expression_function_bodies
+    - prefer_final_fields
+    - prefer_final_locals
+    - prefer_relative_imports
+    - prefer_single_quotes
+    - sized_box_for_whitespace
+    - sort_child_properties_last
+    - sort_pub_dependencies
+    - type_annotate_public_apis
+    - unawaited_futures
+    - use_named_constants
+    - use_super_parameters

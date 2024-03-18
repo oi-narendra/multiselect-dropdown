@@ -345,7 +345,7 @@ _controller.hideDropdown(); /// Hide the dropdown if it is open
 | options                       | List<ValueItem>                            | Options                          |
 | selectedOptions               | List<ValueItem>                            | Selected options                 |
 | disabledOptions               | List<ValueItem>                            | Disabled options                 |
-| onOptionRemoved               | Function(int index, ValueItem<T> option)?  | On option removed                |
+| onOptionRemoved               | Function(int index, T option)?  | On option removed                |
 | onOptionSelected              | Function(List<ValueItem>)?                 | On option selected               |
 | selectedOptionIcon            | Icon?                                      | Selected option icon             |
 | selectedOptionTextColor       | Color?                                     | Selected option text color       |
@@ -382,4 +382,4 @@ _controller.hideDropdown(); /// Hide the dropdown if it is open
 | searchLabel                   | String?                                    | Search label                     |
 | animateSuffixIcon             | bool                                       | Animate Suffix Icon              |
 | singleSelectItemStyle         | TextStyle?                                 | Single select item style         |
-| optionBuilder                 | Widget Function(ctx, ValueItem<T>, bool)?  | Option builder                   |
+| optionBuilder                 | Widget Function(ctx, T, bool)?  | Option builder                   |

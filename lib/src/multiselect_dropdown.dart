@@ -3,7 +3,8 @@ import 'package:provider/provider.dart';
 
 import '../multiselect_dropdown.dart';
 
-typedef OnOptionSelected<T> = void Function(List<ValueItem<T>> selectedOptions);
+typedef OnOptionSelected<T> = void Function(List<T> selectedOptions);
+typedef OptionAsString<T> = String Function(T option);
 
 class MultiSelectDropDown<T> extends StatefulWidget {
   // selection type of the dropdown
@@ -17,11 +18,12 @@ class MultiSelectDropDown<T> extends StatefulWidget {
   final EdgeInsetsGeometry? hintPadding;
 
   // Options
-  final List<ValueItem<T>> options;
-  final List<ValueItem<T>> selectedOptions;
-  final List<ValueItem<T>> disabledOptions;
+  final List<T> options;
+  final List<T> selectedOptions;
+  final List<T> disabledOptions;
   final OnOptionSelected<T>? onOptionSelected;
   final OnOptionSelected<T>? onChanged;
+  final OptionAsString<T>? optionAsString;
 
   /// [onOptionRemoved] is the callback that is called when an option is removed.The callback takes two arguments, the index of the removed option and the removed option.
   /// This will be called only when the delete icon is clicked on the option chip.
@@ -31,13 +33,13 @@ class MultiSelectDropDown<T> extends StatefulWidget {
   /// ```index``` is the index of the removed option.
   ///
   /// ```option``` is the removed option.
-  final void Function(int index, ValueItem<T> option)? onOptionRemoved;
+  final void Function(int index, T option)? onOptionRemoved;
 
   // selected option
   final Icon? selectedOptionIcon;
   final Color? selectedOptionTextColor;
   final Color? selectedOptionBackgroundColor;
-  final Widget Function(BuildContext, ValueItem<T>)? selectedItemBuilder;
+  final Widget Function(BuildContext, T)? selectedItemBuilder;
 
   // chip configuration
   final bool showChipInSingleSelectMode;
@@ -56,8 +58,7 @@ class MultiSelectDropDown<T> extends StatefulWidget {
   /// The builder returns a widget.
   ///
 
-  final Widget Function(BuildContext ctx, ValueItem<T> item, bool selected)?
-      optionBuilder;
+  final Widget Function(BuildContext ctx, T item, bool selected)? optionBuilder;
 
   // dropdownfield configuration
   final Color? fieldBackgroundColor;
@@ -88,7 +89,7 @@ class MultiSelectDropDown<T> extends StatefulWidget {
       responseErrorBuilder;
 
   //Async configuration
-  final Future<List<ValueItem<T>>> Function(String search)? asyncOptions;
+  final Future<List<T>> Function(String search)? asyncOptions;
 
   /// focus node
   final FocusNode? focusNode;
@@ -214,6 +215,7 @@ class MultiSelectDropDown<T> extends StatefulWidget {
       this.options = const [],
       this.onOptionRemoved,
       this.onChanged,
+      this.optionAsString,
       this.selectedOptionTextColor,
       this.chipConfig = const ChipConfig(),
       this.selectionType = SelectionType.multi,
@@ -266,6 +268,7 @@ class MultiSelectDropDown<T> extends StatefulWidget {
       required this.asyncOptions,
       this.onOptionRemoved,
       this.onChanged,
+      this.optionAsString,
       this.responseErrorBuilder,
       this.selectedOptionTextColor,
       this.chipConfig = const ChipConfig(),
@@ -464,6 +467,9 @@ class _MultiSelectDropDownState<T> extends State<MultiSelectDropDown<T>> {
         ),
       );
 
+  String _optionLabel(T option) =>
+      widget.optionAsString?.call(option) ?? option.toString();
+
   Widget _buildSuffixIcon() {
     if (widget.animateSuffixIcon) {
       return AnimatedRotation(
@@ -489,7 +495,7 @@ class _MultiSelectDropDownState<T> extends State<MultiSelectDropDown<T>> {
     if (widget.selectionType == SelectionType.single &&
         !widget.showChipInSingleSelectMode) {
       return SingleSelectedItem(
-          label: _c.selectedOptions.first.label,
+          label: _optionLabel(_c.selectedOptions.first),
           style: widget.singleSelectItemStyle);
     }
 
@@ -605,9 +611,10 @@ class _MultiSelectDropDownState<T> extends State<MultiSelectDropDown<T>> {
   }
 
   /// Build the selected item chip.
-  Widget _buildChip(ValueItem<T> item, ChipConfig chipConfig, isEnabled) =>
+  Widget _buildChip(T item, ChipConfig chipConfig, isEnabled) =>
       SelectionChip<T>(
         item: item,
+        label: _optionLabel(item),
         chipConfig: chipConfig,
         onItemDelete: isEnabled
             ? (removedItem) {
@@ -776,7 +783,8 @@ class _MultiSelectDropDownState<T> extends State<MultiSelectDropDown<T>> {
                                   } else {
                                     dropdownState(() {
                                       options = _c.options
-                                          .where((element) => element.label
+                                          .where((element) => _optionLabel(
+                                                  element)
                                               .toLowerCase()
                                               .contains(value.toLowerCase()))
                                           .toList();
@@ -796,7 +804,7 @@ class _MultiSelectDropDownState<T> extends State<MultiSelectDropDown<T>> {
                           ),
                         if (widget.asyncOptions != null)
                           Expanded(
-                            child: FutureBuilder<List<ValueItem<T>>>(
+                            child: FutureBuilder<List<T>>(
                               builder: (context, snapshot) {
                                 if (snapshot.connectionState !=
                                     ConnectionState.done) {
@@ -839,8 +847,7 @@ class _MultiSelectDropDownState<T> extends State<MultiSelectDropDown<T>> {
     );
   }
 
-  Widget _getList(BuildContext context, List<ValueItem<T>> options) =>
-      ListView.separated(
+  Widget _getList(BuildContext context, List<T> options) => ListView.separated(
         separatorBuilder: (_, __) =>
             widget.optionSeparator ?? const SizedBox(height: 0),
         shrinkWrap: true,
@@ -848,7 +855,10 @@ class _MultiSelectDropDownState<T> extends State<MultiSelectDropDown<T>> {
         itemCount: options.length,
         itemBuilder: (context, index) {
           final option = options[index];
-          final isSelected = context.watch<MultiSelectController<T>>().selectedOptions.contains(option);
+          final isSelected = context
+              .watch<MultiSelectController<T>>()
+              .selectedOptions
+              .contains(option);
           void onTap() {
             if (widget.selectionType == SelectionType.multi) {
               if (isSelected) {
@@ -867,6 +877,7 @@ class _MultiSelectDropDownState<T> extends State<MultiSelectDropDown<T>> {
             widget.onOptionSelected?.call(_c.selectedOptions);
             widget.onChanged?.call(_c.selectedOptions);
           }
+
           if (widget.optionBuilder != null) {
             return InkWell(
               onTap: onTap,
@@ -885,14 +896,14 @@ class _MultiSelectDropDownState<T> extends State<MultiSelectDropDown<T>> {
       );
 
   ListTile _buildOption(
-          {required ValueItem<T> option,
+          {required T option,
           required Color primaryColor,
           required bool isSelected,
           required void Function() onTap,
-          required List<ValueItem<T>> selectedOptions}) =>
+          required List<T> selectedOptions}) =>
       ListTile(
         title: Text(
-          option.label,
+          _optionLabel(option),
           style: widget.optionTextStyle ??
               TextStyle(
                 fontSize: widget.hintFontSize,

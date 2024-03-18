@@ -5,21 +5,23 @@ import '../../multiselect_dropdown.dart';
 /// It is used to build the selected option chip.
 class SelectionChip<T> extends StatelessWidget {
   final ChipConfig chipConfig;
-  final Function(ValueItem<T>)? onItemDelete;
-  final ValueItem<T> item;
+  final Function(T)? onItemDelete;
+  final T item;
+  final String label;
 
   const SelectionChip({
     Key? key,
     required this.chipConfig,
     required this.item,
     required this.onItemDelete,
+    required this.label,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) => Chip(
         padding: chipConfig.padding.copyWith(
             right: chipConfig.padding.right + (onItemDelete == null ? 8 : 0)),
-        label: Text(item.label),
+        label: Text(label),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(chipConfig.radius),
         ),

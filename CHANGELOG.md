@@ -98,3 +98,8 @@ the delete icon/button in chips.
 - Added ```singleSelectItemStyle``` property to dropdown field. Use this property to set the style of the selected item in single select dropdown.
 - Fixed suffixIcon animation issue in dropdown field, also added ```animateSuffixIcon``` property to enable/disable suffix icon animation.
 - Added ```optionBuilder``` property to dropdown field. Use this property to build custom dropdown options.
+
+# 3.0.0 - 2024-03-18
+#### [@rickypid](https://github.com/rickypid)
+
+- Refactoring (//ToDo to be defined all changes and breaking changes) 

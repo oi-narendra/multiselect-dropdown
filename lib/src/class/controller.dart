@@ -1,28 +1,25 @@
 import 'package:flutter/material.dart';
 
-import 'value_item.dart';
-
 /// MultiSelect Controller class.
 /// This class is used to control the state of the MultiSelectDropdown widget.
 /// This is just base class. The implementation of this class is in the MultiSelectController class.
 /// The implementation of this class is hidden from the user.
-class _MultiSelectController<T> {}
 
 /// implementation of the MultiSelectController class.
 class MultiSelectController<T> extends ChangeNotifier {
   MultiSelectController({
-    List<ValueItem<T>> disabledOptions = const [],
-    List<ValueItem<T>> options = const [],
-    List<ValueItem<T>> selectedOptions = const [],
+    List<T> disabledOptions = const [],
+    List<T> options = const [],
+    List<T> selectedOptions = const [],
   }) {
     _disabledOptions.addAll(disabledOptions);
     _options.addAll(options);
     _selectedOptions.addAll(selectedOptions);
   }
 
-  final List<ValueItem<T>> _disabledOptions = [];
-  final List<ValueItem<T>> _options = [];
-  final List<ValueItem<T>> _selectedOptions = [];
+  final List<T> _disabledOptions = [];
+  final List<T> _options = [];
+  final List<T> _selectedOptions = [];
 
   /// return true if any item is selected.
   bool get anyItemSelected => selectedOptions.isNotEmpty;
@@ -49,7 +46,7 @@ class MultiSelectController<T> extends ChangeNotifier {
 
   /// clear specific selected option
   /// [MultiSelectController] is used to clear specific selected option.
-  void clearSelection(ValueItem<T> option) {
+  void clearSelection(T option) {
     if (!_selectedOptions.contains(option)) return;
 
     if (_disabledOptions.contains(option)) {
@@ -67,7 +64,7 @@ class MultiSelectController<T> extends ChangeNotifier {
 
   /// select the options
   /// [MultiSelectController] is used to select the options.
-  void setSelectedOptions(List<ValueItem<T>> options) {
+  void setSelectedOptions(List<T> options) {
     if (options.any((element) => _disabledOptions.contains(element))) {
       throw Exception('Cannot select disabled options');
     }
@@ -83,7 +80,7 @@ class MultiSelectController<T> extends ChangeNotifier {
 
   /// add selected option
   /// [MultiSelectController] is used to add selected option.
-  void addSelectedOption(ValueItem<T> option) {
+  void addSelectedOption(T option) {
     if (_disabledOptions.contains(option)) {
       throw Exception('Cannot select disabled option');
     }
@@ -98,7 +95,7 @@ class MultiSelectController<T> extends ChangeNotifier {
 
   /// remove selected option
   /// [MultiSelectController] is used to remove selected option.
-  void removeSelectedOption(ValueItem<T> option) {
+  void removeSelectedOption(T option) {
     if (!_selectedOptions.contains(option)) {
       throw Exception(
           'Cannot remove option that is not in the selected options list');
@@ -109,7 +106,7 @@ class MultiSelectController<T> extends ChangeNotifier {
 
   /// set disabled options
   /// [MultiSelectController] is used to set disabled options.
-  void setDisabledOptions(List<ValueItem<T>> disabledOptions) {
+  void setDisabledOptions(List<T> disabledOptions) {
     if (disabledOptions.any((element) => !_options.contains(element))) {
       throw Exception(
           'Cannot disable options that are not in the options list');
@@ -122,7 +119,7 @@ class MultiSelectController<T> extends ChangeNotifier {
 
   /// setDisabledOption method
   /// [MultiSelectController] is used to set disabled option.
-  void setDisabledOption(ValueItem<T> disabledOption) {
+  void setDisabledOption(T disabledOption) {
     if (!_options.contains(disabledOption)) {
       throw Exception('Cannot disable option that is not in the options list');
     }
@@ -133,24 +130,24 @@ class MultiSelectController<T> extends ChangeNotifier {
 
   /// set options
   /// [MultiSelectController] is used to set options.
-  void setOptions(List<ValueItem<T>> options) {
+  void setOptions(List<T> options) {
     _options.clear();
     _options.addAll(options);
     notifyListeners();
   }
 
   /// get disabled options
-  List<ValueItem<T>> get disabledOptions => _disabledOptions;
+  List<T> get disabledOptions => _disabledOptions;
 
   /// get enabled options
-  List<ValueItem<T>> get enabledOptions =>
+  List<T> get enabledOptions =>
       _options.where((element) => !_disabledOptions.contains(element)).toList();
 
   /// get options
-  List<ValueItem<T>> get options => _options;
+  List<T> get options => _options;
 
   /// get selected options
-  List<ValueItem<T>> get selectedOptions => _selectedOptions;
+  List<T> get selectedOptions => _selectedOptions;
 
   /// get is dropdown open
   bool get isDropdownOpen => _isDropdownOpen;

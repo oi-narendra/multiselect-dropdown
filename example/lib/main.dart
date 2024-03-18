@@ -55,21 +55,21 @@ class User {
 
   @override
   String toString() {
-    return 'User(name: $name, id: $id)';
+    return '$id: $name';
   }
 }
 
 class _MyHomePageState extends State<MyHomePage> {
   final MultiSelectController<User> _controller =
       MultiSelectController(options: [
-    ValueItem(label: 'Option 1', value: User(name: 'User 1', id: 1)),
-    ValueItem(label: 'Option 2', value: User(name: 'User 2', id: 2)),
-    ValueItem(label: 'Option 3', value: User(name: 'User 3', id: 3)),
-    ValueItem(label: 'Option 4', value: User(name: 'User 4', id: 4)),
-    ValueItem(label: 'Option 5', value: User(name: 'User 5', id: 5)),
+    User(name: 'User 1', id: 1),
+    User(name: 'User 2', id: 2),
+    User(name: 'User 3', id: 3),
+    User(name: 'User 4', id: 4),
+    User(name: 'User 5', id: 5),
   ]);
 
-  final List<ValueItem> _selectedOptions = [];
+  final List<User> _selectedOptions = [];
 
   @override
   Widget build(BuildContext context) {
@@ -168,18 +168,12 @@ class _MyHomePageState extends State<MyHomePage> {
                   const SizedBox(
                     height: 4,
                   ),
-                  MultiSelectDropDown(
+                  MultiSelectDropDown<int>(
                     onOptionSelected: (options) {
                       debugPrint(options.toString());
                     },
-                    options: const <ValueItem>[
-                      ValueItem(label: 'Option 1', value: '1'),
-                      ValueItem(label: 'Option 2', value: '2'),
-                      ValueItem(label: 'Option 3', value: '3'),
-                      ValueItem(label: 'Option 4', value: '4'),
-                      ValueItem(label: 'Option 5', value: '5'),
-                      ValueItem(label: 'Option 6', value: '6'),
-                    ],
+                    optionAsString: (option) => 'Option $option',
+                    options: List.generate(10, (index) => index + 1),
                     selectionType: SelectionType.multi,
                     chipConfig: const ChipConfig(wrapType: WrapType.scroll),
                     dropdownHeight: 400,
@@ -212,12 +206,10 @@ class _MyHomePageState extends State<MyHomePage> {
                       return (jsonDecode(response.body) as List<dynamic>)
                           .map((e) {
                             final item = e as Map<String, dynamic>;
-                            return ValueItem(
-                              label: item['name'],
-                              value: item['id'].toString(),
-                            );
+                            return item['name'];
                           })
-                          .where((element) => element.label
+                          //Custom searching function
+                          .where((element) => element
                               .toLowerCase()
                               .contains(search.toLowerCase()))
                           .toList();

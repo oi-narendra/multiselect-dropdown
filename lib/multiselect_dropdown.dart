@@ -858,6 +858,8 @@ class _MultiSelectDropDownState<T> extends State<MultiSelectDropDown<T>> {
                                     setState(() {
                                       _selectedOptions.remove(option);
                                     });
+                                    widget.onOptionRemoved?.call(index, option);
+                                    _controller.clearSelection(option);
                                   } else {
                                     final bool hasReachMax =
                                         widget.maxItems == null

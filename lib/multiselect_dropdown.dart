@@ -93,6 +93,9 @@ class MultiSelectDropDown<T> extends StatefulWidget {
   final int? maxItems;
 
   final Color? dropdownBackgroundColor;
+  final Color? dropdownBorderColor;
+  final double? dropdownBorderWidth;
+  final double? dropdownElevation;
   final Color? searchBackgroundColor;
 
   // dropdown border radius
@@ -264,6 +267,9 @@ class MultiSelectDropDown<T> extends StatefulWidget {
       this.dropdownBorderRadius,
       this.dropdownMargin,
       this.dropdownBackgroundColor,
+      this.dropdownBorderColor,
+      this.dropdownBorderWidth,
+      this.dropdownElevation,
       this.searchBackgroundColor,
       this.animateSuffixIcon = true,
       this.singleSelectItemStyle,
@@ -323,6 +329,9 @@ class MultiSelectDropDown<T> extends StatefulWidget {
       this.dropdownBorderRadius,
       this.dropdownMargin,
       this.dropdownBackgroundColor,
+      this.dropdownBorderColor,
+      this.dropdownBorderWidth,
+      this.dropdownElevation,
       this.searchBackgroundColor,
       this.animateSuffixIcon = true,
       this.singleSelectItemStyle,
@@ -749,11 +758,15 @@ class _MultiSelectDropDownState<T> extends State<MultiSelectDropDown<T>> {
                   : Offset.zero,
               child: Material(
                   color: widget.dropdownBackgroundColor ?? Colors.white,
-                  elevation: 4,
+                  elevation: widget.dropdownElevation ?? 4,
                   clipBehavior: Clip.antiAlias,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.all(
                       Radius.circular(widget.dropdownBorderRadius ?? 0),
+                    ),
+                    side: BorderSide(
+                      color: widget.dropdownBorderColor ?? Colors.grey.shade300,
+                      width: widget.dropdownBorderWidth ?? 0,
                     ),
                   ),
                   shadowColor: Colors.black,
@@ -1041,7 +1054,7 @@ class _MultiSelectDropDownState<T> extends State<MultiSelectDropDown<T>> {
                     borderRadius: widget.dropdownBorderRadius != null
                         ? BorderRadius.circular(widget.dropdownBorderRadius!)
                         : null,
-                    elevation: 4,
+                    elevation: widget.dropdownElevation ?? 4,
                     child: Container(
                         width: size.width,
                         constraints: BoxConstraints.loose(

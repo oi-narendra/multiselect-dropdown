@@ -1,4 +1,9 @@
-include: package:flutter_lints/flutter.yaml
+include: package:very_good_analysis/analysis_options.yaml
 
 # Additional information about this file can be found at
 # https://dart.dev/guides/language/analysis-options
+
+linter:
+  rules:
+    lines_longer_than_80_chars: false
+    avoid_equals_and_hash_code_on_mutable_classes: false

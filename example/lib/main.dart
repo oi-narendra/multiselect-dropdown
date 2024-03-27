@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:multi_dropdown/multiselect_dropdown.dart';
 
@@ -12,19 +13,10 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: 'Multiselect dropdown demo',
       debugShowCheckedModeBanner: false,
       themeMode: ThemeMode.dark,
       theme: ThemeData(
-        // This is the theme of your application.
-        //
-        // Try running your application with "flutter run". You'll see the
-        // application has a blue toolbar. Then, without quitting the app, try
-        // changing the primarySwatch below to Colors.green and then invoke
-        // "hot reload" (press "r" in the console where you ran "flutter run",
-        // or simply save your changes to "hot reload" in a Flutter IDE).
-        // Notice that the counter didn't reset back to zero; the application
-        // is not restarted.
         primarySwatch: Colors.green,
       ),
       home: const MyHomePage(),
@@ -57,17 +49,39 @@ class User {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  final MultiSelectController<User> _controller = MultiSelectController();
+  final _formKey = GlobalKey<FormState>();
 
-  final List<ValueItem> _selectedOptions = [];
+  final controller = MultiSelectController<User>();
 
   @override
   Widget build(BuildContext context) {
+    var items = [
+      DropdownItem(
+        label: 'Nepal',
+        value: User(name: 'Nepal', id: 1),
+      ),
+      DropdownItem(
+        label: 'India',
+        value: User(name: 'India', id: 2),
+      ),
+      DropdownItem(
+        label: 'China',
+        value: User(name: 'China', id: 3),
+      ),
+      DropdownItem(
+        label: 'USA',
+        value: User(name: 'USA', id: 4),
+      ),
+      DropdownItem(
+        label: 'UK',
+        value: User(name: 'UK', id: 5),
+      ),
+    ];
     return Scaffold(
-        backgroundColor: Colors.grey.shade300,
+        backgroundColor: Colors.white,
         body: SafeArea(
           child: Padding(
-            padding: const EdgeInsets.all(8),
+            padding: const EdgeInsets.all(16),
             child: SingleChildScrollView(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -76,178 +90,49 @@ class _MyHomePageState extends State<MyHomePage> {
                   const SizedBox(
                     height: 4,
                   ),
-                  MultiSelectDropDown<User>(
-                    controller: _controller,
-                    clearIcon: const Icon(Icons.reddit),
-                    onOptionSelected: (options) {},
-                    options: <ValueItem<User>>[
-                      ValueItem(
-                          label: 'Option 1',
-                          value: User(name: 'User 1', id: 1)),
-                      ValueItem(
-                          label: 'Option 2',
-                          value: User(name: 'User 2', id: 2)),
-                      ValueItem(
-                          label: 'Option 3',
-                          value: User(name: 'User 3', id: 3)),
-                      ValueItem(
-                          label: 'Option 4',
-                          value: User(name: 'User 4', id: 4)),
-                      ValueItem(
-                          label: 'Option 5',
-                          value: User(name: 'User 5', id: 5)),
-                    ],
-                    maxItems: 4,
-                    singleSelectItemStyle: const TextStyle(
-                        fontSize: 16, fontWeight: FontWeight.bold),
-                    chipConfig: const ChipConfig(
-                        wrapType: WrapType.wrap, backgroundColor: Colors.red),
-                    optionTextStyle: const TextStyle(fontSize: 16),
-                    selectedOptionIcon: const Icon(
-                      Icons.check_circle,
-                      color: Colors.pink,
+                  MultiDropdown<User>(
+                    items: items,
+                    controller: controller,
+                    enabled: true,
+                    searchEnabled: false,
+                    chipDecoration: ChipDecoration(
+                      backgroundColor: Colors.grey.shade300,
                     ),
-                    searchEnabled: true,
-                    dropdownBorderRadius: 10,
-                    dropdownBackgroundColor: Colors.white,
-                    selectedOptionBackgroundColor: Colors.orange,
-                    selectedOptionTextColor: Colors.blue,
-                    dropdownMargin: 2,
-                    onOptionRemoved: (index, option) {},
-                  ),
-                  const SizedBox(
-                    height: 50,
-                  ),
-                  Wrap(
-                    children: [
-                      ElevatedButton(
-                        onPressed: () {
-                          _controller.clearAllSelection();
-                          setState(() {
-                            _selectedOptions.clear();
-                          });
-                        },
-                        child: const Text('CLEAR'),
+                    fieldDecoration: FieldDecoration(
+                      hintText: 'Select a country',
+                      prefixIcon: const Icon(CupertinoIcons.flag),
+                      suffixIcon: const Icon(Icons.read_more),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                        borderSide: BorderSide(
+                          color: Colors.grey.shade400,
+                        ),
                       ),
-                      const SizedBox(
-                        width: 8,
-                      ),
-                      ElevatedButton(
-                        onPressed: () {
-                          setState(() {
-                            _selectedOptions.clear();
-                            _selectedOptions
-                                .addAll(_controller.selectedOptions);
-                          });
-                        },
-                        child: const Text('Get Selected Options'),
-                      ),
-                      const SizedBox(
-                        width: 8,
-                      ),
-                      ElevatedButton(
-                        onPressed: () {
-                          if (_controller.isDropdownOpen) {
-                            _controller.hideDropdown();
-                          } else {
-                            _controller.showDropdown();
-                          }
-                        },
-                        child: const Text('SHOW/HIDE DROPDOWN'),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(
-                    height: 12,
-                  ),
-                  Text(
-                    'Selected Options: $_selectedOptions',
-                    style: const TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
                     ),
-                  ),
-                  const SizedBox(
-                    height: 50,
-                  ),
-                  const Text('SCROLL', style: MyHomePage._headerStyle),
-                  const SizedBox(
-                    height: 4,
-                  ),
-                  MultiSelectDropDown(
-                    onOptionSelected: (options) {
-                      debugPrint(options.toString());
+                    dropdownDecoration: const DropdownDecoration(
+                      marginTop: 2,
+                    ),
+                    dropdownItemDecoration: const DropdownItemDecoration(
+                      selectedIcon: Icon(Icons.check_box),
+                    ),
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Please select a country';
+                      }
+                      return null;
                     },
-                    options: const <ValueItem>[
-                      ValueItem(label: 'Option 1', value: '1'),
-                      ValueItem(label: 'Option 2', value: '2'),
-                      ValueItem(label: 'Option 3', value: '3'),
-                      ValueItem(label: 'Option 4', value: '4'),
-                      ValueItem(label: 'Option 5', value: '5'),
-                      ValueItem(label: 'Option 6', value: '6'),
-                    ],
-                    selectionType: SelectionType.multi,
-                    chipConfig: const ChipConfig(wrapType: WrapType.scroll),
-                    dropdownHeight: 400,
-                    optionTextStyle: const TextStyle(fontSize: 16),
-                    selectedOptionIcon: const Icon(Icons.check_circle),
                   ),
-                  const SizedBox(
-                    height: 50,
-                  ),
-                  const Text('FROM NETWORK', style: MyHomePage._headerStyle),
-                  const SizedBox(
-                    height: 4,
-                  ),
-                  MultiSelectDropDown.network(
-                    dropdownHeight: 300,
-                    onOptionSelected: (options) {
-                      debugPrint(options.toString());
-                    },
-                    searchEnabled: true,
-                    networkRequest: NetworkRequest(
-                      // customRequest: () async {
-                      //   await Future.delayed(const Duration(seconds: 2));
-                      //   return const <ValueItem>[
-                      //     ValueItem(label: 'Option 1', value: '1'),
-                      //     ValueItem(label: 'Option 2', value: '2'),
-                      //     ValueItem(label: 'Option 3', value: '3'),
-                      //     ValueItem(label: 'Option 4', value: '4'),
-                      //     ValueItem(label: 'Option 5', value: '5'),
-                      //     ValueItem(label: 'Option 6', value: '6'),
-                      //   ];
-                      // },
-                      // responseErrorBuilder: ((context, body) {
-                      //   return const Padding(
-                      //     padding: EdgeInsets.all(16.0),
-                      //     child: Text('Error fetching the data'),
-                      //   );
-                      // }),
-                      url: 'https://jsonplaceholder.typicode.com/usersss',
-                      responseParser: (response) async {
-                        final List<ValueItem> items = [];
-                        for (final item in response) {
-                          items.add(ValueItem(
-                              label: item['name'], value: item['id']));
-                        }
-                        return items;
-                      },
-                      responseErrorBuilder: (context, body) {
-                        return const Padding(
-                          padding: EdgeInsets.all(16.0),
-                          child: Text('Error fetching the data'),
-                        );
-                      },
-                    ),
-                    chipConfig: const ChipConfig(wrapType: WrapType.wrap),
-                  ),
+                  const SizedBox(height: 16),
                   ElevatedButton(
                     onPressed: () {
-                      _controller.clearAllSelection();
+                      if (_formKey.currentState?.validate() ?? false) {
+                        final selectedItems = controller.selectedItems;
+
+                        debugPrint(selectedItems.toString());
+                      }
                     },
-                    child: const Text('CLEAR'),
+                    child: const Text('Submit'),
                   ),
-                  const SizedBox(height: 400)
                 ],
               ),
             ),

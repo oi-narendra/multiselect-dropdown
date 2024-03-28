@@ -24,6 +24,7 @@ class MultiSelectDropDown<T> extends StatefulWidget {
   final OnOptionSelected<T>? onOptionSelected;
   final OnOptionSelected<T>? onChanged;
   final OptionAsString<T>? optionAsString;
+  final bool Function(T, String)? filterFn;
 
   /// [onOptionRemoved] is the callback that is called when an option is removed.The callback takes two arguments, the index of the removed option and the removed option.
   /// This will be called only when the delete icon is clicked on the option chip.
@@ -216,6 +217,7 @@ class MultiSelectDropDown<T> extends StatefulWidget {
       this.onOptionRemoved,
       this.onChanged,
       this.optionAsString,
+      this.filterFn,
       this.selectedOptionTextColor,
       this.chipConfig = const ChipConfig(),
       this.selectionType = SelectionType.multi,
@@ -269,6 +271,7 @@ class MultiSelectDropDown<T> extends StatefulWidget {
       this.onOptionRemoved,
       this.onChanged,
       this.optionAsString,
+      this.filterFn,
       this.responseErrorBuilder,
       this.selectedOptionTextColor,
       this.chipConfig = const ChipConfig(),
@@ -766,30 +769,33 @@ class _MultiSelectDropDownState<T> extends State<MultiSelectDropDown<T>> {
                                   suffixIcon: IconButton(
                                     icon: const Icon(Icons.close),
                                     onPressed: () {
-                                      searchController.clear();
-                                      if (widget.asyncOptions != null) {
-                                        future = widget.asyncOptions!('');
-                                      } else {
-                                        dropdownState(() {
+                                      dropdownState(() {
+                                        searchController.clear();
+                                        if (widget.asyncOptions != null) {
+                                          future = widget.asyncOptions!('');
+                                        } else {
                                           options = _c.options;
-                                        });
-                                      }
+                                        }
+                                      });
                                     },
                                   ),
                                 ),
                                 onChanged: (value) {
-                                  if (widget.asyncOptions != null) {
-                                    future = widget.asyncOptions!(value);
-                                  } else {
-                                    dropdownState(() {
+                                  dropdownState(() {
+                                    if (widget.asyncOptions != null) {
+                                      future = widget.asyncOptions!(value);
+                                    } else {
                                       options = _c.options
-                                          .where((element) => _optionLabel(
-                                                  element)
-                                              .toLowerCase()
-                                              .contains(value.toLowerCase()))
+                                          .where((element) =>
+                                              widget.filterFn
+                                                  ?.call(element, value) ??
+                                              _optionLabel(element)
+                                                  .toLowerCase()
+                                                  .contains(
+                                                      value.toLowerCase()))
                                           .toList();
-                                    });
-                                  }
+                                    }
+                                  });
                                 },
                               ),
                             ),

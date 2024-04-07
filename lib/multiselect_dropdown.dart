@@ -269,7 +269,8 @@ class MultiSelectDropDown<T> extends StatefulWidget {
       this.animateSuffixIcon = true,
       this.singleSelectItemStyle,
       this.optionBuilder,
-      this.searchLabel = 'Search',this.showChips = true})
+      this.searchLabel = 'Search',
+      this.showChips = true})
       : networkConfig = null,
         responseParser = null,
         responseErrorBuilder = null,
@@ -329,7 +330,7 @@ class MultiSelectDropDown<T> extends StatefulWidget {
       this.singleSelectItemStyle,
       this.optionBuilder,
       this.searchLabel = 'Search',
-      this.showChips= true})
+      this.showChips = true})
       : options = const [],
         super(key: key);
 
@@ -499,22 +500,21 @@ class _MultiSelectDropDownState<T> extends State<MultiSelectDropDown<T>> {
                     Expanded(
                       child: _getContainerContent(),
                     ),
-
                     _buildSuffixIcon(),
-                  ],
-
-                  Expanded(
-                    child: _getContainerContent(),
-                  ),
-                  if (widget.clearIcon != null && _anyItemSelected) ...[
-                    const SizedBox(width: 4),
-                    InkWell(
-                      onTap: () => clear(),
-                      child: widget.clearIcon,
+                  ] else ...[
+                    Expanded(
+                      child: _getContainerContent(),
                     ),
-                    const SizedBox(width: 4)
-                  ],
-                  _buildSuffixIcon(),
+                    if (widget.clearIcon != null && _anyItemSelected) ...[
+                      const SizedBox(width: 4),
+                      InkWell(
+                        onTap: () => clear(),
+                        child: widget.clearIcon,
+                      ),
+                      const SizedBox(width: 4)
+                    ],
+                    _buildSuffixIcon(),
+                  ]
                 ],
               ),
             ),
@@ -537,13 +537,20 @@ class _MultiSelectDropDownState<T> extends State<MultiSelectDropDown<T>> {
 
   /// Container Content for the dropdown.
   Widget _getContainerContent() {
-    if (_selectedOptions.isEmpty && !widget.showChips) {
+    if (_selectedOptions.isEmpty) {
       return HintText(
         hintText: widget.hint,
         hintColor: widget.hintColor,
         hintStyle: widget.hintStyle,
         hintPadding: widget.hintPadding,
       );
+    }
+    if(
+    !widget.showChips
+    ){
+      return SingleSelectedItem(
+          label: _selectedOptions.last.label,
+          style: widget.singleSelectItemStyle);
     }
 
     if (widget.selectionType == SelectionType.single &&
@@ -555,6 +562,7 @@ class _MultiSelectDropDownState<T> extends State<MultiSelectDropDown<T>> {
 
     return _buildSelectedItems();
   }
+
 
   /// return true if any item is selected.
   bool get _anyItemSelected => _selectedOptions.isNotEmpty;

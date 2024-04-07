@@ -75,6 +75,7 @@ class MultiSelectDropDown<T> extends StatefulWidget {
       optionBuilder;
 
   // dropdownfield configuration
+  final bool showChips;
   final Color? fieldBackgroundColor;
   final Icon suffixIcon;
   final bool animateSuffixIcon;
@@ -268,7 +269,7 @@ class MultiSelectDropDown<T> extends StatefulWidget {
       this.animateSuffixIcon = true,
       this.singleSelectItemStyle,
       this.optionBuilder,
-      this.searchLabel = 'Search'})
+      this.searchLabel = 'Search',this.showChips = true})
       : networkConfig = null,
         responseParser = null,
         responseErrorBuilder = null,
@@ -327,7 +328,8 @@ class MultiSelectDropDown<T> extends StatefulWidget {
       this.animateSuffixIcon = true,
       this.singleSelectItemStyle,
       this.optionBuilder,
-      this.searchLabel = 'Search'})
+      this.searchLabel = 'Search',
+      this.showChips= true})
       : options = const [],
         super(key: key);
 
@@ -493,6 +495,14 @@ class _MultiSelectDropDownState<T> extends State<MultiSelectDropDown<T>> {
               decoration: _getContainerDecoration(),
               child: Row(
                 children: [
+                  if (!widget.showChips) ...[
+                    Expanded(
+                      child: _getContainerContent(),
+                    ),
+
+                    _buildSuffixIcon(),
+                  ],
+
                   Expanded(
                     child: _getContainerContent(),
                   ),
@@ -527,7 +537,7 @@ class _MultiSelectDropDownState<T> extends State<MultiSelectDropDown<T>> {
 
   /// Container Content for the dropdown.
   Widget _getContainerContent() {
-    if (_selectedOptions.isEmpty) {
+    if (_selectedOptions.isEmpty && !widget.showChips) {
       return HintText(
         hintText: widget.hint,
         hintColor: widget.hintColor,

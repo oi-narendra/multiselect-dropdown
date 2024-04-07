@@ -81,7 +81,7 @@ class MultiSelectDropDown<T> extends StatefulWidget {
   final bool animateSuffixIcon;
   final Icon? clearIcon;
   final Decoration? inputDecoration;
-  final double? fieldBorderRadius;
+  final double? borderRadius;
   final BorderRadiusGeometry? radiusGeometry;
   final Color? borderColor;
   final Color? focusedBorderColor;
@@ -256,7 +256,7 @@ class MultiSelectDropDown<T> extends StatefulWidget {
       this.borderColor = Colors.grey,
       this.borderWidth = 0.4,
       this.focusedBorderWidth = 0.4,
-      this.fieldBorderRadius = 12.0,
+      this.borderRadius = 12.0,
       this.radiusGeometry,
       this.maxItems,
       this.focusNode,
@@ -316,7 +316,7 @@ class MultiSelectDropDown<T> extends StatefulWidget {
       this.focusedBorderColor = Colors.black54,
       this.borderWidth = 0.4,
       this.focusedBorderWidth = 0.4,
-      this.fieldBorderRadius = 12.0,
+      this.borderRadius = 12.0,
       this.radiusGeometry,
       this.maxItems,
       this.focusNode,
@@ -573,7 +573,7 @@ class _MultiSelectDropDownState<T> extends State<MultiSelectDropDown<T>> {
         BoxDecoration(
           color: widget.fieldBackgroundColor ?? Colors.white,
           borderRadius: widget.radiusGeometry ??
-              BorderRadius.circular(widget.fieldBorderRadius ?? 12.0),
+              BorderRadius.circular(widget.borderRadius ?? 12.0),
           border: _selectionMode
               ? Border.all(
                   color: widget.focusedBorderColor ?? Colors.grey,
@@ -813,7 +813,7 @@ class _MultiSelectDropDownState<T> extends State<MultiSelectDropDown<T>> {
                                   hintText: widget.searchLabel,
                                   enabledBorder: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(
-                                        widget.fieldBorderRadius ?? 12),
+                                        widget.borderRadius ?? 12),
                                     borderSide: BorderSide(
                                       color: Colors.grey.shade300,
                                       width: 0.8,
@@ -821,7 +821,7 @@ class _MultiSelectDropDownState<T> extends State<MultiSelectDropDown<T>> {
                                   ),
                                   focusedBorder: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(
-                                        widget.fieldBorderRadius ?? 12),
+                                        widget.borderRadius ?? 12),
                                     borderSide: BorderSide(
                                       color: Theme.of(context).primaryColor,
                                       width: 0.8,

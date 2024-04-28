@@ -75,12 +75,13 @@ class MultiSelectDropDown<T> extends StatefulWidget {
       optionBuilder;
 
   // dropdownfield configuration
+  final bool showChips;
   final Color? fieldBackgroundColor;
   final Icon suffixIcon;
   final bool animateSuffixIcon;
   final Icon? clearIcon;
   final Decoration? inputDecoration;
-  final double? fieldBorderRadius;
+  final double? borderRadius;
   final BorderRadiusGeometry? radiusGeometry;
   final Color? borderColor;
   final Color? focusedBorderColor;
@@ -255,7 +256,7 @@ class MultiSelectDropDown<T> extends StatefulWidget {
       this.borderColor = Colors.grey,
       this.borderWidth = 0.4,
       this.focusedBorderWidth = 0.4,
-      this.fieldBorderRadius = 12.0,
+      this.borderRadius = 12.0,
       this.radiusGeometry,
       this.maxItems,
       this.focusNode,
@@ -268,7 +269,8 @@ class MultiSelectDropDown<T> extends StatefulWidget {
       this.animateSuffixIcon = true,
       this.singleSelectItemStyle,
       this.optionBuilder,
-      this.searchLabel = 'Search'})
+      this.searchLabel = 'Search',
+      this.showChips = true})
       : networkConfig = null,
         responseParser = null,
         responseErrorBuilder = null,
@@ -314,7 +316,7 @@ class MultiSelectDropDown<T> extends StatefulWidget {
       this.focusedBorderColor = Colors.black54,
       this.borderWidth = 0.4,
       this.focusedBorderWidth = 0.4,
-      this.fieldBorderRadius = 12.0,
+      this.borderRadius = 12.0,
       this.radiusGeometry,
       this.maxItems,
       this.focusNode,
@@ -327,7 +329,8 @@ class MultiSelectDropDown<T> extends StatefulWidget {
       this.animateSuffixIcon = true,
       this.singleSelectItemStyle,
       this.optionBuilder,
-      this.searchLabel = 'Search'})
+      this.searchLabel = 'Search',
+      this.showChips = true})
       : options = const [],
         super(key: key);
 
@@ -493,18 +496,25 @@ class _MultiSelectDropDownState<T> extends State<MultiSelectDropDown<T>> {
               decoration: _getContainerDecoration(),
               child: Row(
                 children: [
-                  Expanded(
-                    child: _getContainerContent(),
-                  ),
-                  if (widget.clearIcon != null && _anyItemSelected) ...[
-                    const SizedBox(width: 4),
-                    InkWell(
-                      onTap: () => clear(),
-                      child: widget.clearIcon,
+                  if (!widget.showChips) ...[
+                    Expanded(
+                      child: _getContainerContent(),
                     ),
-                    const SizedBox(width: 4)
-                  ],
-                  _buildSuffixIcon(),
+                    _buildSuffixIcon(),
+                  ] else ...[
+                    Expanded(
+                      child: _getContainerContent(),
+                    ),
+                    if (widget.clearIcon != null && _anyItemSelected) ...[
+                      const SizedBox(width: 4),
+                      InkWell(
+                        onTap: () => clear(),
+                        child: widget.clearIcon,
+                      ),
+                      const SizedBox(width: 4)
+                    ],
+                    _buildSuffixIcon(),
+                  ]
                 ],
               ),
             ),
@@ -535,6 +545,13 @@ class _MultiSelectDropDownState<T> extends State<MultiSelectDropDown<T>> {
         hintPadding: widget.hintPadding,
       );
     }
+    if(
+    !widget.showChips
+    ){
+      return SingleSelectedItem(
+          label: _selectedOptions.last.label,
+          style: widget.singleSelectItemStyle);
+    }
 
     if (widget.selectionType == SelectionType.single &&
         !widget.showChipInSingleSelectMode) {
@@ -546,6 +563,7 @@ class _MultiSelectDropDownState<T> extends State<MultiSelectDropDown<T>> {
     return _buildSelectedItems();
   }
 
+
   /// return true if any item is selected.
   bool get _anyItemSelected => _selectedOptions.isNotEmpty;
 
@@ -555,7 +573,7 @@ class _MultiSelectDropDownState<T> extends State<MultiSelectDropDown<T>> {
         BoxDecoration(
           color: widget.fieldBackgroundColor ?? Colors.white,
           borderRadius: widget.radiusGeometry ??
-              BorderRadius.circular(widget.fieldBorderRadius ?? 12.0),
+              BorderRadius.circular(widget.borderRadius ?? 12.0),
           border: _selectionMode
               ? Border.all(
                   color: widget.focusedBorderColor ?? Colors.grey,
@@ -795,7 +813,7 @@ class _MultiSelectDropDownState<T> extends State<MultiSelectDropDown<T>> {
                                   hintText: widget.searchLabel,
                                   enabledBorder: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(
-                                        widget.fieldBorderRadius ?? 12),
+                                        widget.borderRadius ?? 12),
                                     borderSide: BorderSide(
                                       color: Colors.grey.shade300,
                                       width: 0.8,
@@ -803,7 +821,7 @@ class _MultiSelectDropDownState<T> extends State<MultiSelectDropDown<T>> {
                                   ),
                                   focusedBorder: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(
-                                        widget.fieldBorderRadius ?? 12),
+                                        widget.borderRadius ?? 12),
                                     borderSide: BorderSide(
                                       color: Theme.of(context).primaryColor,
                                       width: 0.8,

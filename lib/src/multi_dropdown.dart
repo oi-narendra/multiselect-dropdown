@@ -33,6 +33,50 @@ typedef FutureRequest<T> = Future<List<DropdownItem<T>>> Function();
 ///
 class MultiDropdown<T extends Object> extends StatefulWidget {
   /// Creates a multiselect dropdown widget.
+  ///
+  /// The [items] are the list of dropdown items. It is required.
+  ///
+  /// The [fieldDecoration] is the decoration of the field. The default value is FieldDecoration().
+  /// It can be used to customize the field decoration.
+  ///
+  /// The [dropdownDecoration] is the decoration of the dropdown. The default value is DropdownDecoration().
+  /// It can be used to customize the dropdown decoration.
+  ///
+  /// The [searchDecoration] is the decoration of the search field. The default value is SearchFieldDecoration().
+  /// It can be used to customize the search field decoration.
+  /// If [searchEnabled] is true, then the search field will be displayed.
+  ///
+  /// The [dropdownItemDecoration] is the decoration of the dropdown items. The default value is DropdownItemDecoration().
+  /// It can be used to customize the dropdown item decoration.
+  ///
+  /// The [autovalidateMode] is the autovalidate mode for the dropdown. The default value is AutovalidateMode.disabled.
+  ///
+  /// The [singleSelect] is the selection type of the dropdown. The default value is false.
+  /// If true, only one item can be selected at a time.
+  ///
+  /// The [itemSeparator] is the separator between the dropdown items.
+  ///
+  /// The [controller] is the controller for the dropdown. It can be used to control the dropdown programmatically.
+  ///
+  /// The [validator] is the validator for the dropdown. It can be used to validate the dropdown.
+  ///
+  /// The [itemBuilder] is the builder for the dropdown items. If not provided, the default ListTile will be used.
+  ///
+  /// The [enabled] is whether the dropdown is enabled. The default value is true.
+  ///
+  /// The [chipDecoration] is the configuration for the chips. The default value is ChipDecoration().
+  /// It can be used to customize the chip decoration. The chips are displayed when an item is selected.
+  ///
+  /// The [searchEnabled] is whether the search field is enabled. The default value is false.
+  ///
+  /// The [maxSelections] is the maximum number of selections allowed. The default value is 0.
+  ///
+  /// The [selectedItemBuilder] is the builder for the selected items. If not provided, the default Chip will be used.
+  ///
+  /// The [focusNode] is the focus node for the dropdown.
+  ///
+  /// The [onSelectionChange] is the callback when the item is changed.
+  ///
   const MultiDropdown({
     required this.items,
     this.fieldDecoration = const FieldDecoration(),
@@ -57,6 +101,28 @@ class MultiDropdown<T extends Object> extends StatefulWidget {
         super(key: key);
 
   /// Creates a multiselect dropdown widget with future request.
+  ///
+  /// The [future] is the future request for the dropdown items.
+  /// You can use this to fetch the dropdown items asynchronously.
+  ///
+  /// A loading indicator will be displayed while the future is in progress at the suffix icon.
+  /// The dropdown will be disabled until the future is completed.
+  ///
+  /// Example:
+  ///
+  /// ```dart
+  /// MultiDropdown<User>.future(
+  ///  future: () async {
+  ///   final response = await http.get(Uri.parse('https://jsonplaceholder.typicode.com/users'));
+  ///  final data = jsonDecode(response.body) as List;
+  /// return data.map((e) => DropdownItem(
+  ///  label: e['name'] as String,
+  /// value: e['id'] as int,
+  /// )).toList();
+  /// },
+  /// );
+  ///
+  /// ```
   const MultiDropdown.future({
     required this.future,
     this.fieldDecoration = const FieldDecoration(),
@@ -416,30 +482,63 @@ class _MultiDropdownState<T extends Object> extends State<MultiDropdown<T>> {
   Widget _buildSelectedItems(List<DropdownItem<T>> selectedOptions) {
     final chipDecoration = widget.chipDecoration;
 
-    return Wrap(
-      spacing: chipDecoration.spacing,
-      runSpacing: chipDecoration.runSpacing,
-      children: selectedOptions
-          .map(
-            (option) => Chip(
-              label: Text(option.label),
-              onDeleted: () => _dropdownController
-                  .deselectWhere((element) => element.label == option.label),
-              deleteIcon: chipDecoration.deleteIcon,
-              shape: chipDecoration.shape,
-              backgroundColor: widget.enabled
-                  ? chipDecoration.backgroundColor
-                  : Colors.grey.shade100,
-              labelStyle: widget.enabled ? chipDecoration.labelStyle : null,
-              labelPadding: chipDecoration.labelPadding,
-              padding: chipDecoration.padding ??
-                  const EdgeInsets.symmetric(horizontal: 8),
-              materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-              elevation: 0,
-              side: chipDecoration.borderSide,
-            ),
-          )
-          .toList(),
+    if (widget.selectedItemBuilder != null) {
+      return Wrap(
+        spacing: chipDecoration.spacing,
+        runSpacing: chipDecoration.runSpacing,
+        children: selectedOptions
+            .map(
+              (option) => widget.selectedItemBuilder!(option),
+            )
+            .toList(),
+      );
+    }
+
+    if (chipDecoration.wrap) {
+      return Wrap(
+        spacing: chipDecoration.spacing,
+        runSpacing: chipDecoration.runSpacing,
+        children: selectedOptions
+            .map(
+              (option) => _buildChip(option, chipDecoration),
+            )
+            .toList(),
+      );
+    }
+
+    return ConstrainedBox(
+      constraints: BoxConstraints.loose(
+        const Size(double.infinity, 32),
+      ),
+      child: ListView.separated(
+        separatorBuilder: (context, index) => const SizedBox(width: 8),
+        scrollDirection: Axis.horizontal,
+        itemCount: selectedOptions.length,
+        itemBuilder: (context, index) {
+          final option = selectedOptions[index];
+          return _buildChip(option, chipDecoration);
+        },
+      ),
+    );
+  }
+
+  Chip _buildChip(DropdownItem<dynamic> option, ChipDecoration chipDecoration) {
+    return Chip(
+      label: Text(option.label),
+      onDeleted: () => _dropdownController
+          .deselectWhere((element) => element.label == option.label),
+      deleteIcon: chipDecoration.deleteIcon,
+      shape: chipDecoration.shape,
+      backgroundColor: widget.enabled
+          ? chipDecoration.backgroundColor
+          : Colors.grey.shade100,
+      labelStyle: widget.enabled ? chipDecoration.labelStyle : null,
+      labelPadding: chipDecoration.labelPadding,
+      padding:
+          chipDecoration.padding ?? const EdgeInsets.symmetric(horizontal: 8),
+      materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+      elevation: 0,
+      side: chipDecoration.borderSide,
     );
   }
 

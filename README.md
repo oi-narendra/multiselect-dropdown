@@ -1,5 +1,5 @@
 [![Pub Version](https://img.shields.io/pub/v/multi_dropdown)](https://pub.dev/packages/multi_dropdown)
-[![License](https://img.shields.io/github/license/oi-narendra/anydrawer)](https://github.com/oi-narendra/anydrawer/blob/main/LICENSE)
+[![License](https://img.shields.io/github/license/oi-narendra/multi_dropdown)](https://github.com/oi-narendra/multi_dropdown/blob/main/LICENSE)
 [![GitHub issues](https://img.shields.io/github/issues/oi-narendra/multiselect-dropdown)]()
 [![Very Good Analysis](https://img.shields.io/badge/style-very_good_analysis-B22C89.svg)](https://pub.dev/packages/very_good_analysis)
 [![Flutter](https://img.shields.io/badge/Flutter-02569B?style=for-the-badge&logo=flutter&logoColor=white)](https://flutter.dev/)
@@ -9,376 +9,146 @@ The MultiSelect Dropdown for Flutter is a powerful and customizable widget that 
 
 ## Links
 
-[Preview](#preview) | [Features](#features) | [Getting started](#getting-started) | [Example](#example) | [Controller](#controller) | [Parameters](#parameters) | [Usage With Form Validation](#usage-with-form-validation) | [License](#license)
-
-## Preview
-
-`Selection mode: single`
-
-```dart
- MultiSelectDropDown<int>(
-              onOptionSelected: (List<ValueItem> selectedOptions) {},
-              options: const <ValueItem>[
-                ValueItem(label: 'Option 1', value: 1),
-                ValueItem(label: 'Option 2', value: 2),
-                ValueItem(label: 'Option 3', value: 3),
-                ValueItem(label: 'Option 4', value: 4),
-                ValueItem(label: 'Option 5', value: 5),
-                ValueItem(label: 'Option 6', value: 6),
-              ],
-              selectionType: SelectionType.single,
-              chipConfig: const ChipConfig(wrapType: WrapType.wrap),
-              dropdownHeight: 300,
-              optionTextStyle: const TextStyle(fontSize: 16),
-              selectedOptionIcon: const Icon(Icons.check_circle),
-            ),
-```
-
-[<img src="https://raw.githubusercontent.com/oi-narendra/multiselect-dropdown/main/screenshots/sample1.png" width="300"/>](sample1.png)
-
-`Selection mode: multiple`
-
-```dart
- MultiSelectDropDown(
-              showClearIcon: true,
-              controller: _controller,
-              onOptionSelected: (options) {
-                debugPrint(options.toString());
-              },
-              options: const <ValueItem>[
-                ValueItem(label: 'Option 1', value: '1'),
-                ValueItem(label: 'Option 2', value: '2'),
-                ValueItem(label: 'Option 3', value: '3'),
-                ValueItem(label: 'Option 4', value: '4'),
-                ValueItem(label: 'Option 5', value: '5'),
-                ValueItem(label: 'Option 6', value: '6'),
-              ],
-              maxItems: 2,
-              disabledOptions: const [ValueItem(label: 'Option 1', value: '1')],
-              selectionType: SelectionType.multi,
-              chipConfig: const ChipConfig(wrapType: WrapType.wrap),
-              dropdownHeight: 300,
-              optionTextStyle: const TextStyle(fontSize: 16),
-              selectedOptionIcon: const Icon(Icons.check_circle),
-            ),
-```
-
-[<img src="https://raw.githubusercontent.com/oi-narendra/multiselect-dropdown/main/screenshots/sample1.gif" width="300"/>](sample1.gif)
-[<img src="https://raw.githubusercontent.com/oi-narendra/multiselect-dropdown/main/screenshots/sample2.gif" width="300"/>](sample2.gif)
-[<img src="https://raw.githubusercontent.com/oi-narendra/multiselect-dropdown/main/screenshots/sample3.gif" width="300"/>](sample3.gif)
-
-`Search`
-
-[<img src="https://raw.githubusercontent.com/oi-narendra/multiselect-dropdown/main/screenshots/sample6.gif" width="300"/>](sample6.gif)
-
-`Network Request`
-
-```dart
-MultiSelectDropDown.network(
-              onOptionSelected: (options) {},
-              networkConfig: NetworkConfig(       // use .custom factory constructor for custom request
-                url: 'https://jsonplaceholder.typicode.com/users',
-                method: RequestMethod.get,
-                headers: {
-                  'Content-Type': 'application/json',
-                },
-                responseParser: (response) {
-                    final list = (response as List<dynamic>).map((e) {
-                      final item = e as Map<String, dynamic>;
-                      return ValueItem(
-                        label: item['name'],
-                        value: item['id'].toString(),
-                      );
-                    }).toList();
-
-                  return Future.value(list);
-                },
-                responseErrorBuilder: ((context, body) {
-                  return const Padding(
-                    padding: EdgeInsets.all(16.0),
-                    child: Text('Error fetching the data'),
-                  );
-                }),
-              ),
-              chipConfig: const ChipConfig(wrapType: WrapType.wrap),
-
-            )
-```
-
-[<img src="https://raw.githubusercontent.com/oi-narendra/multiselect-dropdown/main/screenshots/sample4.png" width="300"/>](sample4.png)
-[<img src="https://raw.githubusercontent.com/oi-narendra/multiselect-dropdown/main/screenshots/sample5.png" width="300"/>](sample5.png)
-
-## Features
-
-- Allows you to select multiple/single items from a list.
-- Allows to fetch the data from a URL.
-- Shows the selected items as chips. You can customize the chip style.
-- Disable the dropdown items.
-- Preselect the dropdown items.
-- Customize dropdown list items.
-- Customize selected item builder.
-- Customize dropdown field style.
-- Callback when dropdown items are selected/unselected.
-- Use controller to programmatically select/unselect items, clear the selection, and get the selected items, set disabled items, show/hide the dropdown.
-
-## Getting started
-
-Add the following to your `pubspec.yaml`:
-
-```yaml
-dependencies:
-  multi_dropdown: ^latest_version
-```
-
-Run `flutter packages get`
-
-## Example
-
-```dart
-import 'package:flutter/material.dart';
-import 'package:multiselect_dropdown/multiselect_dropdown.dart';
-
-void main() {
-  runApp(const MyApp());
-}
-
-class MyApp extends StatelessWidget {
-  const MyApp({Key? key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        primarySwatch: Colors.red,
-      ),
-      home: MyHomePage(),
-    );
-  }
-}
-
-class MyHomePage extends StatelessWidget {
-   MyHomePage({Key? key}) : super(key: key);
-
-  final MultiSelectController _controller = MultiSelectController();
-
-   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-        body: SafeArea(
-      child: Padding(
-        padding: const EdgeInsets.all(8),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Text('WRAP', style: _headerStyle),
-            const SizedBox(
-              height: 4,
-            ),
-            MultiSelectDropDown(
-              controller: _controller,
-              onOptionSelected: (List<ValueItem> selectedOptions) {},
-              options: const <ValueItem>[
-                ValueItem(label: 'Option 1', value: '1'),
-                ValueItem(label: 'Option 2', value: '2'),
-                ValueItem(label: 'Option 3', value: '3'),
-                ValueItem(label: 'Option 4', value: '4'),
-                ValueItem(label: 'Option 5', value: '5'),
-                ValueItem(label: 'Option 6', value: '6'),
-              ],
-              selectionType: SelectionType.multi,
-              chipConfig: const ChipConfig(wrapType: WrapType.wrap),
-              dropdownHeight: 300,
-              optionTextStyle: const TextStyle(fontSize: 16),
-              selectedOptionIcon: const Icon(Icons.check_circle),
-            ),
-             const SizedBox(
-              height: 50,
-            ),
-            Wrap(
-              children: [
-                ElevatedButton(
-                  onPressed: () {
-                    _controller.clearAllSelection();
-                  },
-                  child: const Text('CLEAR'),
-                ),
-                const SizedBox(
-                  width: 8,
-                ),
-                ElevatedButton(
-                  onPressed: () {
-                    debugPrint(_controller.getSelectedOptions.toString());
-                  },
-                  child: const Text('Get Selected Options'),
-                ),
-                const SizedBox(
-                  width: 8,
-                ),
-                ElevatedButton(
-                  onPressed: () {
-                    if (_controller.isDropdownOpen) {
-                      _controller.hideDropdown();
-                    } else {
-                      _controller.showDropdown();
-                    }
-                  },
-                  child: const Text('SHOW/HIDE DROPDOWN'),
-                ),
-              ],
-            ),
-            const SizedBox(
-              height: 50,
-            ),
-            const Text('SCROLL', style: _headerStyle),
-            const SizedBox(
-              height: 4,
-            ),
-            MultiSelectDropDown(
-              onOptionSelected: (List<ValueItem> selectedOptions) {},
-              options: const <ValueItem>[
-                ValueItem(label: 'Option 1', value: '1'),
-                ValueItem(label: 'Option 2', value: '2'),
-                ValueItem(label: 'Option 3', value: '3'),
-                ValueItem(label: 'Option 4', value: '4'),
-                ValueItem(label: 'Option 5', value: '5'),
-                ValueItem(label: 'Option 6', value: '6'),
-              ],
-              selectionType: SelectionType.multi,
-              chipConfig: const ChipConfig(wrapType: WrapType.scroll),
-              dropdownHeight: 300,
-              optionTextStyle: const TextStyle(fontSize: 16),
-              selectedOptionIcon: const Icon(Icons.check_circle),
-            ),
-            const SizedBox(
-              height: 50,
-            ),
-            const Text('FROM NETWORK', style: _headerStyle),
-            const SizedBox(
-              height: 4,
-            ),
-            MultiSelectDropDown.network(
-              onOptionSelected: (options) {},
-              networkConfig: NetworkConfig(
-                url: 'https://jsonplaceholder.typicode.com/users',
-                method: RequestMethod.get,
-                headers: {
-                  'Content-Type': 'application/json',
-                },
-                responseParser: (response) {
-                                final list = (response as List<dynamic>).map((e) {
-                                  final item = e as Map<String, dynamic>;
-                                  return ValueItem(
-                                    label: item['name'],
-                                    value: item['id'].toString(),
-                                  );
-                                }).toList();
-
-                                return Future.value(list);
-                              },
-              responseErrorBuilder: ((context, body) {
-                return const Padding(
-                  padding: EdgeInsets.all(16.0),
-                  child: Text('Error fetching the data'),
-                );
-              }),
-              chipConfig: const ChipConfig(wrapType: WrapType.wrap),
-            ),
-          ],
-        ),
-      ),
-    ));
-    }
-}
-```
-
-## Usage with form Validation
-
-See example [here](https://github.com/oi-narendra/multiselect-dropdown/blob/main/example/lib/usage_with_form.dart)
+[Controller](#controller) | [Parameters](#parameters) | [License](#license)
 
 ## Controller
 
 You can use the controller to programmatically select/unselect items, clear the selection, and get the selected items, set disabled items, show/hide the dropdown. It is still in beta, will be stable in the next release.
 
 ```dart
-final MultiSelectController _controller = MultiSelectController();
+final MultiSelectController<User> _controller = MultiSelectController<User>();
 
-_controller.clearAllSelection(); /// Clear all selected items
+_controller.clearAll(); /// Clear all selected items
 
-_controller.clearSelection(ValueItem item); /// Clear a selected item
+_controller.selectWhere(bool Function(DropdownItem<User>) predicate); /// Select items based on a predicate
 
-_controller.setSelectedOptions(List<ValueItem> options); /// Set selected items
+_controller.setItems(List<DropdownItem<User>> options); /// Set items of the dropdown
 
-_controller.addSelectedOption(ValueItem option); /// Add a selected item
+_controller.addItem(DropdownItem<User> option); /// Add item to dropdown
 
-_controller.setDisabledOptions(List<ValueItem> options); /// Set disabled items
+_controller.addItems(List<DropdownItem<User>> options); /// Add  items to dropdown
 
-_controller.addDisabledOption(ValueItem option); /// Add a disabled item
+_controller.disableWhere(bool Function(DropdownItem<User>) predicate); /// Disable items based on a predicate
 
-_controller.setOptions(List<ValueItem> options); /// Set options
+_controller.selectAll(); /// Select all items
 
-_controller.options; /// Get options
+_controller.selectAtIndex(int index); /// Select item at index
 
-_controller.selectedOptions; /// Get selected options
+_controller.selectWhere(bool Function(DropdownItem<User>) predicate); /// Select items based on a predicate
 
-_controller.disabledOptions; /// Get disabled options
+_controller.deselectWhere(bool Function(DropdownItem<User>) predicate); /// Deselect items based on a predicate
 
-_controller.enabledOptions; /// Get enabled options
+_controller.items; /// Get all items
 
-_controller.showDropdown(); /// Show the dropdown
+_controller.selectedItems; /// Get selected items
 
-_controller.hideDropdown(); /// Hide the dropdown if it is open
+_controller.disabledItems; /// Get disabled items
+
+_controller.show(); /// Show the dropdown
+
+_controller.hide(); /// Hide the dropdown if it is open
 
 ```
 
 ## Parameters
 
-| Name                          | Type                                       | Description                      |
-| ----------------------------- | ------------------------------------------ | -------------------------------- |
-| selectionType                 | SelectionType                              | selection type of the dropdown   |
-| controller                    | MultiSelectController?                     | Controller                       |
-| hint                          | String                                     | Hint                             |
-| hintColor                     | Color?                                     | Hint color                       |
-| hintFontSize                  | double?                                    | Hint font size                   |
-| hintStyle                     | TextStyle?                                 | Hint style                       |
-| options                       | List<ValueItem>                            | Options                          |
-| selectedOptions               | List<ValueItem>                            | Selected options                 |
-| disabledOptions               | List<ValueItem>                            | Disabled options                 |
-| onOptionRemoved               | Function(int index, ValueItem<T> option)?  | On option removed                |
-| onOptionSelected              | Function(List<ValueItem>)?                 | On option selected               |
-| selectedOptionIcon            | Icon?                                      | Selected option icon             |
-| selectedOptionTextColor       | Color?                                     | Selected option text color       |
-| selectedOptionBackgroundColor | Color?                                     | Selected option background color |
-| selectedItemBuilder           | Widget Function(BuildContext, ValueItem)?  | Selected item builder            |
-| showChipInSingleSelectMode    | bool                                       | Show chip in single select mode  |
-| chipConfig                    | ChipConfig                                 | Chip configuration               |
-| fieldBackgroundColor          | Color?                                     | Dropdown field background color  |
-| optionTextStyle               | TextStyle?                                 | Option text style                |
-| optionSeparator               | Widget?                                    | Option seperator                 |
-| dropdownHeight                | double                                     | Dropdown height                  |
-| optionSeparator               | Widget?                                    | Option separator                 |
-| alwaysShowOptionIcon          | bool                                       | Always show option icon          |
-| backgroundColor               | Color?                                     | Background color                 |
-| suffixIcon                    | Icon?                                      | Suffix icon                      |
-| clearIcon                     | Icon?                                      | Clear icon                       |
-| inputDecoration               | Decoration?                                | Input decoration                 |
-| borderRadius                  | double?                                    | Border radius                    |
-| borderColor                   | Color?                                     | Border color                     |
-| borderWidth                   | double?                                    | Border width                     |
-| padding                       | EdgeInsets?                                | Padding                          |
-| networkConfig                 | NetworkConfig?                             | Network configuration            |
-| responseParser                | Future<List<ValueItem>> Function(dynamic)? | Response parser                  |
-| responseErrorBuilder          | Widget Function(BuildContext, dynamic)?    | Response error builder           |
-| focusNode                     | FocusNode?                                 | Focus node                       |
-| radiusGeometry                | RadiusGeometry?                            | Radius geometry                  |
-| focusBorderWidth              | double?                                    | Focus border width               |
-| maxItems                      | int?                                       | Max items                        |
-| searchEnabled                 | bool                                       | Allow dropdown search            |
-| dropdownBorderRadius          | double?                                    | Dropdown border radius           |
-| dropdownMargin                | double?                                    | Dropdown vertical margin         |
-| searchBackgroundColor         | Color?                                     | Search field background color    |
-| dropdownBackgroundColor       | Color?                                     | Dropdown background color        |
-| searchLabel                   | String?                                    | Search label                     |
-| animateSuffixIcon             | bool                                       | Animate Suffix Icon              |
-| singleSelectItemStyle         | TextStyle?                                 | Single select item style         |
-| optionBuilder                 | Widget Function(ctx, ValueItem<T>, bool)?  | Option builder                   |
+# MultiDropdown
+
+| Parameter | Type | Description | Default |
+| --- | --- | --- | --- |
+| items | List<DropdownItem<T>> | The list of dropdown items. | Required |
+| singleSelect | bool | The selection type of the dropdown. | false |
+| chipDecoration | ChipDecoration | The configuration for the chips. | ChipDecoration() |
+| fieldDecoration | FieldDecoration | The decoration of the field. | FieldDecoration() |
+| dropdownDecoration | DropdownDecoration | The decoration of the dropdown. | DropdownDecoration() |
+| searchDecoration | SearchFieldDecoration | The decoration of the search field. | SearchFieldDecoration() |
+| dropdownItemDecoration | DropdownItemDecoration | The decoration of the dropdown items. | DropdownItemDecoration() |
+| itemBuilder | DropdownItemBuilder<T>? | The builder for the dropdown items. | null |
+| selectedItemBuilder | SelectedItemBuilder<T>? | The builder for the selected items. | null |
+| itemSeparator | Widget? | The separator between the dropdown items. | null |
+| validator | String? Function(List<DropdownItem<T>>? selectedOptions)? | The validator for the dropdown. | null |
+| autovalidateMode | AutovalidateMode | The autovalidate mode for the dropdown. | AutovalidateMode.disabled |
+| controller | MultiSelectController<T>? | The controller for the dropdown. | null |
+| maxSelections | int | The maximum number of selections allowed. | 0 |
+| enabled | bool | Whether the dropdown is enabled. | true |
+| searchEnabled | bool | Whether the search field is enabled. | false |
+| focusNode | FocusNode? | The focus node for the dropdown. | null |
+| future | FutureRequest<T>? | The future request for the dropdown items. | null |
+| onSelectionChange | OnSelectionChanged<T>? | The callback when the item is changed. | null |
+
+# DropdownItem
+
+| Parameter | Type | Description | Default |
+| --- | --- | --- | --- |
+| label | String | The label of the dropdown item. | Required |
+| value | T | The value associated with the dropdown item. | Required |
+| disabled | bool | Indicates whether the dropdown item is disabled. | false |
+| selected | bool | Indicates whether the dropdown item is selected. | false |
+
+# ChipDecoration
+
+| Parameter | Type | Description | Default |
+| --- | --- | --- | --- |
+| deleteIcon | Icon | The icon to display for deleting a chip. | Icon(Icons.close) |
+| backgroundColor | Color | The background color of the chip. | Colors.blue |
+| labelStyle | TextStyle | The style of the chip label. | TextStyle() |
+| padding | EdgeInsets | The padding around the chip. | EdgeInsets.all(8.0) |
+| labelPadding | EdgeInsets | The padding for the label of the chip. | EdgeInsets.all(8.0) |
+| shape | RoundedRectangleBorder | The radius of the chip. | RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0)) |
+| spacing | double | The spacing between chips. | 8.0 |
+| runSpacing | double | The spacing between chip rows (when the chips wrap). | 8.0 |
+| separator | Widget | The widget to display between chips. | null |
+| borderSide | BorderSide | The border side of the chip. | BorderSide() |
+| wrap | bool | Whether to wrap chips or scroll them. | true |
+
+# FieldDecoration
+
+| Parameter | Type | Description | Default |
+| --- | --- | --- | --- |
+| labelText | String? | The label text to display above the dropdown field. | null |
+| hintText | String? | The hint text to display in the dropdown field. | null |
+| border | InputBorder? | The border of the dropdown field. | null |
+| focusedBorder | InputBorder? | The border of the dropdown field when it is focused. | null |
+| disabledBorder | InputBorder? | The border of the dropdown field when it is disabled. | null |
+| errorBorder | InputBorder? | The border of the dropdown field when there is an error. | null |
+| suffixIcon | Icon | The icon to display at the end of the dropdown field. | Icon(Icons.arrow_drop_down) |
+| prefixIcon | Icon? | The icon to display at the start of the dropdown field. | null |
+| labelStyle | TextStyle? | The style of the label text. | null |
+| hintStyle | TextStyle? | The style of the hint text. | null |
+| borderRadius | double | The border radius of the dropdown field. | 8.0 |
+| animateSuffixIcon | bool | Animate the icon or not. | true |
+| padding | EdgeInsets? | Padding around the dropdown field. | null |
+
+# DropdownDecoration
+
+| Parameter | Type | Description | Default |
+| --- | --- | --- | --- |
+| backgroundColor | Color | The background color of the dropdown. | Colors.white |
+| elevation | double | The elevation of the dropdown. | 1.0 |
+| height | double | The height of the dropdown. | 300.0 |
+| borderRadius | BorderRadius | The border radius of the dropdown. | BorderRadius.circular(12.0) |
+| marginTop | double | The margin top of the dropdown. | 0.0 |
+
+# SearchFieldDecoration
+
+| Parameter | Type | Description | Default |
+| --- | --- | --- | --- |
+| hintText | String | The hint text to display in the search field. | 'Search' |
+| border | InputBorder? | The border of the search field. | null |
+| focusedBorder | InputBorder? | The border of the search field when it is focused. | null |
+| searchIcon | Icon | The icon to display in the search field. | Icon(Icons.search) |
+
+# DropdownItemDecoration
+
+
+| Parameter | Type | Description | Default |
+| --- | --- | --- | --- |
+| backgroundColor | Color | The background color of the dropdown item. | null |
+| disabledBackgroundColor | Color | The background color of the disabled dropdown item. | null |
+| selectedBackgroundColor | Color | The background color of the selected dropdown item. | null |
+| selectedTextColor | Color | The text color of the selected dropdown item. | null |
+| textColor | Color | The text color of the dropdown item. | null |
+| disabledTextColor | Color | The text color of the disabled dropdown item. | null |
+| selectedIcon | Icon | The icon to display for the selected dropdown item. | null |
+| disabledIcon | Icon | The icon to display for the disabled dropdown item. | null |
+

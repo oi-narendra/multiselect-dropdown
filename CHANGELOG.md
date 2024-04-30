@@ -1,3 +1,19 @@
+# 3.0.0-dev.1
+
+**Breaking Changes**
+- Multiple breaking changes have been made to the library to make it more flexible and customizable.
+- The library has been completely rewritten to make it more flexible and customizable.
+
+**Features**
+- ```MultiSelectDropDown``` is now ```MultiDropdown```.
+- ```ValueItem``` is now ```DropdownItem```. It now supports ```disabled``` & ```selected``` properties.
+- Added ```.future``` constructor to ```MultiDropdown``` to support future options. It now shows a loading indicator when the future is being resolved.
+- ```.custom``` constructor is now removed. You need to handle custom network requests manually by using the  ```.future``` constructor.
+- Dropdown now supports ```Form Validation```, ```Prefix Icon``` and some other properties.
+- Dropdown now somewhat takes decoration from theme, to make the UI more consistent across the app.
+
+
+
 # 2.1.5
 - Renamed ```NetworkConfig``` class to ```NetworkRequest```.
 - responseParser and responseErrorBuilder are now moved inside the ```NetworkRequest``` class.

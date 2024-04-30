@@ -3,6 +3,14 @@ part of '../multi_dropdown.dart';
 /// Represents the decoration for the search field in the dropdown.
 class SearchFieldDecoration {
   /// Creates a new instance of [SearchFieldDecoration].
+  ///
+  /// [hintText] is the hint text to display in the search field. The default value is 'Search'.
+  ///
+  /// [border] is the border of the search field. The default value is OutlineInputBorder().
+  ///
+  /// [focusedBorder] is the border of the search field when it is focused. The default value is OutlineInputBorder().
+  ///
+  /// [searchIcon] is the icon to display in the search field. The default value is Icon(Icons.search).
   const SearchFieldDecoration({
     this.hintText = 'Search',
     this.border = const OutlineInputBorder(),
@@ -26,6 +34,22 @@ class SearchFieldDecoration {
 /// Represents the decoration for the dropdown items.
 class DropdownItemDecoration {
   /// Creates a new instance of [DropdownItemDecoration].
+  ///
+  /// [backgroundColor] is the background color of the dropdown item. The default value is white.
+  ///
+  /// [disabledBackgroundColor] is the background color of the disabled dropdown item. The default value is grey.
+  ///
+  /// [selectedBackgroundColor] is the background color of the selected dropdown item. The default value is blue.
+  ///
+  /// [selectedTextColor] is the text color of the selected dropdown item. The default value is white.
+  ///
+  /// [textColor] is the text color of the dropdown item. The default value is black.
+  ///
+  /// [disabledTextColor] is the text color of the disabled dropdown item. The default value is black.
+  ///
+  /// [selectedIcon] is the icon to display for the selected dropdown item. The default value is Icon(Icons.check).
+  ///
+  /// [disabledIcon] is the icon to display for the disabled dropdown item.
   const DropdownItemDecoration({
     this.backgroundColor,
     this.disabledBackgroundColor,
@@ -65,6 +89,18 @@ class DropdownItemDecoration {
 /// Represents the decoration for the dropdown.
 class DropdownDecoration {
   /// Creates a new instance of [DropdownDecoration].
+  ///
+  /// [backgroundColor] is the background color of the dropdown. The default value is white.
+  ///
+  /// [elevation] is the elevation of the dropdown. The default value is 1.
+  ///
+  /// [height] is the height of the dropdown. The default value is 300.
+  ///
+  /// [marginTop] is the margin top of the dropdown. The default value is 0.
+  ///
+  /// [borderRadius] is the border radius of the dropdown. The default value is 12.
+  ///
+
   const DropdownDecoration({
     this.backgroundColor = Colors.white,
     this.elevation = 1,
@@ -92,6 +128,36 @@ class DropdownDecoration {
 /// Represents the decoration for the dropdown field.
 class FieldDecoration {
   /// Creates a new instance of [FieldDecoration].
+  ///
+  /// [labelText] is the label text to display above the dropdown field.
+  ///
+  /// [hintText] is the hint text to display in the dropdown field. The default value is 'Select'.
+  ///
+  /// [border] is the border of the dropdown field.
+  ///
+  /// [focusedBorder] is the border of the dropdown field when it is focused.
+  ///
+  /// [disabledBorder] is the border of the dropdown field when it is disabled.
+  ///
+  /// [errorBorder] is the border of the dropdown field when there is an error.
+  ///
+  /// [suffixIcon] is the icon to display at the end of dropdown field. The default value is Icon(Icons.arrow_drop_down).
+  ///
+  /// [prefixIcon] is the icon to display at the start of dropdown field.
+  ///
+  /// [labelStyle] is the style of the label text.
+  ///
+  /// [hintStyle] is the style of the hint text.
+  ///
+  /// [borderRadius] is the border radius of the dropdown field. The default value is 12.
+  ///
+  /// [animateSuffixIcon] is whether to animate the suffix icon or not when dropdown is opened/closed. The default value is true.
+  ///
+  /// [suffixIcon] is the icon to display at the end of dropdown field.
+  ///
+  /// [prefixIcon] is the icon to display at the start of dropdown field.
+  ///
+  /// [padding] is the padding around the dropdown field.
   const FieldDecoration({
     this.labelText,
     this.hintText = 'Select',
@@ -105,6 +171,7 @@ class FieldDecoration {
     this.borderRadius = 12,
     this.hintStyle,
     this.animateSuffixIcon = true,
+    this.padding,
   });
 
   /// The label text to display above the dropdown field.
@@ -142,11 +209,36 @@ class FieldDecoration {
 
   /// animate the icon or not
   final bool animateSuffixIcon;
+
+  /// padding around the dropdown field
+  final EdgeInsets? padding;
 }
 
 /// Configuration class for customizing the appearance of chips in the multi-select dropdown.
 class ChipDecoration {
   /// Creates a new instance of [ChipDecoration].
+  ///
+  /// [deleteIcon] is the icon to display for deleting a chip.
+  ///
+  /// [backgroundColor] is the background color of the chip.
+  ///
+  /// [labelStyle] is the style of the chip label.
+  ///
+  /// [padding] is the padding around the chip.
+  ///
+  /// [labelPadding] is the padding for the label of the chip.
+  ///
+  /// [shape] is the radius of the chip.
+  ///
+  /// [spacing] is the spacing between chips.
+  ///
+  /// [runSpacing] is the spacing between chip rows (when the chips wrap).
+  ///
+  /// [separator] is the widget to display between chips.
+  ///
+  /// [borderSide] is the border side of the chip.
+  ///
+  /// [wrap] is whether to wrap or not.
   const ChipDecoration({
     this.deleteIcon,
     this.backgroundColor,

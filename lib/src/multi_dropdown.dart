@@ -396,14 +396,10 @@ class _MultiDropdownState<T extends Object> extends State<MultiDropdown<T>> {
     if (widget.singleSelect) {
       _dropdownController._toggleOnly(item);
     } else {
-      _dropdownController.toggleWhere(
-        (element) => element.label == item.label,
-      );
+      _dropdownController.toggleWhere((element) => element == item);
     }
     state.didChange(_dropdownController.selectedItems);
-    widget.onSelectionChange?.call(
-      _dropdownController.selectedItems.map((e) => e.value).toList(),
-    );
+    widget.onSelectionChange?.call(_dropdownController._selectedValues());
   }
 
   InputDecoration _buildDecoration(FormFieldState<dynamic> state) {
@@ -427,6 +423,8 @@ class _MultiDropdownState<T extends Object> extends State<MultiDropdown<T>> {
       hintText: fieldDecoration.hintText,
       hintStyle: fieldDecoration.hintStyle,
       errorText: state.errorText,
+      filled: fieldDecoration.backgroundColor != null,
+      fillColor: fieldDecoration.backgroundColor,
       border: fieldDecoration.border ?? border,
       enabledBorder: fieldDecoration.border ?? border,
       disabledBorder: fieldDecoration.disabledBorder,
@@ -449,6 +447,7 @@ class _MultiDropdownState<T extends Object> extends State<MultiDropdown<T>> {
         onTap: () {
           _dropdownController.clearAll();
           state.didChange(_dropdownController.selectedItems);
+          widget.onSelectionChange?.call(_dropdownController._selectedValues());
         },
       );
     }
@@ -525,8 +524,11 @@ class _MultiDropdownState<T extends Object> extends State<MultiDropdown<T>> {
   Chip _buildChip(DropdownItem<dynamic> option, ChipDecoration chipDecoration) {
     return Chip(
       label: Text(option.label),
-      onDeleted: () => _dropdownController
-          .deselectWhere((element) => element.label == option.label),
+      onDeleted: () {
+        _dropdownController
+            .deselectWhere((element) => element.label == option.label);
+        widget.onSelectionChange?.call(_dropdownController._selectedValues());
+      },
       deleteIcon: chipDecoration.deleteIcon,
       shape: chipDecoration.shape,
       backgroundColor: widget.enabled

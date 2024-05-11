@@ -11,6 +11,9 @@ class MultiSelectController<T> extends ChangeNotifier {
   List<DropdownItem<T>> get selectedItems =>
       _items.where((element) => element.selected).toList();
 
+  /// Get the list of selected dropdown item values.
+  List<T> _selectedValues() => selectedItems.map((e) => e.value).toList();
+
   /// Gets the list of disabled dropdown items.
   List<DropdownItem<T>> get disabledItems =>
       _items.where((element) => element.disabled).toList();

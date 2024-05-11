@@ -121,6 +121,9 @@ class _MyHomePageState extends State<MyHomePage> {
                       }
                       return null;
                     },
+                    onSelectionChange: (selectedItems) {
+                      debugPrint("OnSelectionChange: $selectedItems");
+                    },
                   ),
                   const SizedBox(height: 16),
                   ElevatedButton(

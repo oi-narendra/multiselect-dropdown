@@ -1,6 +1,8 @@
+# MultiSelect Dropdown
+
 [![Pub Version](https://img.shields.io/pub/v/multi_dropdown)](https://pub.dev/packages/multi_dropdown)
-[![License](https://img.shields.io/github/license/oi-narendra/multi_dropdown)](https://github.com/oi-narendra/multi_dropdown/blob/main/LICENSE)
-[![GitHub issues](https://img.shields.io/github/issues/oi-narendra/multiselect-dropdown)]()
+[![License](https://img.shields.io/github/license/oi-narendra/multiselect-dropdown)](https://github.com/oi-narendra/multiselect-dropdown/blob/main/LICENSE)
+[![GitHub issues](https://img.shields.io/github/issues/oi-narendra/multiselect-dropdown)](https://img.shields.io/github/issues/oi-narendra/multiselect-dropdown)
 [![Very Good Analysis](https://img.shields.io/badge/style-very_good_analysis-B22C89.svg)](https://pub.dev/packages/very_good_analysis)
 [![Flutter](https://img.shields.io/badge/Flutter-02569B?style=for-the-badge&logo=flutter&logoColor=white)](https://flutter.dev/)
 [![Dart](https://img.shields.io/badge/Dart-0175C2?style=for-the-badge&logo=dart&logoColor=white)](https://dart.dev/)
@@ -9,7 +11,7 @@ The MultiSelect Dropdown for Flutter is a powerful and customizable widget that 
 
 ## Links
 
-[Controller](#controller) | [Parameters](#parameters) | [License](#license)
+[Controller](#controller) | [Parameters](#parameters)
 
 ## Controller
 
@@ -52,103 +54,101 @@ _controller.hide(); /// Hide the dropdown if it is open
 
 ## Parameters
 
-# MultiDropdown
+## MultiDropdown
 
-| Parameter | Type | Description | Default |
-| --- | --- | --- | --- |
-| items | List<DropdownItem<T>> | The list of dropdown items. | Required |
-| singleSelect | bool | The selection type of the dropdown. | false |
-| chipDecoration | ChipDecoration | The configuration for the chips. | ChipDecoration() |
-| fieldDecoration | FieldDecoration | The decoration of the field. | FieldDecoration() |
-| dropdownDecoration | DropdownDecoration | The decoration of the dropdown. | DropdownDecoration() |
-| searchDecoration | SearchFieldDecoration | The decoration of the search field. | SearchFieldDecoration() |
-| dropdownItemDecoration | DropdownItemDecoration | The decoration of the dropdown items. | DropdownItemDecoration() |
-| itemBuilder | DropdownItemBuilder<T>? | The builder for the dropdown items. | null |
-| selectedItemBuilder | SelectedItemBuilder<T>? | The builder for the selected items. | null |
-| itemSeparator | Widget? | The separator between the dropdown items. | null |
-| validator | String? Function(List<DropdownItem<T>>? selectedOptions)? | The validator for the dropdown. | null |
-| autovalidateMode | AutovalidateMode | The autovalidate mode for the dropdown. | AutovalidateMode.disabled |
-| controller | MultiSelectController<T>? | The controller for the dropdown. | null |
-| maxSelections | int | The maximum number of selections allowed. | 0 |
-| enabled | bool | Whether the dropdown is enabled. | true |
-| searchEnabled | bool | Whether the search field is enabled. | false |
-| focusNode | FocusNode? | The focus node for the dropdown. | null |
-| future | FutureRequest<T>? | The future request for the dropdown items. | null |
-| onSelectionChange | OnSelectionChanged<T>? | The callback when the item is changed. | null |
+| Parameter              | Type                                                      | Description                                | Default                   |
+| ---------------------- | --------------------------------------------------------- | ------------------------------------------ | ------------------------- |
+| items                  | List<DropdownItem<T>>                                     | The list of dropdown items.                | Required                  |
+| singleSelect           | bool                                                      | The selection type of the dropdown.        | false                     |
+| chipDecoration         | ChipDecoration                                            | The configuration for the chips.           | ChipDecoration()          |
+| fieldDecoration        | FieldDecoration                                           | The decoration of the field.               | FieldDecoration()         |
+| dropdownDecoration     | DropdownDecoration                                        | The decoration of the dropdown.            | DropdownDecoration()      |
+| searchDecoration       | SearchFieldDecoration                                     | The decoration of the search field.        | SearchFieldDecoration()   |
+| dropdownItemDecoration | DropdownItemDecoration                                    | The decoration of the dropdown items.      | DropdownItemDecoration()  |
+| itemBuilder            | DropdownItemBuilder<T>?                                   | The builder for the dropdown items.        | null                      |
+| selectedItemBuilder    | SelectedItemBuilder<T>?                                   | The builder for the selected items.        | null                      |
+| itemSeparator          | Widget?                                                   | The separator between the dropdown items.  | null                      |
+| validator              | String? Function(List<DropdownItem<T>>? selectedOptions)? | The validator for the dropdown.            | null                      |
+| autovalidateMode       | AutovalidateMode                                          | The autovalidate mode for the dropdown.    | AutovalidateMode.disabled |
+| controller             | MultiSelectController<T>?                                 | The controller for the dropdown.           | null                      |
+| maxSelections          | int                                                       | The maximum number of selections allowed.  | 0                         |
+| enabled                | bool                                                      | Whether the dropdown is enabled.           | true                      |
+| searchEnabled          | bool                                                      | Whether the search field is enabled.       | false                     |
+| focusNode              | FocusNode?                                                | The focus node for the dropdown.           | null                      |
+| future                 | FutureRequest<T>?                                         | The future request for the dropdown items. | null                      |
+| onSelectionChange      | OnSelectionChanged<T>?                                    | The callback when the item is changed.     | null                      |
 
-# DropdownItem
+## DropdownItem
 
-| Parameter | Type | Description | Default |
-| --- | --- | --- | --- |
-| label | String | The label of the dropdown item. | Required |
-| value | T | The value associated with the dropdown item. | Required |
-| disabled | bool | Indicates whether the dropdown item is disabled. | false |
-| selected | bool | Indicates whether the dropdown item is selected. | false |
+| Parameter | Type   | Description                                      | Default  |
+| --------- | ------ | ------------------------------------------------ | -------- |
+| label     | String | The label of the dropdown item.                  | Required |
+| value     | T      | The value associated with the dropdown item.     | Required |
+| disabled  | bool   | Indicates whether the dropdown item is disabled. | false    |
+| selected  | bool   | Indicates whether the dropdown item is selected. | false    |
 
-# ChipDecoration
+## ChipDecoration
 
-| Parameter | Type | Description | Default |
-| --- | --- | --- | --- |
-| deleteIcon | Icon | The icon to display for deleting a chip. | Icon(Icons.close) |
-| backgroundColor | Color | The background color of the chip. | Colors.blue |
-| labelStyle | TextStyle | The style of the chip label. | TextStyle() |
-| padding | EdgeInsets | The padding around the chip. | EdgeInsets.all(8.0) |
-| labelPadding | EdgeInsets | The padding for the label of the chip. | EdgeInsets.all(8.0) |
-| shape | RoundedRectangleBorder | The radius of the chip. | RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0)) |
-| spacing | double | The spacing between chips. | 8.0 |
-| runSpacing | double | The spacing between chip rows (when the chips wrap). | 8.0 |
-| separator | Widget | The widget to display between chips. | null |
-| borderSide | BorderSide | The border side of the chip. | BorderSide() |
-| wrap | bool | Whether to wrap chips or scroll them. | true |
+| Parameter       | Type                   | Description                                          | Default                                                          |
+| --------------- | ---------------------- | ---------------------------------------------------- | ---------------------------------------------------------------- |
+| deleteIcon      | Icon                   | The icon to display for deleting a chip.             | Icon(Icons.close)                                                |
+| backgroundColor | Color                  | The background color of the chip.                    | Colors.blue                                                      |
+| labelStyle      | TextStyle              | The style of the chip label.                         | TextStyle()                                                      |
+| padding         | EdgeInsets             | The padding around the chip.                         | EdgeInsets.all(8.0)                                              |
+| labelPadding    | EdgeInsets             | The padding for the label of the chip.               | EdgeInsets.all(8.0)                                              |
+| shape           | RoundedRectangleBorder | The radius of the chip.                              | RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0)) |
+| spacing         | double                 | The spacing between chips.                           | 8.0                                                              |
+| runSpacing      | double                 | The spacing between chip rows (when the chips wrap). | 8.0                                                              |
+| separator       | Widget                 | The widget to display between chips.                 | null                                                             |
+| borderSide      | BorderSide             | The border side of the chip.                         | BorderSide()                                                     |
+| wrap            | bool                   | Whether to wrap chips or scroll them.                | true                                                             |
 
-# FieldDecoration
+## FieldDecoration
 
-| Parameter | Type | Description | Default |
-| --- | --- | --- | --- |
-| labelText | String? | The label text to display above the dropdown field. | null |
-| hintText | String? | The hint text to display in the dropdown field. | null |
-| border | InputBorder? | The border of the dropdown field. | null |
-| focusedBorder | InputBorder? | The border of the dropdown field when it is focused. | null |
-| disabledBorder | InputBorder? | The border of the dropdown field when it is disabled. | null |
-| errorBorder | InputBorder? | The border of the dropdown field when there is an error. | null |
-| suffixIcon | Icon | The icon to display at the end of the dropdown field. | Icon(Icons.arrow_drop_down) |
-| prefixIcon | Icon? | The icon to display at the start of the dropdown field. | null |
-| labelStyle | TextStyle? | The style of the label text. | null |
-| hintStyle | TextStyle? | The style of the hint text. | null |
-| borderRadius | double | The border radius of the dropdown field. | 8.0 |
-| animateSuffixIcon | bool | Animate the icon or not. | true |
-| padding | EdgeInsets? | Padding around the dropdown field. | null |
+| Parameter         | Type         | Description                                              | Default                     |
+| ----------------- | ------------ | -------------------------------------------------------- | --------------------------- |
+| labelText         | String?      | The label text to display above the dropdown field.      | null                        |
+| hintText          | String?      | The hint text to display in the dropdown field.          | null                        |
+| border            | InputBorder? | The border of the dropdown field.                        | null                        |
+| focusedBorder     | InputBorder? | The border of the dropdown field when it is focused.     | null                        |
+| disabledBorder    | InputBorder? | The border of the dropdown field when it is disabled.    | null                        |
+| errorBorder       | InputBorder? | The border of the dropdown field when there is an error. | null                        |
+| suffixIcon        | Icon         | The icon to display at the end of the dropdown field.    | Icon(Icons.arrow_drop_down) |
+| prefixIcon        | Icon?        | The icon to display at the start of the dropdown field.  | null                        |
+| labelStyle        | TextStyle?   | The style of the label text.                             | null                        |
+| hintStyle         | TextStyle?   | The style of the hint text.                              | null                        |
+| borderRadius      | double       | The border radius of the dropdown field.                 | 8.0                         |
+| animateSuffixIcon | bool         | Animate the icon or not.                                 | true                        |
+| padding           | EdgeInsets?  | Padding around the dropdown field.                       | null                        |
 
-# DropdownDecoration
+## DropdownDecoration
 
-| Parameter | Type | Description | Default |
-| --- | --- | --- | --- |
-| backgroundColor | Color | The background color of the dropdown. | Colors.white |
-| elevation | double | The elevation of the dropdown. | 1.0 |
-| height | double | The height of the dropdown. | 300.0 |
-| borderRadius | BorderRadius | The border radius of the dropdown. | BorderRadius.circular(12.0) |
-| marginTop | double | The margin top of the dropdown. | 0.0 |
+| Parameter       | Type         | Description                           | Default                     |
+| --------------- | ------------ | ------------------------------------- | --------------------------- |
+| backgroundColor | Color        | The background color of the dropdown. | Colors.white                |
+| elevation       | double       | The elevation of the dropdown.        | 1.0                         |
+| height          | double       | The height of the dropdown.           | 300.0                       |
+| borderRadius    | BorderRadius | The border radius of the dropdown.    | BorderRadius.circular(12.0) |
+| marginTop       | double       | The margin top of the dropdown.       | 0.0                         |
 
-# SearchFieldDecoration
+## SearchFieldDecoration
 
-| Parameter | Type | Description | Default |
-| --- | --- | --- | --- |
-| hintText | String | The hint text to display in the search field. | 'Search' |
-| border | InputBorder? | The border of the search field. | null |
-| focusedBorder | InputBorder? | The border of the search field when it is focused. | null |
-| searchIcon | Icon | The icon to display in the search field. | Icon(Icons.search) |
+| Parameter     | Type         | Description                                        | Default            |
+| ------------- | ------------ | -------------------------------------------------- | ------------------ |
+| hintText      | String       | The hint text to display in the search field.      | 'Search'           |
+| border        | InputBorder? | The border of the search field.                    | null               |
+| focusedBorder | InputBorder? | The border of the search field when it is focused. | null               |
+| searchIcon    | Icon         | The icon to display in the search field.           | Icon(Icons.search) |
 
-# DropdownItemDecoration
+## DropdownItemDecoration
 
-
-| Parameter | Type | Description | Default |
-| --- | --- | --- | --- |
-| backgroundColor | Color | The background color of the dropdown item. | null |
-| disabledBackgroundColor | Color | The background color of the disabled dropdown item. | null |
-| selectedBackgroundColor | Color | The background color of the selected dropdown item. | null |
-| selectedTextColor | Color | The text color of the selected dropdown item. | null |
-| textColor | Color | The text color of the dropdown item. | null |
-| disabledTextColor | Color | The text color of the disabled dropdown item. | null |
-| selectedIcon | Icon | The icon to display for the selected dropdown item. | null |
-| disabledIcon | Icon | The icon to display for the disabled dropdown item. | null |
-
+| Parameter               | Type  | Description                                         | Default |
+| ----------------------- | ----- | --------------------------------------------------- | ------- |
+| backgroundColor         | Color | The background color of the dropdown item.          | null    |
+| disabledBackgroundColor | Color | The background color of the disabled dropdown item. | null    |
+| selectedBackgroundColor | Color | The background color of the selected dropdown item. | null    |
+| selectedTextColor       | Color | The text color of the selected dropdown item.       | null    |
+| textColor               | Color | The text color of the dropdown item.                | null    |
+| disabledTextColor       | Color | The text color of the disabled dropdown item.       | null    |
+| selectedIcon            | Icon  | The icon to display for the selected dropdown item. | null    |
+| disabledIcon            | Icon  | The icon to display for the disabled dropdown item. | null    |

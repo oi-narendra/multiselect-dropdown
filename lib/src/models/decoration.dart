@@ -158,6 +158,8 @@ class FieldDecoration {
   /// [prefixIcon] is the icon to display at the start of dropdown field.
   ///
   /// [padding] is the padding around the dropdown field.
+  /// 
+  /// [backgroundColor] is the background color of the dropdown field.
   const FieldDecoration({
     this.labelText,
     this.hintText = 'Select',
@@ -172,6 +174,7 @@ class FieldDecoration {
     this.hintStyle,
     this.animateSuffixIcon = true,
     this.padding,
+    this.backgroundColor,
   });
 
   /// The label text to display above the dropdown field.
@@ -212,6 +215,9 @@ class FieldDecoration {
 
   /// padding around the dropdown field
   final EdgeInsets? padding;
+
+  /// background color of the dropdown field
+  final Color? backgroundColor;
 }
 
 /// Configuration class for customizing the appearance of chips in the multi-select dropdown.

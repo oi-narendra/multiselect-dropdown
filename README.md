@@ -1,4 +1,15 @@
+[![Pub Version](https://img.shields.io/pub/v/multi_dropdown)](https://pub.dev/packages/multi_dropdown)
+[![License](https://img.shields.io/github/license/oi-narendra/anydrawer)](https://github.com/oi-narendra/anydrawer/blob/main/LICENSE)
+[![GitHub issues](https://img.shields.io/github/issues/oi-narendra/multiselect-dropdown)]()
+[![Very Good Analysis](https://img.shields.io/badge/style-very_good_analysis-B22C89.svg)](https://pub.dev/packages/very_good_analysis)
+[![Flutter](https://img.shields.io/badge/Flutter-02569B?style=for-the-badge&logo=flutter&logoColor=white)](https://flutter.dev/)
+[![Dart](https://img.shields.io/badge/Dart-0175C2?style=for-the-badge&logo=dart&logoColor=white)](https://dart.dev/)
+
 The MultiSelect Dropdown for Flutter is a powerful and customizable widget that empowers you to effortlessly manage and search through multiple items in a dropdown list. Whether you're selecting multiple options for filtering data or picking various preferences, this package provides a seamless user experience. It also supports fetching the data from a URL.
+
+## Links
+
+[Preview](#preview) | [Features](#features) | [Getting started](#getting-started) | [Example](#example) | [Controller](#controller) | [Parameters](#parameters) | [Usage With Form Validation](#usage-with-form-validation) | [License](#license)
 
 ## Preview
 
@@ -282,6 +293,10 @@ class MyHomePage extends StatelessWidget {
 }
 ```
 
+## Usage with form Validation
+
+See example [here](https://github.com/oi-narendra/multiselect-dropdown/blob/main/example/lib/usage_with_form.dart)
+
 ## Controller
 
 You can use the controller to programmatically select/unselect items, clear the selection, and get the selected items, set disabled items, show/hide the dropdown. It is still in beta, will be stable in the next release.
@@ -330,6 +345,7 @@ _controller.hideDropdown(); /// Hide the dropdown if it is open
 | options                       | List<ValueItem>                            | Options                          |
 | selectedOptions               | List<ValueItem>                            | Selected options                 |
 | disabledOptions               | List<ValueItem>                            | Disabled options                 |
+| onOptionRemoved               | Function(int index, ValueItem<T> option)?  | On option removed                |
 | onOptionSelected              | Function(List<ValueItem>)?                 | On option selected               |
 | selectedOptionIcon            | Icon?                                      | Selected option icon             |
 | selectedOptionTextColor       | Color?                                     | Selected option text color       |
@@ -337,9 +353,9 @@ _controller.hideDropdown(); /// Hide the dropdown if it is open
 | selectedItemBuilder           | Widget Function(BuildContext, ValueItem)?  | Selected item builder            |
 | showChipInSingleSelectMode    | bool                                       | Show chip in single select mode  |
 | chipConfig                    | ChipConfig                                 | Chip configuration               |
-| optionsBackgroundColor        | Color?                                     | Options background color         |
+| fieldBackgroundColor          | Color?                                     | Dropdown field background color  |
 | optionTextStyle               | TextStyle?                                 | Option text style                |
-| optionSeperator               | Widget?                                    | Option seperator                 |
+| optionSeparator               | Widget?                                    | Option seperator                 |
 | dropdownHeight                | double                                     | Dropdown height                  |
 | optionSeparator               | Widget?                                    | Option separator                 |
 | alwaysShowOptionIcon          | bool                                       | Always show option icon          |
@@ -354,9 +370,16 @@ _controller.hideDropdown(); /// Hide the dropdown if it is open
 | networkConfig                 | NetworkConfig?                             | Network configuration            |
 | responseParser                | Future<List<ValueItem>> Function(dynamic)? | Response parser                  |
 | responseErrorBuilder          | Widget Function(BuildContext, dynamic)?    | Response error builder           |
-| showClearIcon                 | bool                                       | Show clear icon                  |
 | focusNode                     | FocusNode?                                 | Focus node                       |
 | radiusGeometry                | RadiusGeometry?                            | Radius geometry                  |
 | focusBorderWidth              | double?                                    | Focus border width               |
 | maxItems                      | int?                                       | Max items                        |
 | searchEnabled                 | bool                                       | Allow dropdown search            |
+| dropdownBorderRadius          | double?                                    | Dropdown border radius           |
+| dropdownMargin                | double?                                    | Dropdown vertical margin         |
+| searchBackgroundColor         | Color?                                     | Search field background color    |
+| dropdownBackgroundColor       | Color?                                     | Dropdown background color        |
+| searchLabel                   | String?                                    | Search label                     |
+| animateSuffixIcon             | bool                                       | Animate Suffix Icon              |
+| singleSelectItemStyle         | TextStyle?                                 | Single select item style         |
+| optionBuilder                 | Widget Function(ctx, ValueItem<T>, bool)?  | Option builder                   |

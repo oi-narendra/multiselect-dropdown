@@ -41,7 +41,9 @@ class ChipConfig {
 
   final Color deleteIconColor;
   final Color labelColor;
+  final Color labelDisabledColor;
   final Color? backgroundColor;
+  final Color? backgroundDisabledColor;
 
   final TextStyle? labelStyle;
   final EdgeInsets padding;
@@ -52,6 +54,7 @@ class ChipConfig {
   final double runSpacing;
 
   final Widget? separator;
+  final BorderSide? borderSide;
 
   final WrapType wrapType;
 
@@ -61,15 +64,18 @@ class ChipConfig {
     this.deleteIcon,
     this.deleteIconColor = Colors.white,
     this.backgroundColor,
+    this.backgroundDisabledColor,
     this.padding = const EdgeInsets.only(left: 12, top: 0, right: 4, bottom: 0),
     this.radius = 18,
     this.spacing = 8,
     this.runSpacing = 8,
     this.separator,
     this.labelColor = Colors.white,
+    this.labelDisabledColor = Colors.white,
     this.labelStyle,
     this.wrapType = WrapType.scroll,
     this.labelPadding = EdgeInsets.zero,
     this.autoScroll = false,
+    this.borderSide,
   });
 }

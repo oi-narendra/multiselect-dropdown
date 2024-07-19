@@ -75,6 +75,7 @@ class MultiSelectDropDown<T> extends StatefulWidget {
 
   // dropdownfield configuration
   final Color? fieldBackgroundColor;
+  final Widget? prefixIcon;
   final Icon suffixIcon;
   final bool animateSuffixIcon;
   final Icon? clearIcon;
@@ -166,6 +167,8 @@ class MultiSelectDropDown<T> extends StatefulWidget {
   ///
   /// [fieldBackgroundColor] is the background color of the dropdown. The default is [Colors.white].
   ///
+  /// [prefixIcon] is the icon used on the left of the dropdown.
+  ///
   /// [suffixIcon] is the icon that is used to indicate the dropdown. The default is [Icons.arrow_drop_down].
   ///
   /// [inputDecoration] is the decoration of the dropdown.
@@ -243,6 +246,7 @@ class MultiSelectDropDown<T> extends StatefulWidget {
       this.fieldBackgroundColor = Colors.white,
       this.dropdownHeight = 200,
       this.showChipInSingleSelectMode = false,
+      this.prefixIcon,
       this.suffixIcon = const Icon(Icons.arrow_drop_down),
       this.clearIcon = const Icon(Icons.close_outlined, size: 20),
       this.selectedItemBuilder,
@@ -301,6 +305,7 @@ class MultiSelectDropDown<T> extends StatefulWidget {
       this.fieldBackgroundColor = Colors.white,
       this.dropdownHeight = 200,
       this.showChipInSingleSelectMode = false,
+      this.prefixIcon,
       this.suffixIcon = const Icon(Icons.arrow_drop_down),
       this.clearIcon = const Icon(Icons.close_outlined, size: 14),
       this.selectedItemBuilder,
@@ -431,6 +436,7 @@ class _MultiSelectDropDownState<T> extends State<MultiSelectDropDown<T>> {
 
     if ((_searchFocusNode == null || _searchFocusNode?.hasFocus == false) && _overlayEntry != null) {
       _overlayEntry?.remove();
+      _overlayEntry = null;
     }
 
     if (mounted) _updateSelection();
@@ -451,7 +457,7 @@ class _MultiSelectDropDownState<T> extends State<MultiSelectDropDown<T>> {
     var size = renderBox?.size ?? Size.zero;
     var offset = renderBox?.localToGlobal(Offset.zero) ?? Offset.zero;
 
-    final availableHeight = MediaQuery.of(context).size.height - offset.dy;
+    final availableHeight = MediaQuery.of(context).size.height - (offset.dy + size.height + (widget.searchEnabled ? 60 : 0));
 
     return [size, availableHeight < widget.dropdownHeight];
   }
@@ -472,7 +478,11 @@ class _MultiSelectDropDownState<T> extends State<MultiSelectDropDown<T>> {
             splashFactory: null,
             onTap: _toggleFocus,
             child: Container(
-              height: widget.chipConfig.wrapType == WrapType.wrap ? null : 52,
+              height: widget.chipConfig.wrapType == WrapType.wrap
+                  ? null
+                  : widget.selectionType == SelectionType.single
+                      ? 52
+                      : 57,
               constraints: BoxConstraints(
                 minWidth: MediaQuery.of(context).size.width,
                 minHeight: 52,
@@ -481,9 +491,12 @@ class _MultiSelectDropDownState<T> extends State<MultiSelectDropDown<T>> {
               decoration: _getContainerDecoration(),
               child: Row(
                 children: [
-                  Expanded(
-                    child: _getContainerContent(),
-                  ),
+                  if (widget.prefixIcon != null) ...[
+                    const SizedBox(width: 10),
+                    widget.prefixIcon ?? const SizedBox(height: 0),
+                    const SizedBox(width: 10),
+                  ],
+                  Expanded(child: _getContainerContent()),
                   if (widget.clearIcon != null && _anyItemSelected) ...[
                     const SizedBox(width: 4),
                     InkWell(
@@ -516,19 +529,38 @@ class _MultiSelectDropDownState<T> extends State<MultiSelectDropDown<T>> {
   /// Container Content for the dropdown.
   Widget _getContainerContent() {
     if (_selectedOptions.isEmpty) {
-      return HintText(
-        hintText: widget.hint,
-        hintColor: widget.hintColor,
-        hintStyle: widget.hintStyle,
-        hintPadding: widget.hintPadding,
+      return Text(
+        widget.hint,
+        style: widget.hintStyle,
       );
     }
 
     if (widget.selectionType == SelectionType.single && !widget.showChipInSingleSelectMode) {
-      return SingleSelectedItem(label: _selectedOptions.first.label, style: widget.singleSelectItemStyle);
+      return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+        Padding(
+            padding: EdgeInsets.only(top: 10),
+            child: Text(
+              widget.hint,
+              style: TextStyle(color: widget.hintColor, fontSize: 13),
+            )),
+        Flexible(
+            child: Text(
+          _selectedOptions.first.label,
+          style: widget.singleSelectItemStyle,
+          overflow: TextOverflow.ellipsis,
+        ))
+      ]);
     }
 
-    return _buildSelectedItems();
+    return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+      Padding(
+          padding: EdgeInsets.only(top: 10),
+          child: Text(
+            widget.hint,
+            style: TextStyle(color: widget.hintColor, fontSize: 13),
+          )),
+      SizedBox(height: 30, child: _buildSelectedItems())
+    ]);
   }
 
   /// return true if any item is selected.
@@ -736,7 +768,7 @@ class _MultiSelectDropDownState<T> extends State<MultiSelectDropDown<T>> {
                       borderRadius: widget.dropdownBorderRadius != null ? BorderRadius.circular(widget.dropdownBorderRadius!) : null,
                     ),
                     constraints: widget.searchEnabled
-                        ? BoxConstraints.loose(Size(size.width, widget.dropdownHeight + 50))
+                        ? BoxConstraints.loose(Size(size.width, widget.dropdownHeight + 60))
                         : BoxConstraints.loose(Size(size.width, widget.dropdownHeight)),
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
@@ -747,6 +779,7 @@ class _MultiSelectDropDownState<T> extends State<MultiSelectDropDown<T>> {
                             child: Padding(
                               padding: const EdgeInsets.all(8.0),
                               child: TextFormField(
+                                style: widget.hintStyle,
                                 controller: searchController,
                                 onTapOutside: (_) {},
                                 scrollPadding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),

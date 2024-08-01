@@ -1,6 +1,6 @@
 # ChangeLOG
 
-## 3.0.0-beta.2
+## 3.0.0-dev.3
 
 - Fixed issue causing `onSelectionChange` callback to not work properly.
 

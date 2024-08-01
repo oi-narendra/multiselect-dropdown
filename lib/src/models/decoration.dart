@@ -107,6 +107,8 @@ class DropdownDecoration {
     this.height = 300,
     this.marginTop = 0,
     this.borderRadius = const BorderRadius.all(Radius.circular(12)),
+    this.footer,
+    this.header,
   });
 
   /// The background color of the dropdown.
@@ -123,6 +125,12 @@ class DropdownDecoration {
 
   /// the margin top of the dropdown
   final double marginTop;
+
+  /// The custom footer widget to display at the bottom of the dropdown.
+  final Widget? footer;
+
+  /// The custom header widget to display at the top of the dropdown.
+  final Widget? header;
 }
 
 /// Represents the decoration for the dropdown field.

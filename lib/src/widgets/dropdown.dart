@@ -90,12 +90,14 @@ class _Dropdown<T> extends StatelessWidget {
           ),
           child: Column(
             mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               if (searchEnabled)
                 _SearchField(
                   decoration: searchDecoration,
                   onChanged: _onSearchChange,
                 ),
+              if (decoration.header != null) decoration.header!,
               Flexible(
                 child: ListView.separated(
                   separatorBuilder: (_, __) =>
@@ -105,6 +107,8 @@ class _Dropdown<T> extends StatelessWidget {
                   itemBuilder: (_, int index) => _buildOption(index, theme),
                 ),
               ),
+              if (decoration.footer != null)
+                Flexible(child: decoration.footer!),
             ],
           ),
         ),

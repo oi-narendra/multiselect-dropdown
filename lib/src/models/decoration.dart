@@ -199,7 +199,7 @@ class FieldDecoration {
   final Icon suffixIcon;
 
   /// The icon to display at the start of dropdown field.
-  final Icon? prefixIcon;
+  final Widget? prefixIcon;
 
   /// The style of the label text.
   final TextStyle? labelStyle;

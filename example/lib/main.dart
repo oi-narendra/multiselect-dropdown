@@ -134,16 +134,33 @@ class _MyHomePageState extends State<MyHomePage> {
                     },
                   ),
                   const SizedBox(height: 16),
-                  ElevatedButton(
-                    onPressed: () {
-                      if (_formKey.currentState?.validate() ?? false) {
-                        final selectedItems = controller.selectedItems;
+                  ButtonBar(
+                    buttonAlignedDropdown: true,
+                    children: [
+                      ElevatedButton(
+                        onPressed: () {
+                          if (_formKey.currentState?.validate() ?? false) {
+                            final selectedItems = controller.selectedItems;
 
-                        debugPrint(selectedItems.toString());
-                      }
-                    },
-                    child: const Text('Submit'),
-                  ),
+                            debugPrint(selectedItems.toString());
+                          }
+                        },
+                        child: const Text('Submit'),
+                      ),
+                      ElevatedButton(
+                        onPressed: () {
+                          controller.selectAll();
+                        },
+                        child: const Text('Select All'),
+                      ),
+                      ElevatedButton(
+                        onPressed: () {
+                          controller.clearAll();
+                        },
+                        child: const Text('Deselect All'),
+                      ),
+                    ],
+                  )
                 ],
               ),
             ),

@@ -1,5 +1,15 @@
 # ChangeLOG
 
+## 3.0.0-beta.1
+
+- Added `closeOnBackButton` property to `MultiDropdown` to close the dropdown when the back button is pressed.
+- Added `footer` and `header` properties to `DropdownDecoration` to add a custom footer and header to the dropdown.
+- When dropdown is opened, now it supports gesture in the background as well. Example: You can now scroll the list behind the dropdown, when the dropdown is open.
+- `prefixIcon` in `FieldDecoration` is now a `Widget` instead of an `Icon`.
+- Fixed dropdown not opening on web.
+- Fixed an issue causing validation to not work properly when using controller to update the dropdown.
+- Renamed controller's `.open` method to `.showDropdown` and `.hide` method to `.closeDropdown`.
+
 ## 3.0.0-dev.2
 
 - Added `backgroundColor` property to `FieldDecoration` to set the background color of the dropdown field.

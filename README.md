@@ -46,9 +46,9 @@ _controller.selectedItems; /// Get selected items
 
 _controller.disabledItems; /// Get disabled items
 
-_controller.show(); /// Show the dropdown
+_controller.openDropdown(); /// Show the dropdown
 
-_controller.hide(); /// Hide the dropdown if it is open
+_controller.closeDropdown(); /// Hide the dropdown if it is open
 
 ```
 
@@ -77,6 +77,7 @@ _controller.hide(); /// Hide the dropdown if it is open
 | focusNode              | FocusNode?                                                | The focus node for the dropdown.           | null                      |
 | future                 | FutureRequest<T>?                                         | The future request for the dropdown items. | null                      |
 | onSelectionChange      | OnSelectionChanged<T>?                                    | The callback when the item is changed.     | null                      |
+| closeOnBackButton      | bool                                                      | Closes the dropdown on back button         | false                     |
 
 ## DropdownItem
 
@@ -89,19 +90,17 @@ _controller.hide(); /// Hide the dropdown if it is open
 
 ## ChipDecoration
 
-| Parameter       | Type                   | Description                                          | Default                                                          |
-| --------------- | ---------------------- | ---------------------------------------------------- | ---------------------------------------------------------------- |
-| deleteIcon      | Icon                   | The icon to display for deleting a chip.             | Icon(Icons.close)                                                |
-| backgroundColor | Color                  | The background color of the chip.                    | Colors.blue                                                      |
-| labelStyle      | TextStyle              | The style of the chip label.                         | TextStyle()                                                      |
-| padding         | EdgeInsets             | The padding around the chip.                         | EdgeInsets.all(8.0)                                              |
-| labelPadding    | EdgeInsets             | The padding for the label of the chip.               | EdgeInsets.all(8.0)                                              |
-| shape           | RoundedRectangleBorder | The radius of the chip.                              | RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0)) |
-| spacing         | double                 | The spacing between chips.                           | 8.0                                                              |
-| runSpacing      | double                 | The spacing between chip rows (when the chips wrap). | 8.0                                                              |
-| separator       | Widget                 | The widget to display between chips.                 | null                                                             |
-| borderSide      | BorderSide             | The border side of the chip.                         | BorderSide()                                                     |
-| wrap            | bool                   | Whether to wrap chips or scroll them.                | true                                                             |
+| Parameter       | Type       | Description                                          | Default             |
+| --------------- | ---------- | ---------------------------------------------------- | ------------------- |
+| deleteIcon      | Icon       | The icon to display for deleting a chip.             | Icon(Icons.close)   |
+| backgroundColor | Color      | The background color of the chip.                    | Colors.blue         |
+| labelStyle      | TextStyle  | The style of the chip label.                         | TextStyle()         |
+| padding         | EdgeInsets | The padding around the chip.                         | EdgeInsets.all(8.0) |
+| border          | BoxBorder  | The border of the chip.                              | Border()            |
+| spacing         | double     | The spacing between chips.                           | 8.0                 |
+| runSpacing      | double     | The spacing between chip rows (when the chips wrap). | 8.0                 |
+| borderRadius | BorderRadiusGeometry | The border radius of the chip. | BorderRadius.circular(12) |
+| wrap | bool | Whether to wrap chips or scroll them. | true |
 
 ## FieldDecoration
 
@@ -114,7 +113,7 @@ _controller.hide(); /// Hide the dropdown if it is open
 | disabledBorder    | InputBorder? | The border of the dropdown field when it is disabled.    | null                        |
 | errorBorder       | InputBorder? | The border of the dropdown field when there is an error. | null                        |
 | suffixIcon        | Icon         | The icon to display at the end of the dropdown field.    | Icon(Icons.arrow_drop_down) |
-| prefixIcon        | Icon?        | The icon to display at the start of the dropdown field.  | null                        |
+| prefixIcon        | Widget?      | The icon to display at the start of the dropdown field.  | null                        |
 | labelStyle        | TextStyle?   | The style of the label text.                             | null                        |
 | hintStyle         | TextStyle?   | The style of the hint text.                              | null                        |
 | borderRadius      | double       | The border radius of the dropdown field.                 | 8.0                         |
@@ -130,6 +129,8 @@ _controller.hide(); /// Hide the dropdown if it is open
 | height          | double       | The height of the dropdown.           | 300.0                       |
 | borderRadius    | BorderRadius | The border radius of the dropdown.    | BorderRadius.circular(12.0) |
 | marginTop       | double       | The margin top of the dropdown.       | 0.0                         |
+| header          | Widget?      | The header of the dropdown.           | null                        |
+| footer          | Widget?      | The footer of the dropdown.           | null                        |
 
 ## SearchFieldDecoration
 

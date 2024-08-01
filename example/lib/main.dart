@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:multi_dropdown/multi_dropdown.dart';
 
 void main() {
@@ -12,14 +13,21 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return MaterialApp.router(
       title: 'Multiselect dropdown demo',
       debugShowCheckedModeBanner: false,
       themeMode: ThemeMode.dark,
       theme: ThemeData(
         primarySwatch: Colors.green,
       ),
-      home: const MyHomePage(),
+      routerConfig: GoRouter(routes: [
+        GoRoute(
+          path: '/',
+          builder: (context, state) {
+            return const MyHomePage();
+          },
+        ),
+      ]),
     );
   }
 }

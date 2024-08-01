@@ -173,7 +173,7 @@ class FieldDecoration {
     this.borderRadius = 12,
     this.hintStyle,
     this.animateSuffixIcon = true,
-    this.padding,
+    this.padding = const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
     this.backgroundColor,
   });
 
@@ -234,7 +234,7 @@ class ChipDecoration {
   ///
   /// [labelPadding] is the padding for the label of the chip.
   ///
-  /// [shape] is the radius of the chip.
+  /// [border] is the border of the chip.
   ///
   /// [spacing] is the spacing between chips.
   ///
@@ -242,20 +242,20 @@ class ChipDecoration {
   ///
   /// [separator] is the widget to display between chips.
   ///
-  /// [borderSide] is the border side of the chip.
+  /// [borderRadius] is the border radius of the chip.
   ///
   /// [wrap] is whether to wrap or not.
   const ChipDecoration({
     this.deleteIcon,
-    this.backgroundColor,
-    this.padding,
-    this.shape,
+    this.backgroundColor = const Color(0xFFE0E0E0),
+    this.padding = const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+    this.border = const Border(),
     this.spacing = 8,
     this.runSpacing = 8,
     this.separator,
     this.labelStyle,
     this.labelPadding = EdgeInsets.zero,
-    this.borderSide,
+    this.borderRadius = const BorderRadius.all(Radius.circular(12)),
     this.wrap = true,
   });
 
@@ -269,13 +269,13 @@ class ChipDecoration {
   final TextStyle? labelStyle;
 
   /// The padding around the chip.
-  final EdgeInsets? padding;
+  final EdgeInsets padding;
 
   /// The padding for the label of the chip.
   final EdgeInsets labelPadding;
 
-  /// The radius of the chip.
-  final OutlinedBorder? shape;
+  /// The border of the chip.
+  final BoxBorder border;
 
   /// The spacing between chips.
   final double spacing;
@@ -286,8 +286,8 @@ class ChipDecoration {
   /// The widget to display between chips.
   final Widget? separator;
 
-  /// The border side of the chip.
-  final BorderSide? borderSide;
+  /// The border radius of the chip.
+  final BorderRadiusGeometry borderRadius;
 
   /// Whether to wrap or not
   ///

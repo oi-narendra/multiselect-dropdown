@@ -96,6 +96,7 @@ class MultiDropdown<T extends Object> extends StatefulWidget {
     this.selectedItemBuilder,
     this.focusNode,
     this.onSelectionChange,
+    this.closeOnBackButton = false,
     Key? key,
   })  : future = null,
         super(key: key);
@@ -142,6 +143,7 @@ class MultiDropdown<T extends Object> extends StatefulWidget {
     this.selectedItemBuilder,
     this.focusNode,
     this.onSelectionChange,
+    this.closeOnBackButton = false,
     Key? key,
   })  : items = const [],
         super(key: key);
@@ -205,6 +207,11 @@ class MultiDropdown<T extends Object> extends StatefulWidget {
   /// This callback is called when any item is selected or unselected.
   final OnSelectionChanged<T>? onSelectionChange;
 
+  /// Whether to close the dropdown when the back button is pressed.
+  ///
+  /// Note: This option requires the app to have a router, such as MaterialApp.router, in order to work properly.
+  final bool closeOnBackButton;
+
   @override
   State<MultiDropdown<T>> createState() => _MultiDropdownState<T>();
 }
@@ -242,6 +249,37 @@ class _MultiDropdownState<T extends Object> extends State<MultiDropdown<T>> {
     _dropdownController
       ..setItems(widget.items)
       ..addListener(_controllerListener);
+
+    // if close on back button is enabled, then add the listener
+    _listenBackButton();
+  }
+
+  void _listenBackButton() {
+    if (!widget.closeOnBackButton) return;
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      try {
+        _registerBackButtonDispatcherCallback();
+      } catch (e) {
+        debugPrint('Error: $e');
+      }
+    });
+  }
+
+  void _registerBackButtonDispatcherCallback() {
+    final rootBackDispatcher = Router.of(context).backButtonDispatcher;
+
+    if (rootBackDispatcher != null) {
+      rootBackDispatcher.createChildBackButtonDispatcher()
+        ..addCallback(() {
+          if (_dropdownController.isOpen) {
+            _dropdownController.hide();
+          }
+
+          return Future.value(true);
+        })
+        ..takePriority();
+    }
   }
 
   Future<void> _handleFuture() async {
@@ -324,7 +362,7 @@ class _MultiDropdownState<T extends Object> extends State<MultiDropdown<T>> {
               children: [
                 Positioned.fill(
                   child: GestureDetector(
-                    behavior: HitTestBehavior.translucent,
+                    behavior: HitTestBehavior.opaque,
                     onTap: _handleOutsideTap,
                     child: const ColoredBox(
                       color: Colors.transparent,
@@ -361,27 +399,27 @@ class _MultiDropdownState<T extends Object> extends State<MultiDropdown<T>> {
           },
           child: CompositedTransformTarget(
             link: _layerLink,
-            child: ConstrainedBox(
-              constraints: const BoxConstraints(
-                minHeight: 52,
-              ),
-              child: ListenableBuilder(
-                listenable: _listenable,
-                builder: (_, __) {
-                  return InkWell(
-                    onTap: _handleTap,
-                    focusNode: _focusNode,
-                    canRequestFocus: widget.enabled,
-                    borderRadius: _getFieldBorderRadius(),
-                    child: InputDecorator(
-                      isEmpty: _dropdownController.selectedItems.isEmpty,
-                      isFocused: _dropdownController.isOpen,
-                      decoration: _buildDecoration(state),
+            child: ListenableBuilder(
+              listenable: _listenable,
+              builder: (_, __) {
+                return InkWell(
+                  onTap: _handleTap,
+                  focusNode: _focusNode,
+                  canRequestFocus: widget.enabled,
+                  borderRadius: _getFieldBorderRadius(),
+                  child: InputDecorator(
+                    isEmpty: _dropdownController.selectedItems.isEmpty,
+                    isFocused: _dropdownController.isOpen,
+                    decoration: _buildDecoration(state),
+                    textAlign: TextAlign.start,
+                    textAlignVertical: TextAlignVertical.center,
+                    child: Align(
+                      alignment: Alignment.centerLeft,
                       child: _buildField(),
                     ),
-                  );
-                },
-              ),
+                  ),
+                );
+              },
             ),
           ),
         );
@@ -432,7 +470,7 @@ class _MultiDropdownState<T extends Object> extends State<MultiDropdown<T>> {
       focusedBorder: fieldDecoration.focusedBorder ?? border,
       errorBorder: fieldDecoration.errorBorder,
       suffixIcon: _buildSuffixIcon(state),
-      contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+      contentPadding: fieldDecoration.padding,
     );
   }
 
@@ -485,10 +523,9 @@ class _MultiDropdownState<T extends Object> extends State<MultiDropdown<T>> {
       return Wrap(
         spacing: chipDecoration.spacing,
         runSpacing: chipDecoration.runSpacing,
+        crossAxisAlignment: WrapCrossAlignment.center,
         children: selectedOptions
-            .map(
-              (option) => widget.selectedItemBuilder!(option),
-            )
+            .map((option) => widget.selectedItemBuilder!(option))
             .toList(),
       );
     }
@@ -497,18 +534,15 @@ class _MultiDropdownState<T extends Object> extends State<MultiDropdown<T>> {
       return Wrap(
         spacing: chipDecoration.spacing,
         runSpacing: chipDecoration.runSpacing,
+        crossAxisAlignment: WrapCrossAlignment.center,
         children: selectedOptions
-            .map(
-              (option) => _buildChip(option, chipDecoration),
-            )
+            .map((option) => _buildChip(option, chipDecoration))
             .toList(),
       );
     }
 
     return ConstrainedBox(
-      constraints: BoxConstraints.loose(
-        const Size(double.infinity, 32),
-      ),
+      constraints: BoxConstraints.loose(const Size(double.infinity, 32)),
       child: ListView.separated(
         separatorBuilder: (context, index) => const SizedBox(width: 8),
         scrollDirection: Axis.horizontal,
@@ -521,26 +555,40 @@ class _MultiDropdownState<T extends Object> extends State<MultiDropdown<T>> {
     );
   }
 
-  Chip _buildChip(DropdownItem<dynamic> option, ChipDecoration chipDecoration) {
-    return Chip(
-      label: Text(option.label),
-      onDeleted: () {
-        _dropdownController
-            .deselectWhere((element) => element.label == option.label);
-        widget.onSelectionChange?.call(_dropdownController._selectedValues());
-      },
-      deleteIcon: chipDecoration.deleteIcon,
-      shape: chipDecoration.shape,
-      backgroundColor: widget.enabled
-          ? chipDecoration.backgroundColor
-          : Colors.grey.shade100,
-      labelStyle: widget.enabled ? chipDecoration.labelStyle : null,
-      labelPadding: chipDecoration.labelPadding,
-      padding:
-          chipDecoration.padding ?? const EdgeInsets.symmetric(horizontal: 8),
-      materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-      elevation: 0,
-      side: chipDecoration.borderSide,
+  Widget _buildChip(
+    DropdownItem<dynamic> option,
+    ChipDecoration chipDecoration,
+  ) {
+    return Container(
+      decoration: BoxDecoration(
+        borderRadius: chipDecoration.borderRadius,
+        color: widget.enabled
+            ? chipDecoration.backgroundColor
+            : Colors.grey.shade100,
+        border: chipDecoration.border,
+      ),
+      padding: chipDecoration.padding,
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(option.label, style: chipDecoration.labelStyle),
+          const SizedBox(width: 4),
+          InkWell(
+            onTap: () {
+              _dropdownController
+                  .deselectWhere((element) => element.label == option.label);
+              widget.onSelectionChange
+                  ?.call(_dropdownController._selectedValues());
+            },
+            child: SizedBox(
+              width: 16,
+              height: 16,
+              child: chipDecoration.deleteIcon ??
+                  const Icon(Icons.close, size: 16),
+            ),
+          ),
+        ],
+      ),
     );
   }
 

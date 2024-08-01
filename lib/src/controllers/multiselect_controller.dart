@@ -157,7 +157,7 @@ class MultiSelectController<T> extends ChangeNotifier {
   }
 
   /// shows the dropdown, if it is not already open.
-  void show() {
+  void openDropdown() {
     if (_open) return;
 
     _open = true;
@@ -165,7 +165,7 @@ class MultiSelectController<T> extends ChangeNotifier {
   }
 
   /// hides the dropdown, if it is not already closed.
-  void hide() {
+  void closeDropdown() {
     if (!_open) return;
 
     _open = false;

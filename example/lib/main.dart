@@ -115,7 +115,7 @@ class _MyHomePageState extends State<MyHomePage> {
                         enabled: true,
                         searchEnabled: false,
                         chipDecoration: ChipDecoration(
-                            backgroundColor: Colors.grey.shade300, wrap: false),
+                            backgroundColor: Colors.grey.shade300, wrap: true),
                         fieldDecoration: FieldDecoration(
                           hintText: 'Select a country',
                           prefixIcon: const Icon(CupertinoIcons.flag),
@@ -129,6 +129,18 @@ class _MyHomePageState extends State<MyHomePage> {
                         ),
                         dropdownDecoration: const DropdownDecoration(
                           marginTop: 2,
+                          height: 500,
+                          header: Padding(
+                            padding: EdgeInsets.all(8),
+                            child: Text(
+                              'Select a country',
+                              textAlign: TextAlign.start,
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
                         ),
                         dropdownItemDecoration: const DropdownItemDecoration(
                           selectedIcon: Icon(Icons.check_box),
@@ -151,7 +163,7 @@ class _MyHomePageState extends State<MyHomePage> {
                             onPressed: () {
                               if (_formKey.currentState?.validate() ?? false) {
                                 final selectedItems = controller.selectedItems;
-                
+
                                 debugPrint(selectedItems.toString());
                               }
                             },

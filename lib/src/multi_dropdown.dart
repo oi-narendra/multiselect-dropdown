@@ -277,7 +277,7 @@ class _MultiDropdownState<T extends Object> extends State<MultiDropdown<T>> {
       rootBackDispatcher.createChildBackButtonDispatcher()
         ..addCallback(() {
           if (_dropdownController.isOpen) {
-            _dropdownController.hide();
+            _dropdownController.closeDropdown();
           }
 
           return Future.value(true);
@@ -630,13 +630,13 @@ class _MultiDropdownState<T extends Object> extends State<MultiDropdown<T>> {
 
     if (_portalController.isShowing && _dropdownController.isOpen) return;
 
-    _dropdownController.show();
+    _dropdownController.openDropdown();
   }
 
   void _handleOutsideTap() {
     if (!_dropdownController.isOpen) return;
 
-    _dropdownController.hide();
+    _dropdownController.closeDropdown();
   }
 
   void _showError(String message) {

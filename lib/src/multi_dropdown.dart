@@ -232,6 +232,10 @@ class _MultiDropdownState<T extends Object> extends State<MultiDropdown<T>> {
     _loadingController,
   ]);
 
+  // the global key for the form field state to update the form field state when the controller changes
+  final GlobalKey<FormFieldState<List<DropdownItem<T>>?>> _formFieldKey =
+      GlobalKey();
+
   @override
   void initState() {
     super.initState();
@@ -300,6 +304,9 @@ class _MultiDropdownState<T extends Object> extends State<MultiDropdown<T>> {
   }
 
   void _controllerListener() {
+    // update the form field state when the controller changes
+    _formFieldKey.currentState?.didChange(_dropdownController.selectedItems);
+
     if (_dropdownController.isOpen) {
       _portalController.show();
     } else {
@@ -338,7 +345,9 @@ class _MultiDropdownState<T extends Object> extends State<MultiDropdown<T>> {
 
   @override
   Widget build(BuildContext context) {
+    debugPrint('Building MultiDropdown');
     return FormField<List<DropdownItem<T>>?>(
+      key: _formFieldKey,
       validator: widget.validator ?? (_) => null,
       autovalidateMode: widget.autovalidateMode,
       initialValue: _dropdownController.selectedItems,
@@ -347,7 +356,13 @@ class _MultiDropdownState<T extends Object> extends State<MultiDropdown<T>> {
         return OverlayPortal(
           controller: _portalController,
           overlayChildBuilder: (_) {
-            final renderBox = context.findRenderObject()! as RenderBox;
+            final renderBox = context.findRenderObject() as RenderBox?;
+
+            if (renderBox == null || !renderBox.attached) {
+              _showError('Failed to build the dropdown\nCode: 08');
+              return const SizedBox();
+            }
+
             final renderBoxSize = renderBox.size;
             final renderBoxOffset = renderBox.localToGlobal(Offset.zero);
 
@@ -403,7 +418,10 @@ class _MultiDropdownState<T extends Object> extends State<MultiDropdown<T>> {
               listenable: _listenable,
               builder: (_, __) {
                 return InkWell(
-                  onTap: _handleTap,
+                  mouseCursor: widget.enabled
+                      ? SystemMouseCursors.grab
+                      : SystemMouseCursors.forbidden,
+                  onTap: widget.enabled ? _handleTap : null,
                   focusNode: _focusNode,
                   canRequestFocus: widget.enabled,
                   borderRadius: _getFieldBorderRadius(),
@@ -454,6 +472,13 @@ class _MultiDropdownState<T extends Object> extends State<MultiDropdown<T>> {
 
     final fieldDecoration = widget.fieldDecoration;
 
+    final prefixIcon = fieldDecoration.prefixIcon != null
+        ? IconTheme.merge(
+            data: IconThemeData(color: widget.enabled ? null : Colors.grey),
+            child: fieldDecoration.prefixIcon!,
+          )
+        : null;
+
     return InputDecoration(
       enabled: widget.enabled,
       labelText: fieldDecoration.labelText,
@@ -466,7 +491,7 @@ class _MultiDropdownState<T extends Object> extends State<MultiDropdown<T>> {
       border: fieldDecoration.border ?? border,
       enabledBorder: fieldDecoration.border ?? border,
       disabledBorder: fieldDecoration.disabledBorder,
-      prefixIcon: fieldDecoration.prefixIcon,
+      prefixIcon: prefixIcon,
       focusedBorder: fieldDecoration.focusedBorder ?? border,
       errorBorder: fieldDecoration.errorBorder,
       suffixIcon: _buildSuffixIcon(state),
@@ -615,5 +640,19 @@ class _MultiDropdownState<T extends Object> extends State<MultiDropdown<T>> {
     if (!_dropdownController.isOpen) return;
 
     _dropdownController.hide();
+  }
+
+  void _showError(String message) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            message,
+            style: TextStyle(color: Theme.of(context).colorScheme.onError),
+          ),
+          backgroundColor: Theme.of(context).colorScheme.error,
+        ),
+      );
+    });
   }
 }

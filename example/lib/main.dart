@@ -91,77 +91,80 @@ class _MyHomePageState extends State<MyHomePage> {
           child: Padding(
             padding: const EdgeInsets.all(16),
             child: SingleChildScrollView(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Text('WRAP', style: MyHomePage._headerStyle),
-                  const SizedBox(
-                    height: 4,
-                  ),
-                  MultiDropdown<User>(
-                    items: items,
-                    controller: controller,
-                    enabled: true,
-                    searchEnabled: false,
-                    chipDecoration: ChipDecoration(
-                      backgroundColor: Colors.grey.shade300,
+              child: Form(
+                key: _formKey,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text('WRAP', style: MyHomePage._headerStyle),
+                    const SizedBox(
+                      height: 4,
                     ),
-                    fieldDecoration: FieldDecoration(
-                      hintText: 'Select a country',
-                      prefixIcon: const Icon(CupertinoIcons.flag),
-                      suffixIcon: const Icon(Icons.read_more),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
-                        borderSide: BorderSide(
-                          color: Colors.grey.shade400,
+                    MultiDropdown<User>(
+                      items: items,
+                      controller: controller,
+                      enabled: true,
+                      searchEnabled: false,
+                      chipDecoration: ChipDecoration(
+                        backgroundColor: Colors.grey.shade300,
+                      ),
+                      fieldDecoration: FieldDecoration(
+                        hintText: 'Select a country',
+                        prefixIcon: const Icon(CupertinoIcons.flag),
+                        suffixIcon: const Icon(Icons.read_more),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide: BorderSide(
+                            color: Colors.grey.shade400,
+                          ),
                         ),
                       ),
-                    ),
-                    dropdownDecoration: const DropdownDecoration(
-                      marginTop: 2,
-                    ),
-                    dropdownItemDecoration: const DropdownItemDecoration(
-                      selectedIcon: Icon(Icons.check_box),
-                    ),
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Please select a country';
-                      }
-                      return null;
-                    },
-                    onSelectionChange: (selectedItems) {
-                      debugPrint("OnSelectionChange: $selectedItems");
-                    },
-                  ),
-                  const SizedBox(height: 16),
-                  ButtonBar(
-                    buttonAlignedDropdown: true,
-                    children: [
-                      ElevatedButton(
-                        onPressed: () {
-                          if (_formKey.currentState?.validate() ?? false) {
-                            final selectedItems = controller.selectedItems;
-
-                            debugPrint(selectedItems.toString());
-                          }
-                        },
-                        child: const Text('Submit'),
+                      dropdownDecoration: const DropdownDecoration(
+                        marginTop: 2,
                       ),
-                      ElevatedButton(
-                        onPressed: () {
-                          controller.selectAll();
-                        },
-                        child: const Text('Select All'),
+                      dropdownItemDecoration: const DropdownItemDecoration(
+                        selectedIcon: Icon(Icons.check_box),
                       ),
-                      ElevatedButton(
-                        onPressed: () {
-                          controller.clearAll();
-                        },
-                        child: const Text('Deselect All'),
-                      ),
-                    ],
-                  )
-                ],
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Please select a country';
+                        }
+                        return null;
+                      },
+                      onSelectionChange: (selectedItems) {
+                        debugPrint("OnSelectionChange: $selectedItems");
+                      },
+                    ),
+                    const SizedBox(height: 16),
+                    ButtonBar(
+                      buttonAlignedDropdown: true,
+                      children: [
+                        ElevatedButton(
+                          onPressed: () {
+                            if (_formKey.currentState?.validate() ?? false) {
+                              final selectedItems = controller.selectedItems;
+                
+                              debugPrint(selectedItems.toString());
+                            }
+                          },
+                          child: const Text('Submit'),
+                        ),
+                        ElevatedButton(
+                          onPressed: () {
+                            controller.selectAll();
+                          },
+                          child: const Text('Select All'),
+                        ),
+                        ElevatedButton(
+                          onPressed: () {
+                            controller.clearAll();
+                          },
+                          child: const Text('Deselect All'),
+                        ),
+                      ],
+                    )
+                  ],
+                ),
               ),
             ),
           ),

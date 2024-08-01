@@ -377,11 +377,8 @@ class _MultiDropdownState<T extends Object> extends State<MultiDropdown<T>> {
               children: [
                 Positioned.fill(
                   child: GestureDetector(
-                    behavior: HitTestBehavior.opaque,
+                    behavior: HitTestBehavior.translucent,
                     onTap: _handleOutsideTap,
-                    child: const ColoredBox(
-                      color: Colors.transparent,
-                    ),
                   ),
                 ),
                 CompositedTransformFollower(

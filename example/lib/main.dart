@@ -69,6 +69,10 @@ class _MyHomePageState extends State<MyHomePage> {
         value: User(name: 'Nepal', id: 1),
       ),
       DropdownItem(
+        label: 'Australia',
+        value: User(name: 'Australia', id: 6),
+      ),
+      DropdownItem(
         label: 'India',
         value: User(name: 'India', id: 2),
       ),
@@ -143,7 +147,7 @@ class _MyHomePageState extends State<MyHomePage> {
                           onPressed: () {
                             if (_formKey.currentState?.validate() ?? false) {
                               final selectedItems = controller.selectedItems;
-                
+
                               debugPrint(selectedItems.toString());
                             }
                           },

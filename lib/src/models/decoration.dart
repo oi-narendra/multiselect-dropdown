@@ -240,15 +240,11 @@ class ChipDecoration {
   ///
   /// [padding] is the padding around the chip.
   ///
-  /// [labelPadding] is the padding for the label of the chip.
-  ///
   /// [border] is the border of the chip.
   ///
   /// [spacing] is the spacing between chips.
   ///
   /// [runSpacing] is the spacing between chip rows (when the chips wrap).
-  ///
-  /// [separator] is the widget to display between chips.
   ///
   /// [borderRadius] is the border radius of the chip.
   ///
@@ -260,9 +256,7 @@ class ChipDecoration {
     this.border = const Border(),
     this.spacing = 8,
     this.runSpacing = 8,
-    this.separator,
     this.labelStyle,
-    this.labelPadding = EdgeInsets.zero,
     this.borderRadius = const BorderRadius.all(Radius.circular(12)),
     this.wrap = true,
   });
@@ -279,9 +273,6 @@ class ChipDecoration {
   /// The padding around the chip.
   final EdgeInsets padding;
 
-  /// The padding for the label of the chip.
-  final EdgeInsets labelPadding;
-
   /// The border of the chip.
   final BoxBorder border;
 
@@ -290,9 +281,6 @@ class ChipDecoration {
 
   /// The spacing between chip rows (when the chips wrap).
   final double runSpacing;
-
-  /// The widget to display between chips.
-  final Widget? separator;
 
   /// The border radius of the chip.
   final BorderRadiusGeometry borderRadius;

@@ -12,7 +12,7 @@ class MultiSelectController<T> extends ChangeNotifier {
       _items.where((element) => element.selected).toList();
 
   /// Get the list of selected dropdown item values.
-  List<T> _selectedValues() => selectedItems.map((e) => e.value).toList();
+  List<T> get _selectedValues => selectedItems.map((e) => e.value).toList();
 
   /// Gets the list of disabled dropdown items.
   List<DropdownItem<T>> get disabledItems =>
@@ -28,6 +28,9 @@ class MultiSelectController<T> extends ChangeNotifier {
   /// Gets whether the controller is disposed.
   bool get isDisposed => _isDisposed;
 
+  /// on selection changed callback invoker.
+  OnSelectionChanged<T>? _onSelectionChanged;
+
   /// sets the list of dropdown items.
   /// It replaces the existing list of dropdown items.
   void setItems(List<DropdownItem<T>> options) {
@@ -35,6 +38,7 @@ class MultiSelectController<T> extends ChangeNotifier {
       ..clear()
       ..addAll(options);
     notifyListeners();
+    _onSelectionChanged?.call(_selectedValues);
   }
 
   /// Adds a dropdown item to the list of dropdown items.
@@ -46,12 +50,14 @@ class MultiSelectController<T> extends ChangeNotifier {
       _items.insert(index, option);
     }
     notifyListeners();
+    _onSelectionChanged?.call(_selectedValues);
   }
 
   /// Adds a list of dropdown items to the list of dropdown items.
   void addItems(List<DropdownItem<T>> options) {
     _items.addAll(options);
     notifyListeners();
+    _onSelectionChanged?.call(_selectedValues);
   }
 
   /// clears all the selected items.
@@ -63,6 +69,7 @@ class MultiSelectController<T> extends ChangeNotifier {
         )
         .toList();
     notifyListeners();
+    _onSelectionChanged?.call(_selectedValues);
   }
 
   /// selects all the items.
@@ -74,6 +81,7 @@ class MultiSelectController<T> extends ChangeNotifier {
         )
         .toList();
     notifyListeners();
+    _onSelectionChanged?.call(_selectedValues);
   }
 
   /// select the item at the specified index.
@@ -99,6 +107,7 @@ class MultiSelectController<T> extends ChangeNotifier {
         )
         .toList();
     notifyListeners();
+    _onSelectionChanged?.call(_selectedValues);
   }
 
   /// selects the items that satisfy the predicate.
@@ -113,6 +122,7 @@ class MultiSelectController<T> extends ChangeNotifier {
         )
         .toList();
     notifyListeners();
+    _onSelectionChanged?.call(_selectedValues);
   }
 
   void _toggleOnly(DropdownItem<T> item) {
@@ -126,6 +136,7 @@ class MultiSelectController<T> extends ChangeNotifier {
 
     debugPrint('items: $_items');
     notifyListeners();
+    _onSelectionChanged?.call(_selectedValues);
   }
 
   /// deselects the items that satisfy the predicate.
@@ -140,6 +151,7 @@ class MultiSelectController<T> extends ChangeNotifier {
         )
         .toList();
     notifyListeners();
+    _onSelectionChanged?.call(_selectedValues);
   }
 
   /// disables the items that satisfy the predicate.
@@ -154,6 +166,7 @@ class MultiSelectController<T> extends ChangeNotifier {
         )
         .toList();
     notifyListeners();
+    _onSelectionChanged?.call(_selectedValues);
   }
 
   /// shows the dropdown, if it is not already open.
@@ -170,6 +183,11 @@ class MultiSelectController<T> extends ChangeNotifier {
 
     _open = false;
     notifyListeners();
+  }
+
+  // ignore: use_setters_to_change_properties
+  void _setOnSelectionChange(OnSelectionChanged<T>? onSelectionChanged) {
+    this._onSelectionChanged = onSelectionChanged;
   }
 
   @override

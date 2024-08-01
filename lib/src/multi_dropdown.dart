@@ -250,9 +250,11 @@ class _MultiDropdownState<T extends Object> extends State<MultiDropdown<T>> {
     if (widget.future != null) {
       unawaited(_handleFuture());
     }
+
     _dropdownController
       ..setItems(widget.items)
-      ..addListener(_controllerListener);
+      ..addListener(_controllerListener)
+      .._setOnSelectionChange(widget.onSelectionChange);
 
     // if close on back button is enabled, then add the listener
     _listenBackButton();
@@ -345,14 +347,13 @@ class _MultiDropdownState<T extends Object> extends State<MultiDropdown<T>> {
 
   @override
   Widget build(BuildContext context) {
-    debugPrint('Building MultiDropdown');
     return FormField<List<DropdownItem<T>>?>(
       key: _formFieldKey,
       validator: widget.validator ?? (_) => null,
       autovalidateMode: widget.autovalidateMode,
       initialValue: _dropdownController.selectedItems,
       enabled: widget.enabled,
-      builder: (FormFieldState<dynamic> state) {
+      builder: (_) {
         return OverlayPortal(
           controller: _portalController,
           overlayChildBuilder: (_) {
@@ -393,7 +394,7 @@ class _MultiDropdownState<T extends Object> extends State<MultiDropdown<T>> {
                       : Offset(0, widget.dropdownDecoration.marginTop),
                   child: _Dropdown<T>(
                     decoration: widget.dropdownDecoration,
-                    onItemTap: (item) => _handleDropdownItemTap(item, state),
+                    onItemTap: _handleDropdownItemTap,
                     width: renderBoxSize.width,
                     items: _dropdownController.items,
                     searchEnabled: widget.searchEnabled,
@@ -425,7 +426,7 @@ class _MultiDropdownState<T extends Object> extends State<MultiDropdown<T>> {
                   child: InputDecorator(
                     isEmpty: _dropdownController.selectedItems.isEmpty,
                     isFocused: _dropdownController.isOpen,
-                    decoration: _buildDecoration(state),
+                    decoration: _buildDecoration(),
                     textAlign: TextAlign.start,
                     textAlignVertical: TextAlignVertical.center,
                     child: Align(
@@ -442,20 +443,16 @@ class _MultiDropdownState<T extends Object> extends State<MultiDropdown<T>> {
     );
   }
 
-  void _handleDropdownItemTap(
-    DropdownItem<T> item,
-    FormFieldState<dynamic> state,
-  ) {
+  void _handleDropdownItemTap(DropdownItem<T> item) {
     if (widget.singleSelect) {
       _dropdownController._toggleOnly(item);
     } else {
       _dropdownController.toggleWhere((element) => element == item);
     }
-    state.didChange(_dropdownController.selectedItems);
-    widget.onSelectionChange?.call(_dropdownController._selectedValues());
+    _formFieldKey.currentState?.didChange(_dropdownController.selectedItems);
   }
 
-  InputDecoration _buildDecoration(FormFieldState<dynamic> state) {
+  InputDecoration _buildDecoration() {
     final theme = Theme.of(context);
 
     final border = widget.fieldDecoration.border ??
@@ -482,7 +479,7 @@ class _MultiDropdownState<T extends Object> extends State<MultiDropdown<T>> {
       labelStyle: fieldDecoration.labelStyle,
       hintText: fieldDecoration.hintText,
       hintStyle: fieldDecoration.hintStyle,
-      errorText: state.errorText,
+      errorText: _formFieldKey.currentState?.errorText,
       filled: fieldDecoration.backgroundColor != null,
       fillColor: fieldDecoration.backgroundColor,
       border: fieldDecoration.border ?? border,
@@ -491,12 +488,12 @@ class _MultiDropdownState<T extends Object> extends State<MultiDropdown<T>> {
       prefixIcon: prefixIcon,
       focusedBorder: fieldDecoration.focusedBorder ?? border,
       errorBorder: fieldDecoration.errorBorder,
-      suffixIcon: _buildSuffixIcon(state),
+      suffixIcon: _buildSuffixIcon(),
       contentPadding: fieldDecoration.padding,
     );
   }
 
-  Widget _buildSuffixIcon(FormFieldState<dynamic> state) {
+  Widget _buildSuffixIcon() {
     if (_loadingController.value) {
       return const CircularProgressIndicator.adaptive();
     }
@@ -506,8 +503,8 @@ class _MultiDropdownState<T extends Object> extends State<MultiDropdown<T>> {
         child: const Icon(Icons.clear),
         onTap: () {
           _dropdownController.clearAll();
-          state.didChange(_dropdownController.selectedItems);
-          widget.onSelectionChange?.call(_dropdownController._selectedValues());
+          _formFieldKey.currentState
+              ?.didChange(_dropdownController.selectedItems);
         },
       );
     }
@@ -599,8 +596,6 @@ class _MultiDropdownState<T extends Object> extends State<MultiDropdown<T>> {
             onTap: () {
               _dropdownController
                   .deselectWhere((element) => element.label == option.label);
-              widget.onSelectionChange
-                  ?.call(_dropdownController._selectedValues());
             },
             child: SizedBox(
               width: 16,

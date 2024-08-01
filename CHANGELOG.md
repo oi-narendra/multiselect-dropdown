@@ -1,5 +1,9 @@
 # ChangeLOG
 
+## 3.0.0-beta.2
+
+- Fixed issue causing `onSelectionChange` callback to not work properly.
+
 ## 3.0.0-beta.1
 
 - Added `closeOnBackButton` property to `MultiDropdown` to close the dropdown when the back button is pressed.

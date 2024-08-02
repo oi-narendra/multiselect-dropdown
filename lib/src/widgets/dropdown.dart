@@ -126,7 +126,7 @@ class _Dropdown<T> extends StatelessWidget {
     final option = items[index];
 
     if (itemBuilder != null) {
-      return itemBuilder!(option, index);
+      return itemBuilder!(option, index, () => onItemTap(option));
     }
 
     final disabledColor = dropdownItemDecoration.disabledBackgroundColor ??
@@ -172,9 +172,7 @@ class _Dropdown<T> extends StatelessWidget {
     );
   }
 
-  void _onSearchChange(String value) {
-    onSearchChange?.call(value);
-  }
+  void _onSearchChange(String value) => onSearchChange?.call(value);
 
   bool _reachedMaxSelection(DropdownItem<dynamic> option) {
     return !option.selected &&
@@ -199,6 +197,7 @@ class _SearchField extends StatelessWidget {
       padding: const EdgeInsets.all(8),
       child: TextField(
         decoration: InputDecoration(
+          isDense: true,
           hintText: decoration.hintText,
           border: decoration.border,
           focusedBorder: decoration.focusedBorder,

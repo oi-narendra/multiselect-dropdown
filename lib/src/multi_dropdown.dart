@@ -18,6 +18,7 @@ part 'widgets/dropdown.dart';
 typedef DropdownItemBuilder<T> = Widget Function(
   DropdownItem<T> item,
   int index,
+  VoidCallback onTap,
 );
 
 /// typedef for the callback when the item is selected/de-selected/disabled.

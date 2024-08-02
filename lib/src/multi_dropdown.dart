@@ -374,7 +374,7 @@ class _MultiDropdownState<T extends Object> extends State<MultiDropdown<T>> {
                 renderBoxSize.height;
 
             final showOnTop =
-                availableHeight < widget.dropdownDecoration.height;
+                availableHeight < widget.dropdownDecoration.maxHeight;
 
             final stack = Stack(
               children: [
@@ -394,19 +394,21 @@ class _MultiDropdownState<T extends Object> extends State<MultiDropdown<T>> {
                   offset: widget.dropdownDecoration.marginTop == 0
                       ? Offset.zero
                       : Offset(0, widget.dropdownDecoration.marginTop),
-                  child: _Dropdown<T>(
-                    decoration: widget.dropdownDecoration,
-                    onItemTap: _handleDropdownItemTap,
-                    width: renderBoxSize.width,
-                    items: _dropdownController.items,
-                    searchEnabled: widget.searchEnabled,
-                    dropdownItemDecoration: widget.dropdownItemDecoration,
-                    itemBuilder: widget.itemBuilder,
-                    itemSeparator: widget.itemSeparator,
-                    searchDecoration: widget.searchDecoration,
-                    maxSelections: widget.maxSelections,
-                    singleSelect: widget.singleSelect,
-                    onSearchChange: _dropdownController._setSearchQuery,
+                  child: RepaintBoundary(
+                    child: _Dropdown<T>(
+                      decoration: widget.dropdownDecoration,
+                      onItemTap: _handleDropdownItemTap,
+                      width: renderBoxSize.width,
+                      items: _dropdownController.items,
+                      searchEnabled: widget.searchEnabled,
+                      dropdownItemDecoration: widget.dropdownItemDecoration,
+                      itemBuilder: widget.itemBuilder,
+                      itemSeparator: widget.itemSeparator,
+                      searchDecoration: widget.searchDecoration,
+                      maxSelections: widget.maxSelections,
+                      singleSelect: widget.singleSelect,
+                      onSearchChange: _dropdownController._setSearchQuery,
+                    ),
                   ),
                 ),
               ],

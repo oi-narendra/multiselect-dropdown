@@ -116,7 +116,7 @@ class _MyHomePageState extends State<MyHomePage> {
                         ),
                         dropdownDecoration: const DropdownDecoration(
                           marginTop: 2,
-                          height: 500,
+                          maxHeight: 500,
                           header: Padding(
                             padding: EdgeInsets.all(8),
                             child: Text(

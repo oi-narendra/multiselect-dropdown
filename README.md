@@ -15,10 +15,10 @@ The MultiSelect Dropdown for Flutter is a powerful and customizable widget that 
 
 ## Preview
 
-[<img src="https://raw.githubusercontent.com/oi-narendra/multiselect-dropdown/main/screenshots/screenshot_1.png" width="280"/>](screenshot_1.png)
-[<img src="https://raw.githubusercontent.com/oi-narendra/multiselect-dropdown/main/screenshots/screenshot_2.png" width="280"/>](screenshot_2.png)
-[<img src="https://raw.githubusercontent.com/oi-narendra/multiselect-dropdown/main/screenshots/screenshot_3.png" width="280"/>](screenshot_3.png)
-[<img src="https://raw.githubusercontent.com/oi-narendra/multiselect-dropdown/main/screenshots/screenshot_4.png" width="280"/>](screenshot_4.png)
+[<img src="https://raw.githubusercontent.com/oi-narendra/multiselect-dropdown/develop/screenshots/screenshot_1.png" width="250"/>](screenshot_1.png)
+[<img src="https://raw.githubusercontent.com/oi-narendra/multiselect-dropdown/develop/screenshots/screenshot_2.png" width="250"/>](screenshot_2.png)
+[<img src="https://raw.githubusercontent.com/oi-narendra/multiselect-dropdown/develop/screenshots/screenshot_3.png" width="250"/>](screenshot_3.png)
+[<img src="https://raw.githubusercontent.com/oi-narendra/multiselect-dropdown/develop/screenshots/screenshot_4.png" width="250"/>](screenshot_4.png)
 
 ## Controller
 
@@ -133,7 +133,7 @@ _controller.closeDropdown(); /// Hide the dropdown if it is open
 | --------------- | ------------ | ------------------------------------- | --------------------------- |
 | backgroundColor | Color        | The background color of the dropdown. | Colors.white                |
 | elevation       | double       | The elevation of the dropdown.        | 1.0                         |
-| height          | double       | The height of the dropdown.           | 300.0                       |
+| maxHeight       | double       | The max height of the dropdown.       | 400.0                       |
 | borderRadius    | BorderRadius | The border radius of the dropdown.    | BorderRadius.circular(12.0) |
 | marginTop       | double       | The margin top of the dropdown.       | 0.0                         |
 | header          | Widget?      | The header of the dropdown.           | null                        |

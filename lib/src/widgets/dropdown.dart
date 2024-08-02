@@ -85,8 +85,9 @@ class _Dropdown<T> extends StatelessWidget {
             color: decoration.backgroundColor,
             backgroundBlendMode: BlendMode.dstATop,
           ),
-          constraints: BoxConstraints.loose(
-            Size(width, decoration.height),
+          constraints: BoxConstraints(
+            maxWidth: width,
+            maxHeight: decoration.maxHeight,
           ),
           child: Column(
             mainAxisSize: MainAxisSize.min,
@@ -97,7 +98,8 @@ class _Dropdown<T> extends StatelessWidget {
                   decoration: searchDecoration,
                   onChanged: _onSearchChange,
                 ),
-              if (decoration.header != null) decoration.header!,
+              if (decoration.header != null)
+                Flexible(child: decoration.header!),
               Flexible(
                 child: ListView.separated(
                   separatorBuilder: (_, __) =>
@@ -161,6 +163,7 @@ class _Dropdown<T> extends StatelessWidget {
         autofocus: true,
         enabled: !option.disabled,
         selected: option.selected,
+        visualDensity: VisualDensity.adaptivePlatformDensity,
         focusColor: dropdownItemDecoration.backgroundColor?.withAlpha(100),
         selectedColor: dropdownItemDecoration.selectedTextColor ??
             theme.colorScheme.onSurface,

@@ -100,7 +100,7 @@ class DropdownDecoration {
   ///
   /// [elevation] is the elevation of the dropdown. The default value is 1.
   ///
-  /// [height] is the height of the dropdown. The default value is 300.
+  /// [maxHeight] is the height of the dropdown. The default value is 300.
   ///
   /// [marginTop] is the margin top of the dropdown. The default value is 0.
   ///
@@ -110,7 +110,7 @@ class DropdownDecoration {
   const DropdownDecoration({
     this.backgroundColor = Colors.white,
     this.elevation = 1,
-    this.height = 300,
+    this.maxHeight = 400,
     this.marginTop = 0,
     this.borderRadius = const BorderRadius.all(Radius.circular(12)),
     this.footer,
@@ -123,8 +123,8 @@ class DropdownDecoration {
   /// The elevation of the dropdown.
   final double elevation;
 
-  /// The height of the dropdown.
-  final double height;
+  /// The maximum height of the dropdown.
+  final double maxHeight;
 
   /// The border radius of the dropdown.
   final BorderRadius borderRadius;
@@ -261,7 +261,7 @@ class ChipDecoration {
     this.padding = const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
     this.border = const Border(),
     this.spacing = 8,
-    this.runSpacing = 8,
+    this.runSpacing = 12,
     this.labelStyle,
     this.borderRadius = const BorderRadius.all(Radius.circular(12)),
     this.wrap = true,

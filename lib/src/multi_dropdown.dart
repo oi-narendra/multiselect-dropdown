@@ -313,6 +313,7 @@ class _MultiDropdownState<T extends Object> extends State<MultiDropdown<T>> {
     if (_dropdownController.isOpen) {
       _portalController.show();
     } else {
+      _dropdownController._clearSearchQuery();
       _portalController.hide();
     }
   }
@@ -405,6 +406,7 @@ class _MultiDropdownState<T extends Object> extends State<MultiDropdown<T>> {
                     searchDecoration: widget.searchDecoration,
                     maxSelections: widget.maxSelections,
                     singleSelect: widget.singleSelect,
+                    onSearchChange: _dropdownController._setSearchQuery,
                   ),
                 ),
               ],
@@ -596,7 +598,7 @@ class _MultiDropdownState<T extends Object> extends State<MultiDropdown<T>> {
           InkWell(
             onTap: () {
               _dropdownController
-                  .deselectWhere((element) => element.label == option.label);
+                  .unselectWhere((element) => element.label == option.label);
             },
             child: SizedBox(
               width: 16,

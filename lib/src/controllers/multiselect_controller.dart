@@ -4,8 +4,13 @@ part of '../multi_dropdown.dart';
 class MultiSelectController<T> extends ChangeNotifier {
   List<DropdownItem<T>> _items = [];
 
+  List<DropdownItem<T>> _filteredItems = [];
+
+  String _searchQuery = '';
+
   /// Gets the list of dropdown items.
-  List<DropdownItem<T>> get items => _items;
+  List<DropdownItem<T>> get items =>
+      _searchQuery.isEmpty ? _items : _filteredItems;
 
   /// Gets the list of selected dropdown items.
   List<DropdownItem<T>> get selectedItems =>
@@ -106,6 +111,14 @@ class MultiSelectController<T> extends ChangeNotifier {
               : element,
         )
         .toList();
+    if (_searchQuery.isNotEmpty) {
+      _filteredItems = _items
+          .where(
+            (item) =>
+                item.label.toLowerCase().contains(_searchQuery.toLowerCase()),
+          )
+          .toList();
+    }
     notifyListeners();
     _onSelectionChanged?.call(_selectedValues);
   }
@@ -139,10 +152,10 @@ class MultiSelectController<T> extends ChangeNotifier {
     _onSelectionChanged?.call(_selectedValues);
   }
 
-  /// deselects the items that satisfy the predicate.
+  /// unselects the items that satisfy the predicate.
   ///
   /// The [predicate] parameter is a function that takes a [DropdownItem] and returns a boolean.
-  void deselectWhere(bool Function(DropdownItem<T> item) predicate) {
+  void unselectWhere(bool Function(DropdownItem<T> item) predicate) {
     _items = _items
         .map(
           (element) => predicate(element) && element.selected
@@ -188,6 +201,29 @@ class MultiSelectController<T> extends ChangeNotifier {
   // ignore: use_setters_to_change_properties
   void _setOnSelectionChange(OnSelectionChanged<T>? onSelectionChanged) {
     this._onSelectionChanged = onSelectionChanged;
+  }
+
+  // sets the search query.
+  // The [query] parameter is the search query.
+  void _setSearchQuery(String query) {
+    _searchQuery = query;
+    if (_searchQuery.isEmpty) {
+      _filteredItems = List.from(_items);
+    } else {
+      _filteredItems = _items
+          .where(
+            (item) =>
+                item.label.toLowerCase().contains(_searchQuery.toLowerCase()),
+          )
+          .toList();
+    }
+    notifyListeners();
+  }
+
+  // clears the search query.
+  void _clearSearchQuery({bool notify = false}) {
+    _searchQuery = '';
+    if (notify) notifyListeners();
   }
 
   @override

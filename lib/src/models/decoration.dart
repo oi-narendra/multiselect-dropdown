@@ -13,8 +13,14 @@ class SearchFieldDecoration {
   /// [searchIcon] is the icon to display in the search field. The default value is Icon(Icons.search).
   const SearchFieldDecoration({
     this.hintText = 'Search',
-    this.border = const OutlineInputBorder(),
-    this.focusedBorder = const OutlineInputBorder(),
+    this.border = const OutlineInputBorder(
+      borderSide: BorderSide(color: Color(0xFFE0E0E0)),
+      borderRadius: BorderRadius.all(Radius.circular(12)),
+    ),
+    this.focusedBorder = const OutlineInputBorder(
+      borderSide: BorderSide(color: Colors.grey),
+      borderRadius: BorderRadius.all(Radius.circular(12)),
+    ),
     this.searchIcon = const Icon(Icons.search),
   });
 

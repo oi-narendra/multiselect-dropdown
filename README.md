@@ -11,7 +11,14 @@ The MultiSelect Dropdown for Flutter is a powerful and customizable widget that 
 
 ## Links
 
-[Controller](#controller) | [Parameters](#parameters)
+[Preview](#preview) | [Controller](#controller) | [Parameters](#parameters)
+
+## Preview
+
+[<img src="https://raw.githubusercontent.com/oi-narendra/multiselect-dropdown/main/screenshots/screenshot_1.png" width="280"/>](screenshot_1.png)
+[<img src="https://raw.githubusercontent.com/oi-narendra/multiselect-dropdown/main/screenshots/screenshot_2.png" width="280"/>](screenshot_2.png)
+[<img src="https://raw.githubusercontent.com/oi-narendra/multiselect-dropdown/main/screenshots/screenshot_3.png" width="280"/>](screenshot_3.png)
+[<img src="https://raw.githubusercontent.com/oi-narendra/multiselect-dropdown/main/screenshots/screenshot_4.png" width="280"/>](screenshot_4.png)
 
 ## Controller
 
@@ -90,17 +97,17 @@ _controller.closeDropdown(); /// Hide the dropdown if it is open
 
 ## ChipDecoration
 
-| Parameter       | Type       | Description                                          | Default             |
-| --------------- | ---------- | ---------------------------------------------------- | ------------------- |
-| deleteIcon      | Icon       | The icon to display for deleting a chip.             | Icon(Icons.close)   |
-| backgroundColor | Color      | The background color of the chip.                    | Colors.blue         |
-| labelStyle      | TextStyle  | The style of the chip label.                         | TextStyle()         |
-| padding         | EdgeInsets | The padding around the chip.                         | EdgeInsets.all(8.0) |
-| border          | BoxBorder  | The border of the chip.                              | Border()            |
-| spacing         | double     | The spacing between chips.                           | 8.0                 |
-| runSpacing      | double     | The spacing between chip rows (when the chips wrap). | 8.0                 |
-| borderRadius | BorderRadiusGeometry | The border radius of the chip. | BorderRadius.circular(12) |
-| wrap | bool | Whether to wrap chips or scroll them. | true |
+| Parameter       | Type                 | Description                                          | Default                   |
+| --------------- | -------------------- | ---------------------------------------------------- | ------------------------- |
+| deleteIcon      | Icon                 | The icon to display for deleting a chip.             | Icon(Icons.close)         |
+| backgroundColor | Color                | The background color of the chip.                    | Colors.blue               |
+| labelStyle      | TextStyle            | The style of the chip label.                         | TextStyle()               |
+| padding         | EdgeInsets           | The padding around the chip.                         | EdgeInsets.all(8.0)       |
+| border          | BoxBorder            | The border of the chip.                              | Border()                  |
+| spacing         | double               | The spacing between chips.                           | 8.0                       |
+| runSpacing      | double               | The spacing between chip rows (when the chips wrap). | 8.0                       |
+| borderRadius    | BorderRadiusGeometry | The border radius of the chip.                       | BorderRadius.circular(12) |
+| wrap            | bool                 | Whether to wrap chips or scroll them.                | true                      |
 
 ## FieldDecoration
 

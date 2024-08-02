@@ -54,4 +54,4 @@ flutter: null
 # https://flutter.dev/custom-fonts/#from-packages
 screenshots:
   - description: "Example screenshot 1"
-    path: screenshots/sample4.png
+    path: screenshots/screenshot_2.png

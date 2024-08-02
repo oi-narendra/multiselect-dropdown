@@ -37,11 +37,6 @@ class MyHomePage extends StatefulWidget {
 
   @override
   State<MyHomePage> createState() => _MyHomePageState();
-
-  static const _headerStyle = TextStyle(
-    fontSize: 12,
-    color: Colors.blue,
-  );
 }
 
 class User {

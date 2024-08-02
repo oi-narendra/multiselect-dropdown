@@ -1,5 +1,10 @@
 # ChangeLOG
 
+## 3.0.0-dev.4
+
+- Fixed `search` feature not working issue.
+- Fixed `itemBuilder` not working properly.
+
 ## 3.0.0-dev.3
 
 - Fixed issue causing `onSelectionChange` callback to not work properly.

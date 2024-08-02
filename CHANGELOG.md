@@ -1,5 +1,9 @@
 # ChangeLOG
 
+## 3.0.0-dev.5
+
+- `height` property in `DropdownDecoration` is renamed to `maxHeight`.
+
 ## 3.0.0-dev.4
 
 - Fixed `search` feature not working issue.

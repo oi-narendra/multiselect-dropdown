@@ -64,30 +64,14 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     var items = [
-      DropdownItem(
-        label: 'Nepal',
-        value: User(name: 'Nepal', id: 1),
-      ),
-      DropdownItem(
-        label: 'Australia',
-        value: User(name: 'Australia', id: 6),
-      ),
-      DropdownItem(
-        label: 'India',
-        value: User(name: 'India', id: 2),
-      ),
-      DropdownItem(
-        label: 'China',
-        value: User(name: 'China', id: 3),
-      ),
-      DropdownItem(
-        label: 'USA',
-        value: User(name: 'USA', id: 4),
-      ),
-      DropdownItem(
-        label: 'UK',
-        value: User(name: 'UK', id: 5),
-      ),
+      DropdownItem(label: 'Nepal', value: User(name: 'Nepal', id: 1)),
+      DropdownItem(label: 'Australia', value: User(name: 'Australia', id: 6)),
+      DropdownItem(label: 'India', value: User(name: 'India', id: 2)),
+      DropdownItem(label: 'China', value: User(name: 'China', id: 3)),
+      DropdownItem(label: 'USA', value: User(name: 'USA', id: 4)),
+      DropdownItem(label: 'UK', value: User(name: 'UK', id: 5)),
+      DropdownItem(label: 'Germany', value: User(name: 'Germany', id: 7)),
+      DropdownItem(label: 'France', value: User(name: 'France', id: 8)),
     ];
     return Scaffold(
         backgroundColor: Colors.white,
@@ -105,7 +89,6 @@ class _MyHomePageState extends State<MyHomePage> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisSize: MainAxisSize.max,
                     children: [
-                      const Text('WRAP', style: MyHomePage._headerStyle),
                       const SizedBox(
                         height: 4,
                       ),
@@ -113,17 +96,26 @@ class _MyHomePageState extends State<MyHomePage> {
                         items: items,
                         controller: controller,
                         enabled: true,
-                        searchEnabled: false,
-                        chipDecoration: ChipDecoration(
-                            backgroundColor: Colors.grey.shade300, wrap: true),
+                        searchEnabled: true,
+                        chipDecoration: const ChipDecoration(
+                          backgroundColor: Colors.yellow,
+                          wrap: true,
+                          runSpacing: 2,
+                          spacing: 10,
+                        ),
                         fieldDecoration: FieldDecoration(
-                          hintText: 'Select a country',
+                          hintText: 'Countries',
+                          hintStyle: const TextStyle(color: Colors.black87),
                           prefixIcon: const Icon(CupertinoIcons.flag),
-                          suffixIcon: const Icon(Icons.read_more),
+                          suffixIcon: const Icon(Icons.arrow_drop_down),
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(12),
-                            borderSide: BorderSide(
-                              color: Colors.grey.shade400,
+                            borderSide: const BorderSide(color: Colors.grey),
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
+                            borderSide: const BorderSide(
+                              color: Colors.black87,
                             ),
                           ),
                         ),
@@ -133,7 +125,7 @@ class _MyHomePageState extends State<MyHomePage> {
                           header: Padding(
                             padding: EdgeInsets.all(8),
                             child: Text(
-                              'Select a country',
+                              'Select countries from the list',
                               textAlign: TextAlign.start,
                               style: TextStyle(
                                 fontSize: 16,
@@ -142,8 +134,11 @@ class _MyHomePageState extends State<MyHomePage> {
                             ),
                           ),
                         ),
-                        dropdownItemDecoration: const DropdownItemDecoration(
-                          selectedIcon: Icon(Icons.check_box),
+                        dropdownItemDecoration: DropdownItemDecoration(
+                          selectedIcon:
+                              const Icon(Icons.check_box, color: Colors.green),
+                          disabledIcon:
+                              Icon(Icons.lock, color: Colors.grey.shade300),
                         ),
                         validator: (value) {
                           if (value == null || value.isEmpty) {
@@ -155,9 +150,9 @@ class _MyHomePageState extends State<MyHomePage> {
                           debugPrint("OnSelectionChange: $selectedItems");
                         },
                       ),
-                      const SizedBox(height: 16),
-                      ButtonBar(
-                        buttonAlignedDropdown: true,
+                      const SizedBox(height: 12),
+                      Wrap(
+                        spacing: 8,
                         children: [
                           ElevatedButton(
                             onPressed: () {
@@ -179,7 +174,38 @@ class _MyHomePageState extends State<MyHomePage> {
                             onPressed: () {
                               controller.clearAll();
                             },
-                            child: const Text('Deselect All'),
+                            child: const Text('Unselect All'),
+                          ),
+                          ElevatedButton(
+                            onPressed: () {
+                              controller.addItems([
+                                DropdownItem(
+                                    label: 'France',
+                                    value: User(name: 'France', id: 8)),
+                              ]);
+                            },
+                            child: const Text('Add Items'),
+                          ),
+                          ElevatedButton(
+                            onPressed: () {
+                              controller.selectWhere((element) =>
+                                  element.value.id == 1 ||
+                                  element.value.id == 2 ||
+                                  element.value.id == 3);
+                            },
+                            child: const Text('Select Where'),
+                          ),
+                          ElevatedButton(
+                            onPressed: () {
+                              controller.selectAtIndex(0);
+                            },
+                            child: const Text('Select At Index'),
+                          ),
+                          ElevatedButton(
+                            onPressed: () {
+                              controller.openDropdown();
+                            },
+                            child: const Text('Open/Close dropdown'),
                           ),
                         ],
                       )

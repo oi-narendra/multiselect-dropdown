@@ -7,7 +7,16 @@
 [![Flutter](https://img.shields.io/badge/Flutter-02569B?style=for-the-badge&logo=flutter&logoColor=white)](https://flutter.dev/)
 [![Dart](https://img.shields.io/badge/Dart-0175C2?style=for-the-badge&logo=dart&logoColor=white)](https://dart.dev/)
 
-The MultiSelect Dropdown for Flutter is a powerful and customizable widget that empowers you to effortlessly manage and search through multiple items in a dropdown list. Whether you're selecting multiple options for filtering data or picking various preferences, this package provides a seamless user experience. It also supports fetching the data from a URL.
+The MultiSelect Dropdown for Flutter is a powerful and customizable widget that empowers you to effortlessly manage and search through multiple items in a dropdown list. Customize the dropdown with your own style, and use the controller to programmatically control the dropdown.
+
+## Breaking Changes in v3.0.0
+
+- The `MultiSelectDropDown` widget has been renamed to `MultiDropdown`, which now supports `FormValidation`.
+- The `MultiSelectController` methods have been updated/renamed.
+- The `ValueItem` class has replaced the `DropdownItem` class.
+- The `.network` constructor has been removed and has been replaced with the `future` constructor, which accepts a future callback to fetch the data from the server. Use it to handle future your own way.
+- `onOptionsSelected` has been replaced with `onSelectionChange`. The `onSelectionChange` callback is called whenever the selection changes in the dropdown, whether it is selected or deselected.
+- A lot of parameters have been renamed and updated. Please check the documentation for the updated parameters.
 
 ## Links
 
@@ -15,10 +24,10 @@ The MultiSelect Dropdown for Flutter is a powerful and customizable widget that 
 
 ## Preview
 
-[<img src="https://raw.githubusercontent.com/oi-narendra/multiselect-dropdown/develop/screenshots/screenshot_1.png" width="250"/>](screenshot_1.png)
-[<img src="https://raw.githubusercontent.com/oi-narendra/multiselect-dropdown/develop/screenshots/screenshot_2.png" width="250"/>](screenshot_2.png)
-[<img src="https://raw.githubusercontent.com/oi-narendra/multiselect-dropdown/develop/screenshots/screenshot_3.png" width="250"/>](screenshot_3.png)
-[<img src="https://raw.githubusercontent.com/oi-narendra/multiselect-dropdown/develop/screenshots/screenshot_4.png" width="250"/>](screenshot_4.png)
+[<img src="https://raw.githubusercontent.com/oi-narendra/multiselect-dropdown/develop/screenshots/screenshot_1.png" width="250" alt=""/>](screenshot_1.png)
+[<img src="https://raw.githubusercontent.com/oi-narendra/multiselect-dropdown/develop/screenshots/screenshot_2.png" width="250" alt=""/>](screenshot_2.png)
+[<img src="https://raw.githubusercontent.com/oi-narendra/multiselect-dropdown/develop/screenshots/screenshot_3.png" width="250" alt="">](screenshot_3.png)
+[<img src="https://raw.githubusercontent.com/oi-narendra/multiselect-dropdown/develop/screenshots/screenshot_4.png" width="250" alt=""/>](screenshot_4.png)
 
 ## Controller
 
@@ -119,13 +128,14 @@ _controller.closeDropdown(); /// Hide the dropdown if it is open
 | focusedBorder     | InputBorder? | The border of the dropdown field when it is focused.     | null                        |
 | disabledBorder    | InputBorder? | The border of the dropdown field when it is disabled.    | null                        |
 | errorBorder       | InputBorder? | The border of the dropdown field when there is an error. | null                        |
-| suffixIcon        | Icon         | The icon to display at the end of the dropdown field.    | Icon(Icons.arrow_drop_down) |
+| suffixIcon        | Widget?      | The icon to display at the end of the dropdown field.    | Icon(Icons.arrow_drop_down) |
 | prefixIcon        | Widget?      | The icon to display at the start of the dropdown field.  | null                        |
 | labelStyle        | TextStyle?   | The style of the label text.                             | null                        |
 | hintStyle         | TextStyle?   | The style of the hint text.                              | null                        |
 | borderRadius      | double       | The border radius of the dropdown field.                 | 8.0                         |
 | animateSuffixIcon | bool         | Animate the icon or not.                                 | true                        |
 | padding           | EdgeInsets?  | Padding around the dropdown field.                       | null                        |
+| showClearIcon     | bool         | Show the clear icon or not.                              | true                        |
 
 ## DropdownDecoration
 

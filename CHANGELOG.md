@@ -1,5 +1,19 @@
 # ChangeLOG
 
+## 3.0.0
+
+### Breaking Changes
+
+- Multiple breaking changes have been made to the library to make it more flexible and customizable.
+- The library has been completely rewritten to make it more flexible and customizable.
+- `MultiSelectDropDown` is now `MultiDropdown`.
+- `ValueItem` is now `DropdownItem`. It now supports `disabled` & `selected` properties.
+- Added `.future` constructor to `MultiDropdown` to support future options. It now shows a loading indicator when the future is being resolved.
+- `.custom` constructor is now removed. You need to handle custom network requests manually by using the `.future` constructor.
+- Dropdown now supports `Form Validation`, `Prefix Icon` and some other properties.
+- Dropdown now somewhat takes decoration from theme, to make the UI more consistent across the app.
+- Refer to the parameters of the `MultiDropdown` widget for more information.
+
 ## 3.0.0-dev.5
 
 - `height` property in `DropdownDecoration` is renamed to `maxHeight`.
@@ -29,8 +43,6 @@
 - Fixed issue with `onSelectionChange` callback.
 
 ## 3.0.0-dev.1
-
-## Breaking Changes
 
 - Multiple breaking changes have been made to the library to make it more flexible and customizable.
 - The library has been completely rewritten to make it more flexible and customizable.

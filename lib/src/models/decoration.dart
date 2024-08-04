@@ -189,6 +189,7 @@ class FieldDecoration {
     this.animateSuffixIcon = true,
     this.padding = const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
     this.backgroundColor,
+    this.showClearIcon = true,
   });
 
   /// The label text to display above the dropdown field.
@@ -210,7 +211,7 @@ class FieldDecoration {
   final InputBorder? errorBorder;
 
   /// The icon to display at the end of dropdown field.
-  final Icon suffixIcon;
+  final Widget? suffixIcon;
 
   /// The icon to display at the start of dropdown field.
   final Widget? prefixIcon;
@@ -232,6 +233,9 @@ class FieldDecoration {
 
   /// background color of the dropdown field
   final Color? backgroundColor;
+
+  /// show clear icon or not in the dropdown field
+  final bool showClearIcon;
 }
 
 /// Configuration class for customizing the appearance of chips in the multi-select dropdown.

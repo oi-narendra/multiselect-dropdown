@@ -78,6 +78,10 @@ class MultiDropdown<T extends Object> extends StatefulWidget {
   ///
   /// The [onSelectionChange] is the callback when the item is changed.
   ///
+  /// The [closeOnBackButton] is whether to close the dropdown when the back button is pressed. The default value is false.
+  /// Note: This option requires the app to have a router, such as MaterialApp.router, in order to work properly.
+  ///
+  ///
   const MultiDropdown({
     required this.items,
     this.fieldDecoration = const FieldDecoration(),
@@ -226,7 +230,7 @@ class _MultiDropdownState<T extends Object> extends State<MultiDropdown<T>> {
       widget.controller ?? MultiSelectController<T>();
   final _FutureController _loadingController = _FutureController();
 
-  late final FocusNode _focusNode = widget.focusNode ?? FocusNode();
+  late FocusNode _focusNode = widget.focusNode ?? FocusNode();
 
   late final Listenable _listenable = Listenable.merge([
     _dropdownController,
@@ -328,6 +332,13 @@ class _MultiDropdownState<T extends Object> extends State<MultiDropdown<T>> {
         ..dispose();
 
       _initializeController();
+    }
+
+    // if the focus node is changed, then dispose the old focus node
+    // and initialize the new focus node.
+    if (oldWidget.focusNode != widget.focusNode) {
+      _focusNode.dispose();
+      _focusNode = widget.focusNode ?? FocusNode();
     }
 
     super.didUpdateWidget(oldWidget);
@@ -498,12 +509,13 @@ class _MultiDropdownState<T extends Object> extends State<MultiDropdown<T>> {
     );
   }
 
-  Widget _buildSuffixIcon() {
+  Widget? _buildSuffixIcon() {
     if (_loadingController.value) {
       return const CircularProgressIndicator.adaptive();
     }
 
-    if (_dropdownController.selectedItems.isNotEmpty) {
+    if (widget.fieldDecoration.showClearIcon &&
+        _dropdownController.selectedItems.isNotEmpty) {
       return GestureDetector(
         child: const Icon(Icons.clear),
         onTap: () {
@@ -512,6 +524,10 @@ class _MultiDropdownState<T extends Object> extends State<MultiDropdown<T>> {
               ?.didChange(_dropdownController.selectedItems);
         },
       );
+    }
+
+    if (widget.fieldDecoration.suffixIcon == null) {
+      return null;
     }
 
     if (!widget.fieldDecoration.animateSuffixIcon) {

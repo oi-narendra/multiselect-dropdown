@@ -102,7 +102,7 @@ class _MyHomePageState extends State<MyHomePage> {
                           hintText: 'Countries',
                           hintStyle: const TextStyle(color: Colors.black87),
                           prefixIcon: const Icon(CupertinoIcons.flag),
-                          suffixIcon: const Icon(Icons.arrow_drop_down),
+                          showClearIcon: false,
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(12),
                             borderSide: const BorderSide(color: Colors.grey),

@@ -267,7 +267,8 @@ class _MultiDropdownState<T extends Object> extends State<MultiDropdown<T>> {
     _dropdownController
       ..setItems(widget.items)
       ..addListener(_controllerListener)
-      .._setOnSelectionChange(widget.onSelectionChange);
+      .._setOnSelectionChange(widget.onSelectionChange)
+      .._setOnSearchChange(widget.onSearchChange);
 
     // if close on back button is enabled, then add the listener
     _listenBackButton();

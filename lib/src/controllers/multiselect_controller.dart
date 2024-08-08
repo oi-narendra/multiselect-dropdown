@@ -36,6 +36,9 @@ class MultiSelectController<T> extends ChangeNotifier {
   /// on selection changed callback invoker.
   OnSelectionChanged<T>? _onSelectionChanged;
 
+  /// on search changed callback invoker.
+  OnSearchChanged? _onSearchChanged;
+
   /// sets the list of dropdown items.
   /// It replaces the existing list of dropdown items.
   void setItems(List<DropdownItem<T>> options) {
@@ -201,6 +204,11 @@ class MultiSelectController<T> extends ChangeNotifier {
   // ignore: use_setters_to_change_properties
   void _setOnSelectionChange(OnSelectionChanged<T>? onSelectionChanged) {
     this._onSelectionChanged = onSelectionChanged;
+  }
+
+  // ignore: use_setters_to_change_properties
+  void _setOnSearchChange(OnSearchChanged? onSearchChanged) {
+    this._onSearchChanged = onSearchChanged;
   }
 
   // sets the search query.

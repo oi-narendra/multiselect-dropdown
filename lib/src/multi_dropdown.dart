@@ -104,6 +104,7 @@ class MultiDropdown<T extends Object> extends StatefulWidget {
     this.selectedItemBuilder,
     this.focusNode,
     this.onSelectionChange,
+    this.onSearchChange,
     this.closeOnBackButton = false,
     Key? key,
   })  : future = null,
@@ -151,6 +152,7 @@ class MultiDropdown<T extends Object> extends StatefulWidget {
     this.selectedItemBuilder,
     this.focusNode,
     this.onSelectionChange,
+    this.onSearchChange,
     this.closeOnBackButton = false,
     Key? key,
   })  : items = const [],
@@ -214,6 +216,9 @@ class MultiDropdown<T extends Object> extends StatefulWidget {
   ///
   /// This callback is called when any item is selected or unselected.
   final OnSelectionChanged<T>? onSelectionChange;
+
+  /// The callback when the search field value changes.
+  final OnSearchChanged? onSearchChange;
 
   /// Whether to close the dropdown when the back button is pressed.
   ///

@@ -225,6 +225,7 @@ class MultiSelectController<T> extends ChangeNotifier {
           )
           .toList();
     }
+    _onSearchChanged?.call(query);
     notifyListeners();
   }
 

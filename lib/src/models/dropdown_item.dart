@@ -5,12 +5,11 @@ class DropdownItem<T> {
   /// Creates a new instance of [DropdownItem].
   ///
   /// The [label] and [value] parameters are required.
-  /// The [disabled] and [selected] parameters are optional and default to false.
+  /// The [disabled] parameters are optional and default to false.
   DropdownItem({
     required this.label,
     required this.value,
     this.disabled = false,
-    this.selected = false,
   });
 
   /// Creates a new instance of [DropdownItem] from a map.
@@ -25,7 +24,6 @@ class DropdownItem<T> {
       label: map['label'] as String? ?? '',
       value: map['value'] as T,
       disabled: map['disabled'] as bool? ?? false,
-      selected: map['selected'] as bool? ?? false,
     );
   }
 
@@ -37,9 +35,6 @@ class DropdownItem<T> {
 
   /// Indicates whether the dropdown item is disabled.
   bool disabled;
-
-  /// Indicates whether the dropdown item is selected.
-  bool selected;
 
   /// Converts the [DropdownItem] instance to a map.
   ///
@@ -53,7 +48,6 @@ class DropdownItem<T> {
       'label': label,
       'value': value,
       'disabled': disabled,
-      'selected': selected,
     };
   }
 
@@ -62,7 +56,7 @@ class DropdownItem<T> {
 
   @override
   String toString() {
-    return 'ValueItem(label: $label, value: $value, disabled: $disabled, selected: $selected)';
+    return 'ValueItem(label: $label, value: $value, disabled: $disabled)';
   }
 
   @override
@@ -72,13 +66,11 @@ class DropdownItem<T> {
     return other is DropdownItem<T> &&
         other.label == label &&
         other.value == value &&
-        other.disabled == disabled &&
-        other.selected == selected;
+        other.disabled == disabled;
   }
 
   @override
-  int get hashCode =>
-      label.hashCode ^ value.hashCode ^ disabled.hashCode ^ selected.hashCode;
+  int get hashCode => label.hashCode ^ value.hashCode ^ disabled.hashCode;
 
   /// Creates a copy of the [DropdownItem] instance with the specified properties.
   ///
@@ -87,13 +79,11 @@ class DropdownItem<T> {
     String? label,
     T? value,
     bool? disabled,
-    bool? selected,
   }) {
     return DropdownItem<T>(
       label: label ?? this.label,
       value: value ?? this.value,
       disabled: disabled ?? this.disabled,
-      selected: selected ?? this.selected,
     );
   }
 }

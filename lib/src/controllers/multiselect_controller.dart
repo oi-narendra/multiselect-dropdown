@@ -6,6 +6,8 @@ class MultiSelectController<T> extends ChangeNotifier {
 
   List<DropdownItem<T>> _filteredItems = [];
 
+  List<DropdownItem<T>> _selectedItems = [];
+
   String _searchQuery = '';
 
   /// Current page number for lazy loading scroll
@@ -16,8 +18,7 @@ class MultiSelectController<T> extends ChangeNotifier {
       _searchQuery.isEmpty ? _items : _filteredItems;
 
   /// Gets the list of selected dropdown items.
-  List<DropdownItem<T>> get selectedItems =>
-      _items.where((element) => element.selected).toList();
+  List<DropdownItem<T>> get selectedItems => _selectedItems;
 
   /// Get the list of selected dropdown item values.
   List<T> get _selectedValues => selectedItems.map((e) => e.value).toList();
@@ -38,6 +39,11 @@ class MultiSelectController<T> extends ChangeNotifier {
 
   /// on selection changed callback invoker.
   OnSelectionChanged<T>? _onSelectionChanged;
+
+  ///return true if item is selected
+  bool isItemSelected(DropdownItem<T> item) {
+    return _selectedItems.contains(item);
+  }
 
   /// sets the list of dropdown items.
   /// It replaces the existing list of dropdown items.
@@ -70,24 +76,14 @@ class MultiSelectController<T> extends ChangeNotifier {
 
   /// clears all the selected items.
   void clearAll() {
-    _items = _items
-        .map(
-          (element) =>
-              element.selected ? element.copyWith(selected: false) : element,
-        )
-        .toList();
+    _selectedItems.clear();
     notifyListeners();
     _onSelectionChanged?.call(_selectedValues);
   }
 
   /// selects all the items.
   void selectAll() {
-    _items = _items
-        .map(
-          (element) =>
-              !element.selected ? element.copyWith(selected: true) : element,
-        )
-        .toList();
+    _selectedItems = items;
     notifyListeners();
     _onSelectionChanged?.call(_selectedValues);
   }
@@ -100,27 +96,21 @@ class MultiSelectController<T> extends ChangeNotifier {
 
     final item = _items[index];
 
-    if (item.disabled || item.selected) return;
+    if (item.disabled || _selectedItems.contains(item)) return;
 
     selectWhere((element) => element == _items[index]);
   }
 
   /// deselects all the items.
   void toggleWhere(bool Function(DropdownItem<T> item) predicate) {
-    _items = _items
-        .map(
-          (element) => predicate(element)
-              ? element.copyWith(selected: !element.selected)
-              : element,
-        )
-        .toList();
-    if (_searchQuery.isNotEmpty) {
-      _filteredItems = _items
-          .where(
-            (item) =>
-                item.label.toLowerCase().contains(_searchQuery.toLowerCase()),
-          )
-          .toList();
+    for (final item in _items) {
+      if (predicate(item)) {
+        if (_selectedItems.contains(item)) {
+          _selectedItems.remove(item);
+        } else {
+          _selectedItems.add(item);
+        }
+      }
     }
     notifyListeners();
     _onSelectionChanged?.call(_selectedValues);
@@ -130,26 +120,18 @@ class MultiSelectController<T> extends ChangeNotifier {
   ///
   /// The [predicate] parameter is a function that takes a [DropdownItem] and returns a boolean.
   void selectWhere(bool Function(DropdownItem<T> item) predicate) {
-    _items = _items
-        .map(
-          (element) => predicate(element) && !element.selected
-              ? element.copyWith(selected: true)
-              : element,
-        )
-        .toList();
+    _selectedItems =
+        _items.where((currentItem) => predicate(currentItem)).toList();
     notifyListeners();
     _onSelectionChanged?.call(_selectedValues);
   }
 
   void _toggleOnly(DropdownItem<T> item) {
-    _items = _items
-        .map(
-          (element) => element == item
-              ? element.copyWith(selected: !element.selected)
-              : element.copyWith(selected: false),
-        )
-        .toList();
-
+    if (_selectedItems.contains(item)) {
+      _selectedItems.remove(item);
+    } else {
+      _selectedItems.add(item);
+    }
     debugPrint('items: $_items');
     notifyListeners();
     _onSelectionChanged?.call(_selectedValues);
@@ -159,13 +141,11 @@ class MultiSelectController<T> extends ChangeNotifier {
   ///
   /// The [predicate] parameter is a function that takes a [DropdownItem] and returns a boolean.
   void unselectWhere(bool Function(DropdownItem<T> item) predicate) {
-    _items = _items
-        .map(
-          (element) => predicate(element) && element.selected
-              ? element.copyWith(selected: false)
-              : element,
-        )
-        .toList();
+    for (final item in _items) {
+      if (predicate(item)) {
+        _selectedItems.remove(item);
+      }
+    }
     notifyListeners();
     _onSelectionChanged?.call(_selectedValues);
   }

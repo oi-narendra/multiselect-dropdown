@@ -19,6 +19,8 @@ typedef DropdownItemBuilder<T> = Widget Function(
   DropdownItem<T> item,
   int index,
   VoidCallback onTap,
+  // ignore: avoid_positional_boolean_parameters
+  bool isSelected,
 );
 
 /// typedef for the callback when the item is selected/de-selected/disabled.
@@ -484,6 +486,7 @@ class _MultiDropdownState<T extends Object> extends State<MultiDropdown<T>> {
                       handleFuture: _handleFuture,
                       debounce: widget.debounce,
                       searchEditingController: _searchEditingController,
+                      dropdownController: _dropdownController,
                     ),
                   ),
                 ),

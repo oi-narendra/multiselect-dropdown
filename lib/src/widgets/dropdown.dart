@@ -16,6 +16,7 @@ class _Dropdown<T> extends StatelessWidget {
     required this.scrollController,
     required this.loadingController,
     required this.handleFuture,
+    required this.dropdownController,
     Key? key,
     this.onSearchChange,
     this.itemBuilder,
@@ -70,11 +71,12 @@ class _Dropdown<T> extends StatelessWidget {
   /// Search controller
   final TextEditingController? searchEditingController;
 
+  /// Dropdown controller for interactions
+  final MultiSelectController<T> dropdownController;
+
   final _FutureController loadingController;
 
   final void Function() handleFuture;
-
-  int get _selectedCount => items.where((element) => element.selected).length;
 
   static const Map<ShortcutActivator, Intent> _webShortcuts =
       <ShortcutActivator, Intent>{
@@ -170,7 +172,12 @@ class _Dropdown<T> extends StatelessWidget {
     final option = items[index];
 
     if (itemBuilder != null) {
-      return itemBuilder!(option, index, () => onItemTap(option));
+      return itemBuilder!(
+        option,
+        index,
+        () => onItemTap(option),
+        dropdownController.isItemSelected(option),
+      );
     }
 
     final disabledColor = dropdownItemDecoration.disabledBackgroundColor ??
@@ -178,13 +185,13 @@ class _Dropdown<T> extends StatelessWidget {
 
     final tileColor = option.disabled
         ? disabledColor
-        : option.selected
+        : dropdownController.isItemSelected(option)
             ? dropdownItemDecoration.selectedBackgroundColor
             : dropdownItemDecoration.backgroundColor;
 
     final trailing = option.disabled
         ? dropdownItemDecoration.disabledIcon
-        : option.selected
+        : dropdownController.isItemSelected(option)
             ? dropdownItemDecoration.selectedIcon
             : null;
 
@@ -195,7 +202,7 @@ class _Dropdown<T> extends StatelessWidget {
         dense: true,
         autofocus: true,
         enabled: !option.disabled,
-        selected: option.selected,
+        selected: dropdownController.isItemSelected(option),
         visualDensity: VisualDensity.adaptivePlatformDensity,
         focusColor: dropdownItemDecoration.backgroundColor?.withAlpha(100),
         selectedColor: dropdownItemDecoration.selectedTextColor ??
@@ -219,10 +226,10 @@ class _Dropdown<T> extends StatelessWidget {
 
   void _onSearchChange(String value) => onSearchChange?.call(value);
 
-  bool _reachedMaxSelection(DropdownItem<dynamic> option) {
-    return !option.selected &&
+  bool _reachedMaxSelection(DropdownItem<T> option) {
+    return !dropdownController.isItemSelected(option) &&
         maxSelections > 0 &&
-        _selectedCount >= maxSelections;
+        dropdownController.selectedItems.length >= maxSelections;
   }
 }
 

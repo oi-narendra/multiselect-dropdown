@@ -8,6 +8,9 @@ class MultiSelectController<T> extends ChangeNotifier {
 
   String _searchQuery = '';
 
+  /// Current page number for lazy loading scroll
+  int page = 1;
+
   /// Gets the list of dropdown items.
   List<DropdownItem<T>> get items =>
       _searchQuery.isEmpty ? _items : _filteredItems;

@@ -30,6 +30,13 @@ typedef SelectedItemBuilder<T> = Widget Function(DropdownItem<T> item);
 /// typedef for the future request.
 typedef FutureRequest<T> = Future<List<DropdownItem<T>>> Function();
 
+/// typedef for the future paginate and search request.
+typedef FutureSearchAndPaginateRequest<T> = Future<List<DropdownItem<T>>>
+    Function(
+  int? page,
+  String? query,
+);
+
 /// A multiselect dropdown widget.
 ///
 class MultiDropdown<T extends Object> extends StatefulWidget {
@@ -102,8 +109,12 @@ class MultiDropdown<T extends Object> extends StatefulWidget {
     this.focusNode,
     this.onSelectionChange,
     this.closeOnBackButton = false,
+    this.scrollController,
+    this.debounce,
+    this.searchEditingController,
     Key? key,
   })  : future = null,
+        futureSearchAndPaginate = null,
         super(key: key);
 
   /// Creates a multiselect dropdown widget with future request.
@@ -130,7 +141,8 @@ class MultiDropdown<T extends Object> extends StatefulWidget {
   ///
   /// ```
   const MultiDropdown.future({
-    required this.future,
+    this.future,
+    this.futureSearchAndPaginate,
     this.fieldDecoration = const FieldDecoration(),
     this.dropdownDecoration = const DropdownDecoration(),
     this.searchDecoration = const SearchFieldDecoration(),
@@ -149,8 +161,15 @@ class MultiDropdown<T extends Object> extends StatefulWidget {
     this.focusNode,
     this.onSelectionChange,
     this.closeOnBackButton = false,
+    this.scrollController,
+    this.debounce,
+    this.searchEditingController,
     Key? key,
   })  : items = const [],
+        assert(
+          future != null || futureSearchAndPaginate != null,
+          'future or futureSearchAndPaginate arguments required',
+        ),
         super(key: key);
 
   /// The list of dropdown items.
@@ -170,6 +189,9 @@ class MultiDropdown<T extends Object> extends StatefulWidget {
 
   /// The decoration of the search field.
   final SearchFieldDecoration searchDecoration;
+
+  /// Dropdown menu scroll controller.
+  final ScrollController? scrollController;
 
   /// The decoration of the dropdown items.
   final DropdownItemDecoration dropdownItemDecoration;
@@ -207,6 +229,9 @@ class MultiDropdown<T extends Object> extends StatefulWidget {
   /// The future request for the dropdown items.
   final FutureRequest<T>? future;
 
+  /// The future request for the dropdown search and lazy loading items.
+  final FutureSearchAndPaginateRequest<T>? futureSearchAndPaginate;
+
   /// The callback when the item is changed.
   ///
   /// This callback is called when any item is selected or unselected.
@@ -216,6 +241,12 @@ class MultiDropdown<T extends Object> extends StatefulWidget {
   ///
   /// Note: This option requires the app to have a router, such as MaterialApp.router, in order to work properly.
   final bool closeOnBackButton;
+
+  /// Search debounce duration
+  final Duration? debounce;
+
+  /// Search text editing controller
+  final TextEditingController? searchEditingController;
 
   @override
   State<MultiDropdown<T>> createState() => _MultiDropdownState<T>();
@@ -231,6 +262,9 @@ class _MultiDropdownState<T extends Object> extends State<MultiDropdown<T>> {
   final _FutureController _loadingController = _FutureController();
 
   late FocusNode _focusNode = widget.focusNode ?? FocusNode();
+
+  late final TextEditingController _searchEditingController =
+      widget.searchEditingController ?? TextEditingController();
 
   late final Listenable _listenable = Listenable.merge([
     _dropdownController,
@@ -252,7 +286,8 @@ class _MultiDropdownState<T extends Object> extends State<MultiDropdown<T>> {
       throw StateError('DropdownController is disposed');
     }
 
-    if (widget.future != null) {
+    if (widget.future != null || widget.futureSearchAndPaginate != null) {
+      _dropdownController.page = 1;
       unawaited(_handleFuture());
     }
 
@@ -293,17 +328,41 @@ class _MultiDropdownState<T extends Object> extends State<MultiDropdown<T>> {
     }
   }
 
-  Future<void> _handleFuture() async {
+  void _handleSearch([String? query]) {
+    if (widget.futureSearchAndPaginate != null) {
+      _dropdownController.setItems([]);
+      _handleFuture(_searchEditingController.text, 1);
+      _dropdownController.page = 1;
+    } else {
+      _dropdownController._setSearchQuery(_searchEditingController.text);
+    }
+  }
+
+  Future<List<DropdownItem<T>>> _handleRequest(String? query, int? page) async {
+    if (widget.futureSearchAndPaginate != null) {
+      return widget.futureSearchAndPaginate!(
+        page ?? _dropdownController.page,
+        query,
+      );
+    }
+    return widget.future!();
+  }
+
+  Future<void> _handleFuture([String? query, int? page]) async {
     // we need to wait for the future to complete
     // before we can set the items to the dropdown controller.
 
     try {
       _loadingController.start();
-      final items = await widget.future!();
+      final items = await _handleRequest(_searchEditingController.text, page);
+
       WidgetsBinding.instance.addPostFrameCallback((_) {
         _loadingController.stop();
-        _dropdownController.setItems(items);
+        _dropdownController.addItems(items);
       });
+      if (widget.futureSearchAndPaginate != null && items.isNotEmpty) {
+        _dropdownController.page++;
+      }
     } catch (e) {
       _loadingController.stop();
       rethrow;
@@ -418,7 +477,13 @@ class _MultiDropdownState<T extends Object> extends State<MultiDropdown<T>> {
                       searchDecoration: widget.searchDecoration,
                       maxSelections: widget.maxSelections,
                       singleSelect: widget.singleSelect,
-                      onSearchChange: _dropdownController._setSearchQuery,
+                      onSearchChange: _handleSearch,
+                      scrollController:
+                          widget.scrollController ?? ScrollController(),
+                      loadingController: _loadingController,
+                      handleFuture: _handleFuture,
+                      debounce: widget.debounce,
+                      searchEditingController: _searchEditingController,
                     ),
                   ),
                 ),

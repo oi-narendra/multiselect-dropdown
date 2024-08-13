@@ -318,7 +318,7 @@ class _MultiDropdownState<T extends Object> extends State<MultiDropdown<T>> {
       _portalController.show();
     } else {
       _dropdownController._clearSearchQuery();
-      _portalController.hide();
+      // _portalController.hide();
     }
   }
 
@@ -653,6 +653,7 @@ class _MultiDropdownState<T extends Object> extends State<MultiDropdown<T>> {
     if (!_dropdownController.isOpen) return;
 
     _dropdownController.closeDropdown();
+    _portalController.hide();
   }
 
   void _showError(String message) {

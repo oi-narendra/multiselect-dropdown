@@ -128,9 +128,11 @@ class MultiSelectController<T> extends ChangeNotifier {
 
   void _toggleOnly(DropdownItem<T> item) {
     if (_selectedItems.contains(item)) {
-      _selectedItems.remove(item);
+      _selectedItems.clear();
     } else {
-      _selectedItems.add(item);
+      _selectedItems
+        ..clear()
+        ..add(item);
     }
     debugPrint('items: $_items');
     notifyListeners();

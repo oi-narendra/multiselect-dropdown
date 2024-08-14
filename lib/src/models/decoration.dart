@@ -65,6 +65,7 @@ class DropdownItemDecoration {
     this.disabledTextColor,
     this.selectedIcon = const Icon(Icons.check),
     this.disabledIcon,
+    this.showSelectIcon = true,
   });
 
   /// The background color of the dropdown item.
@@ -90,6 +91,9 @@ class DropdownItemDecoration {
 
   /// The icon to display for the disabled dropdown item.
   final Icon? disabledIcon;
+
+  /// Show or hide selected icon
+  final bool? showSelectIcon;
 }
 
 /// Represents the decoration for the dropdown.

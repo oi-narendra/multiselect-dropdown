@@ -192,7 +192,9 @@ class _Dropdown<T> extends StatelessWidget {
     final trailing = option.disabled
         ? dropdownItemDecoration.disabledIcon
         : dropdownController.isItemSelected(option)
-            ? dropdownItemDecoration.selectedIcon
+            ? dropdownItemDecoration.showSelectIcon ?? true
+                ? dropdownItemDecoration.selectedIcon
+                : null
             : null;
 
     return Ink(

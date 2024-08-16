@@ -267,9 +267,12 @@ class ChipDecoration {
     this.spacing = 8,
     this.runSpacing = 12,
     this.labelStyle,
+    Color? disabledBackgroundColor,
+    TextStyle? disabledLabelStyle,
     this.borderRadius = const BorderRadius.all(Radius.circular(12)),
     this.wrap = true,
-  });
+  })  : disabledLabelStyle = disabledLabelStyle ?? disabledLabelStyle,
+        disabledBackgroundColor = disabledBackgroundColor ?? backgroundColor;
 
   /// The icon to display for deleting a chip.
   final Icon? deleteIcon;
@@ -277,8 +280,14 @@ class ChipDecoration {
   /// The background color of the chip.
   final Color? backgroundColor;
 
+  /// The background color of the disabled chip.
+  final Color? disabledBackgroundColor;
+
   /// The style of the chip label.
   final TextStyle? labelStyle;
+
+  /// The style of the chip label.
+  final TextStyle? disabledLabelStyle;
 
   /// The padding around the chip.
   final EdgeInsets padding;

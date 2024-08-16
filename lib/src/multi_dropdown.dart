@@ -597,7 +597,7 @@ class _MultiDropdownState<T extends Object> extends State<MultiDropdown<T>> {
         children: [
           Text(option.label, style: option.disabled ? chipDecoration.disabledLabelStyle : chipDecoration.labelStyle),
           const SizedBox(width: 4),
-          if (option.disabled)
+          if (!option.disabled)
             InkWell(
               onTap: () {
                 _dropdownController.unselectWhere((element) => element.label == option.label);

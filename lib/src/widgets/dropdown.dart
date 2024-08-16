@@ -126,7 +126,7 @@ class _Dropdown<T> extends StatelessWidget {
       ),
     );
 
-    if (kIsWeb || Platform.isMacOS || Platform.isLinux || Platform.isWindows) {
+    if (operatingSystemShortcutAvailable) {
       return Shortcuts(shortcuts: _webShortcuts, child: child);
     }
 

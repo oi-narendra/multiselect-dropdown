@@ -466,6 +466,12 @@ class _MultiDropdownState<T extends Object> extends State<MultiDropdown<T>> {
       _dropdownController.toggleWhere((element) => element == item);
     }
     _formFieldKey.currentState?.didChange(_dropdownController.selectedItems);
+
+    if (widget.singleSelect) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        _dropdownController.closeDropdown();
+      });
+    }
   }
 
   InputDecoration _buildDecoration() {

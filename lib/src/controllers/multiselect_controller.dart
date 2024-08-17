@@ -147,7 +147,6 @@ class MultiSelectController<T> extends ChangeNotifier {
         )
         .toList();
 
-    debugPrint('items: $_items');
     notifyListeners();
     _onSelectionChanged?.call(_selectedValues);
   }

@@ -234,7 +234,7 @@ class _MultiDropdownState<T extends Object> extends State<MultiDropdown<T>> {
 
   final OverlayPortalController _portalController = OverlayPortalController();
 
-  late final MultiSelectController<T> _dropdownController =
+  late MultiSelectController<T> _dropdownController =
       widget.controller ?? MultiSelectController<T>();
   final _FutureController _loadingController = _FutureController();
 
@@ -264,9 +264,14 @@ class _MultiDropdownState<T extends Object> extends State<MultiDropdown<T>> {
       unawaited(_handleFuture());
     }
 
+    if (!_dropdownController._initialized) {
+      _dropdownController
+        .._initialize()
+        ..setItems(widget.items);
+    }
+
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _dropdownController
-        ..setItems(widget.items)
         ..addListener(_controllerListener)
         .._setOnSelectionChange(widget.onSelectionChange)
         .._setOnSearchChange(widget.onSearchChange);
@@ -341,6 +346,8 @@ class _MultiDropdownState<T extends Object> extends State<MultiDropdown<T>> {
       _dropdownController
         ..removeListener(_controllerListener)
         ..dispose();
+
+      _dropdownController = widget.controller ?? MultiSelectController<T>();
 
       _initializeController();
     }

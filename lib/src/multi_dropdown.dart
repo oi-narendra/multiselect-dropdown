@@ -264,14 +264,16 @@ class _MultiDropdownState<T extends Object> extends State<MultiDropdown<T>> {
       unawaited(_handleFuture());
     }
 
-    _dropdownController
-      ..setItems(widget.items)
-      ..addListener(_controllerListener)
-      .._setOnSelectionChange(widget.onSelectionChange)
-      .._setOnSearchChange(widget.onSearchChange);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _dropdownController
+        ..setItems(widget.items)
+        ..addListener(_controllerListener)
+        .._setOnSelectionChange(widget.onSelectionChange)
+        .._setOnSearchChange(widget.onSearchChange);
 
-    // if close on back button is enabled, then add the listener
-    _listenBackButton();
+      // if close on back button is enabled, then add the listener
+      _listenBackButton();
+    });
   }
 
   void _listenBackButton() {
@@ -355,6 +357,8 @@ class _MultiDropdownState<T extends Object> extends State<MultiDropdown<T>> {
 
   @override
   void dispose() {
+    _dropdownController.removeListener(_controllerListener);
+
     if (widget.controller == null) {
       _dropdownController.dispose();
     }

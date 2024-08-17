@@ -458,10 +458,7 @@ class _MultiDropdownState<T extends Object> extends State<MultiDropdown<T>> {
                     decoration: _buildDecoration(),
                     textAlign: TextAlign.start,
                     textAlignVertical: TextAlignVertical.center,
-                    child: Align(
-                      alignment: Alignment.centerLeft,
-                      child: _buildField(),
-                    ),
+                    child: _buildField(),
                   ),
                 );
               },

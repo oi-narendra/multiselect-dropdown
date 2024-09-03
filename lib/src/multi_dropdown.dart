@@ -26,6 +26,9 @@ typedef DropdownItemBuilder<T> = Widget Function(
 /// typedef for the callback when the item is selected/de-selected/disabled.
 typedef OnSelectionChanged<T> = void Function(List<T> selectedItems);
 
+/// typedef for the callback when the search field value changes.
+typedef OnSearchChanged = ValueChanged<String>;
+
 /// typedef for the selected item builder.
 typedef SelectedItemBuilder<T> = Widget Function(DropdownItem<T> item);
 
@@ -110,6 +113,7 @@ class MultiDropdown<T extends Object> extends StatefulWidget {
     this.selectedItemBuilder,
     this.focusNode,
     this.onSelectionChange,
+    this.onSearchChange,
     this.closeOnBackButton = false,
     this.scrollController,
     this.debounce,
@@ -162,6 +166,7 @@ class MultiDropdown<T extends Object> extends StatefulWidget {
     this.selectedItemBuilder,
     this.focusNode,
     this.onSelectionChange,
+    this.onSearchChange,
     this.closeOnBackButton = false,
     this.scrollController,
     this.debounce,
@@ -239,6 +244,9 @@ class MultiDropdown<T extends Object> extends StatefulWidget {
   /// This callback is called when any item is selected or unselected.
   final OnSelectionChanged<T>? onSelectionChange;
 
+  /// The callback when the search field value changes.
+  final OnSearchChanged? onSearchChange;
+
   /// Whether to close the dropdown when the back button is pressed.
   ///
   /// Note: This option requires the app to have a router, such as MaterialApp.router, in order to work properly.
@@ -259,7 +267,7 @@ class _MultiDropdownState<T extends Object> extends State<MultiDropdown<T>> {
 
   final OverlayPortalController _portalController = OverlayPortalController();
 
-  late final MultiSelectController<T> _dropdownController =
+  late MultiSelectController<T> _dropdownController =
       widget.controller ?? MultiSelectController<T>();
   final _FutureController _loadingController = _FutureController();
 
@@ -293,13 +301,20 @@ class _MultiDropdownState<T extends Object> extends State<MultiDropdown<T>> {
       unawaited(_handleFuture());
     }
 
-    _dropdownController
-      ..setItems(widget.items)
-      ..addListener(_controllerListener)
-      .._setOnSelectionChange(widget.onSelectionChange);
+    if (!_dropdownController._initialized) {
+      _dropdownController
+        .._initialize()
+        ..setItems(widget.items);
+    }
 
-    // if close on back button is enabled, then add the listener
-    _listenBackButton();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _dropdownController
+        ..addListener(_controllerListener)
+        .._setOnSelectionChange(widget.onSelectionChange);
+
+      // if close on back button is enabled, then add the listener
+      _listenBackButton();
+    });
   }
 
   void _listenBackButton() {
@@ -392,6 +407,8 @@ class _MultiDropdownState<T extends Object> extends State<MultiDropdown<T>> {
         ..removeListener(_controllerListener)
         ..dispose();
 
+      _dropdownController = widget.controller ?? MultiSelectController<T>();
+
       _initializeController();
     }
 
@@ -407,6 +424,8 @@ class _MultiDropdownState<T extends Object> extends State<MultiDropdown<T>> {
 
   @override
   void dispose() {
+    _dropdownController.removeListener(_controllerListener);
+
     if (widget.controller == null) {
       _dropdownController.dispose();
     }
@@ -513,10 +532,7 @@ class _MultiDropdownState<T extends Object> extends State<MultiDropdown<T>> {
                     decoration: _buildDecoration(),
                     textAlign: TextAlign.start,
                     textAlignVertical: TextAlignVertical.center,
-                    child: Align(
-                      alignment: Alignment.centerLeft,
-                      child: _buildField(),
-                    ),
+                    child: _buildField(),
                   ),
                 );
               },
@@ -534,6 +550,12 @@ class _MultiDropdownState<T extends Object> extends State<MultiDropdown<T>> {
       _dropdownController.toggleWhere((element) => element == item);
     }
     _formFieldKey.currentState?.didChange(_dropdownController.selectedItems);
+
+    if (widget.singleSelect) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        _dropdownController.closeDropdown();
+      });
+    }
   }
 
   InputDecoration _buildDecoration() {

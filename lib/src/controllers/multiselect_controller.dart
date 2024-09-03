@@ -2,6 +2,14 @@ part of '../multi_dropdown.dart';
 
 /// Controller for the multiselect dropdown.
 class MultiSelectController<T> extends ChangeNotifier {
+  /// a flag to indicate whether the controller is initialized.
+  bool _initialized = false;
+
+  /// set initialized flag to true.
+  void _initialize() {
+    _initialized = true;
+  }
+
   List<DropdownItem<T>> _items = [];
 
   List<DropdownItem<T>> _filteredItems = [];

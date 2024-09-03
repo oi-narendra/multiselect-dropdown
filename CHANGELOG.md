@@ -1,5 +1,13 @@
 # ChangeLOG
 
+## 3.0.1
+
+- Fixed overlay exception error.
+- Fixed Text Direction issue.
+- Exposed `OnSearchChange` callback to get the search query.
+- Fixed dropdown reset issue when used inside a `ListView`.
+- Close dropdown when single select item is selected.
+
 ## 3.0.0
 
 ### Breaking Changes

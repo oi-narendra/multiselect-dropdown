@@ -94,6 +94,7 @@ _controller.closeDropdown(); /// Hide the dropdown if it is open
 | future                 | FutureRequest<T>?                                         | The future request for the dropdown items. | null                      |
 | onSelectionChange      | OnSelectionChanged<T>?                                    | The callback when the item is changed.     | null                      |
 | closeOnBackButton      | bool                                                      | Closes the dropdown on back button         | false                     |
+| onSearchChange         | ValueChanged<String>?                                     | The callback when the search text changes. | null                      |
 
 ## DropdownItem
 

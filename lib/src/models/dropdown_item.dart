@@ -9,6 +9,7 @@ class DropdownItem<T> {
   DropdownItem({
     required this.label,
     required this.value,
+    this.selected,
     this.disabled = false,
   });
 
@@ -24,6 +25,7 @@ class DropdownItem<T> {
       label: map['label'] as String? ?? '',
       value: map['value'] as T,
       disabled: map['disabled'] as bool? ?? false,
+      selected: map['selected'] as bool? ?? false,
     );
   }
 
@@ -35,6 +37,9 @@ class DropdownItem<T> {
 
   /// Indicates whether the dropdown item is disabled.
   bool disabled;
+
+  /// Indicates whether the dropdown item is disabled.
+  bool? selected;
 
   /// Converts the [DropdownItem] instance to a map.
   ///
@@ -48,6 +53,7 @@ class DropdownItem<T> {
       'label': label,
       'value': value,
       'disabled': disabled,
+      'selected': selected,
     };
   }
 
@@ -56,7 +62,7 @@ class DropdownItem<T> {
 
   @override
   String toString() {
-    return 'ValueItem(label: $label, value: $value, disabled: $disabled)';
+    return 'ValueItem(label: $label, value: $value, disabled: $disabled, selected: $selected)';
   }
 
   @override
@@ -66,11 +72,13 @@ class DropdownItem<T> {
     return other is DropdownItem<T> &&
         other.label == label &&
         other.value == value &&
-        other.disabled == disabled;
+        other.disabled == disabled &&
+        other.selected == selected;
   }
 
   @override
-  int get hashCode => label.hashCode ^ value.hashCode ^ disabled.hashCode;
+  int get hashCode =>
+      label.hashCode ^ value.hashCode ^ disabled.hashCode ^ selected.hashCode;
 
   /// Creates a copy of the [DropdownItem] instance with the specified properties.
   ///
@@ -84,6 +92,7 @@ class DropdownItem<T> {
       label: label ?? this.label,
       value: value ?? this.value,
       disabled: disabled ?? this.disabled,
+      selected: selected ?? this.selected,
     );
   }
 }

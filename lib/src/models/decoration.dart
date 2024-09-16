@@ -175,6 +175,8 @@ class FieldDecoration {
   ///
   /// [prefixIcon] is the icon to display at the start of dropdown field.
   ///
+  /// [suffixLoader] the loader widget to display at the end of dropdown field.
+  ///
   /// [padding] is the padding around the dropdown field.
   ///
   /// [backgroundColor] is the background color of the dropdown field.
@@ -187,6 +189,7 @@ class FieldDecoration {
     this.errorBorder,
     this.suffixIcon = const Icon(Icons.arrow_drop_down),
     this.prefixIcon,
+    this.suffixLoader,
     this.labelStyle,
     this.borderRadius = 12,
     this.hintStyle,
@@ -216,6 +219,9 @@ class FieldDecoration {
 
   /// The icon to display at the end of dropdown field.
   final Widget? suffixIcon;
+
+  /// The loader widget to display at the end of dropdown field.
+  final Widget? suffixLoader;
 
   /// The icon to display at the start of dropdown field.
   final Widget? prefixIcon;

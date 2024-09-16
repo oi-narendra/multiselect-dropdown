@@ -376,6 +376,8 @@ class _MultiDropdownState<T extends Object> extends State<MultiDropdown<T>> {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         _loadingController.stop();
         _dropdownController.addItems(items);
+        _dropdownController._selectedItems
+            .addAll(items.where((i) => i.selected ?? false));
       });
       if (widget.futureSearchAndPaginate != null && items.isNotEmpty) {
         _dropdownController.page++;
@@ -594,14 +596,15 @@ class _MultiDropdownState<T extends Object> extends State<MultiDropdown<T>> {
       prefixIcon: prefixIcon,
       focusedBorder: fieldDecoration.focusedBorder ?? border,
       errorBorder: fieldDecoration.errorBorder,
-      suffixIcon: _buildSuffixIcon(),
+      suffixIcon: _buildSuffixIcon(fieldDecoration),
       contentPadding: fieldDecoration.padding,
     );
   }
 
-  Widget? _buildSuffixIcon() {
+  Widget? _buildSuffixIcon(FieldDecoration fieldDecoration) {
     if (_loadingController.value) {
-      return const CircularProgressIndicator.adaptive();
+      return fieldDecoration.suffixLoader ??
+          const CircularProgressIndicator.adaptive();
     }
 
     if (widget.fieldDecoration.showClearIcon &&

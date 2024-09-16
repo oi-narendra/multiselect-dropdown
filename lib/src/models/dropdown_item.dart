@@ -5,12 +5,12 @@ class DropdownItem<T> {
   /// Creates a new instance of [DropdownItem].
   ///
   /// The [label] and [value] parameters are required.
-  /// The [disabled] and [selected] parameters are optional and default to false.
+  /// The [disabled] parameters are optional and default to false.
   DropdownItem({
     required this.label,
     required this.value,
+    this.selected,
     this.disabled = false,
-    this.selected = false,
   });
 
   /// Creates a new instance of [DropdownItem] from a map.
@@ -38,8 +38,8 @@ class DropdownItem<T> {
   /// Indicates whether the dropdown item is disabled.
   bool disabled;
 
-  /// Indicates whether the dropdown item is selected.
-  bool selected;
+  /// Indicates whether the dropdown item is disabled.
+  bool? selected;
 
   /// Converts the [DropdownItem] instance to a map.
   ///
@@ -87,7 +87,6 @@ class DropdownItem<T> {
     String? label,
     T? value,
     bool? disabled,
-    bool? selected,
   }) {
     return DropdownItem<T>(
       label: label ?? this.label,

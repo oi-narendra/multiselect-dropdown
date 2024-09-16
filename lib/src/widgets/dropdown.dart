@@ -13,11 +13,17 @@ class _Dropdown<T> extends StatelessWidget {
     required this.maxSelections,
     required this.items,
     required this.onItemTap,
+    required this.scrollController,
+    required this.loadingController,
+    required this.handleFuture,
+    required this.dropdownController,
     Key? key,
     this.onSearchChange,
     this.itemBuilder,
     this.itemSeparator,
     this.singleSelect = false,
+    this.searchEditingController,
+    this.debounce = const Duration(milliseconds: 250),
   }) : super(key: key);
 
   /// The decoration of the dropdown.
@@ -56,7 +62,21 @@ class _Dropdown<T> extends StatelessWidget {
   /// Whether the selection is single.
   final bool singleSelect;
 
-  int get _selectedCount => items.where((element) => element.selected).length;
+  /// Menu scroll controller
+  final ScrollController scrollController;
+
+  /// Search debounce duration
+  final Duration? debounce;
+
+  /// Search controller
+  final TextEditingController? searchEditingController;
+
+  /// Dropdown controller for interactions
+  final MultiSelectController<T> dropdownController;
+
+  final _FutureController loadingController;
+
+  final void Function() handleFuture;
 
   static const Map<ShortcutActivator, Intent> _webShortcuts =
       <ShortcutActivator, Intent>{
@@ -97,16 +117,31 @@ class _Dropdown<T> extends StatelessWidget {
                 _SearchField(
                   decoration: searchDecoration,
                   onChanged: _onSearchChange,
+                  debounce: debounce,
+                  searchEditingController: searchEditingController,
                 ),
               if (decoration.header != null)
                 Flexible(child: decoration.header!),
               Flexible(
-                child: ListView.separated(
-                  separatorBuilder: (_, __) =>
-                      itemSeparator ?? const SizedBox.shrink(),
-                  shrinkWrap: true,
-                  itemCount: items.length,
-                  itemBuilder: (_, int index) => _buildOption(index, theme),
+                child: NotificationListener(
+                  onNotification: (notif) {
+                    if (notif is ScrollEndNotification &&
+                        !loadingController.value) {
+                      if (scrollController.position.pixels ==
+                          scrollController.position.maxScrollExtent) {
+                        handleFuture();
+                      }
+                    }
+                    return true;
+                  },
+                  child: ListView.separated(
+                    controller: scrollController,
+                    separatorBuilder: (_, __) =>
+                        itemSeparator ?? const SizedBox.shrink(),
+                    shrinkWrap: true,
+                    itemCount: items.length,
+                    itemBuilder: (_, int index) => _buildOption(index, theme),
+                  ),
                 ),
               ),
               if (items.isEmpty && searchEnabled)
@@ -137,7 +172,12 @@ class _Dropdown<T> extends StatelessWidget {
     final option = items[index];
 
     if (itemBuilder != null) {
-      return itemBuilder!(option, index, () => onItemTap(option));
+      return itemBuilder!(
+        option,
+        index,
+        () => onItemTap(option),
+        dropdownController.isItemSelected(option),
+      );
     }
 
     final disabledColor = dropdownItemDecoration.disabledBackgroundColor ??
@@ -145,14 +185,16 @@ class _Dropdown<T> extends StatelessWidget {
 
     final tileColor = option.disabled
         ? disabledColor
-        : option.selected
+        : dropdownController.isItemSelected(option)
             ? dropdownItemDecoration.selectedBackgroundColor
             : dropdownItemDecoration.backgroundColor;
 
     final trailing = option.disabled
         ? dropdownItemDecoration.disabledIcon
-        : option.selected
-            ? dropdownItemDecoration.selectedIcon
+        : dropdownController.isItemSelected(option)
+            ? dropdownItemDecoration.showSelectIcon ?? true
+                ? dropdownItemDecoration.selectedIcon
+                : null
             : null;
 
     return Ink(
@@ -162,7 +204,7 @@ class _Dropdown<T> extends StatelessWidget {
         dense: true,
         autofocus: true,
         enabled: !option.disabled,
-        selected: option.selected,
+        selected: dropdownController.isItemSelected(option),
         visualDensity: VisualDensity.adaptivePlatformDensity,
         focusColor: dropdownItemDecoration.backgroundColor?.withAlpha(100),
         selectedColor: dropdownItemDecoration.selectedTextColor ??
@@ -186,36 +228,62 @@ class _Dropdown<T> extends StatelessWidget {
 
   void _onSearchChange(String value) => onSearchChange?.call(value);
 
-  bool _reachedMaxSelection(DropdownItem<dynamic> option) {
-    return !option.selected &&
+  bool _reachedMaxSelection(DropdownItem<T> option) {
+    return !dropdownController.isItemSelected(option) &&
         maxSelections > 0 &&
-        _selectedCount >= maxSelections;
+        dropdownController.selectedItems.length >= maxSelections;
   }
 }
 
-class _SearchField extends StatelessWidget {
+class _SearchField extends StatefulWidget {
   const _SearchField({
     required this.decoration,
     required this.onChanged,
+    required this.debounce,
+    required this.searchEditingController,
   });
 
   final SearchFieldDecoration decoration;
 
   final ValueChanged<String> onChanged;
 
+  final Duration? debounce;
+
+  final TextEditingController? searchEditingController;
+
+  @override
+  State<_SearchField> createState() => _SearchFieldState();
+}
+
+class _SearchFieldState extends State<_SearchField> {
+  Timer? _debounce;
+
+  @override
+  void dispose() {
+    _debounce?.cancel();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.all(8),
       child: TextField(
+        controller: widget.searchEditingController,
         decoration: InputDecoration(
           isDense: true,
-          hintText: decoration.hintText,
-          border: decoration.border,
-          focusedBorder: decoration.focusedBorder,
-          suffixIcon: decoration.searchIcon,
+          hintText: widget.decoration.hintText,
+          border: widget.decoration.border,
+          focusedBorder: widget.decoration.focusedBorder,
+          suffixIcon: widget.decoration.searchIcon,
         ),
-        onChanged: onChanged,
+        onChanged: (value) {
+          if (_debounce?.isActive ?? false) _debounce?.cancel();
+          _debounce =
+              Timer(widget.debounce ?? const Duration(milliseconds: 250), () {
+            widget.onChanged(value);
+          });
+        },
       ),
     );
   }

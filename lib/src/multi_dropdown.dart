@@ -670,6 +670,9 @@ class _MultiDropdownState<T extends Object> extends State<MultiDropdown<T>> {
     if (_portalController.isShowing && _dropdownController.isOpen) return;
 
     _dropdownController.openDropdown();
+
+    // clear the focus when the dropdown is opened
+    FocusManager.instance.primaryFocus?.unfocus();
   }
 
   void _handleOutsideTap() {

@@ -650,7 +650,8 @@ class _MultiDropdownState<T extends Object> extends State<MultiDropdown<T>> {
                   Icon(
                     Icons.close,
                     size: 16,
-                    color: widget.enabled ? null : Colors.grey,
+                    color:
+                        widget.enabled ? null : Theme.of(context).disabledColor,
                   ),
             ),
           ),

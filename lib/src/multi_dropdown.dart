@@ -84,7 +84,8 @@ class MultiDropdown<T extends Object> extends StatefulWidget {
   /// The [closeOnBackButton] is whether to close the dropdown when the back button is pressed. The default value is false.
   /// Note: This option requires the app to have a router, such as MaterialApp.router, in order to work properly.
   ///
-  ///
+  /// The [autoCloseDropdownInSingleSelectMode] is whether to close the dropdown when an item is selected/deselected in single select mode.
+  /// The default value is true.
   const MultiDropdown({
     required this.items,
     this.fieldDecoration = const FieldDecoration(),
@@ -106,6 +107,7 @@ class MultiDropdown<T extends Object> extends StatefulWidget {
     this.onSelectionChange,
     this.onSearchChange,
     this.closeOnBackButton = false,
+    this.autoCloseDropdownInSingleSelectMode = true,
     Key? key,
   })  : future = null,
         super(key: key);
@@ -154,6 +156,7 @@ class MultiDropdown<T extends Object> extends StatefulWidget {
     this.onSelectionChange,
     this.onSearchChange,
     this.closeOnBackButton = false,
+    this.autoCloseDropdownInSingleSelectMode = true,
     Key? key,
   })  : items = const [],
         super(key: key);
@@ -224,6 +227,9 @@ class MultiDropdown<T extends Object> extends StatefulWidget {
   ///
   /// Note: This option requires the app to have a router, such as MaterialApp.router, in order to work properly.
   final bool closeOnBackButton;
+
+  /// Whether to close the dropdown when an item is selected/deselected in single select mode.
+  final bool autoCloseDropdownInSingleSelectMode;
 
   @override
   State<MultiDropdown<T>> createState() => _MultiDropdownState<T>();
@@ -484,7 +490,7 @@ class _MultiDropdownState<T extends Object> extends State<MultiDropdown<T>> {
     }
     _formFieldKey.currentState?.didChange(_dropdownController.selectedItems);
 
-    if (widget.singleSelect) {
+    if (widget.singleSelect && widget.autoCloseDropdownInSingleSelectMode) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         _dropdownController.closeDropdown();
       });

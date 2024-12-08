@@ -507,7 +507,9 @@ class _MultiDropdownState<T extends Object> extends State<MultiDropdown<T>> {
 
     final prefixIcon = fieldDecoration.prefixIcon != null
         ? IconTheme.merge(
-            data: IconThemeData(color: widget.enabled ? null : Colors.grey),
+            data: IconThemeData(
+              color: widget.enabled ? null : theme.disabledColor,
+            ),
             child: fieldDecoration.prefixIcon!,
           )
         : null;
@@ -627,7 +629,7 @@ class _MultiDropdownState<T extends Object> extends State<MultiDropdown<T>> {
         borderRadius: chipDecoration.borderRadius,
         color: widget.enabled
             ? chipDecoration.backgroundColor
-            : Colors.grey.shade100,
+            : Theme.of(context).disabledColor,
         border: chipDecoration.border,
       ),
       padding: chipDecoration.padding,

@@ -6,6 +6,8 @@ class SearchFieldDecoration {
   ///
   /// [hintText] is the hint text to display in the search field. The default value is 'Search'.
   ///
+  /// [noItemsFoundText] is the text to display when no items are found. The default value is 'No items found'.
+  ///
   /// [border] is the border of the search field. The default value is OutlineInputBorder().
   ///
   /// [focusedBorder] is the border of the search field when it is focused. The default value is OutlineInputBorder().
@@ -13,6 +15,7 @@ class SearchFieldDecoration {
   /// [searchIcon] is the icon to display in the search field. The default value is Icon(Icons.search).
   const SearchFieldDecoration({
     this.hintText = 'Search',
+    this.noItemsFoundText = 'No items found',
     this.border = const OutlineInputBorder(
       borderSide: BorderSide(color: Color(0xFFE0E0E0)),
       borderRadius: BorderRadius.all(Radius.circular(12)),
@@ -26,6 +29,9 @@ class SearchFieldDecoration {
 
   /// The hint text to display in the search field.
   final String hintText;
+
+  /// The text to display when no items are found.
+  final String noItemsFoundText;
 
   /// The border of the search field.
   final InputBorder? border;

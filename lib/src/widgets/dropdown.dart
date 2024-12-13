@@ -113,7 +113,7 @@ class _Dropdown<T> extends StatelessWidget {
                 Padding(
                   padding: const EdgeInsets.all(12),
                   child: Text(
-                    'No items found',
+                    searchDecoration.noItemsFoundText,
                     textAlign: TextAlign.center,
                     style: theme.textTheme.bodyMedium,
                   ),

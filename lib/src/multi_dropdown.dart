@@ -638,6 +638,8 @@ class _MultiDropdownState<T extends Object> extends State<MultiDropdown<T>> {
           const SizedBox(width: 4),
           InkWell(
             onTap: () {
+              if (!widget.enabled) return;
+
               _dropdownController
                   .unselectWhere((element) => element.label == option.label);
             },
@@ -645,7 +647,12 @@ class _MultiDropdownState<T extends Object> extends State<MultiDropdown<T>> {
               width: 16,
               height: 16,
               child: chipDecoration.deleteIcon ??
-                  const Icon(Icons.close, size: 16),
+                  Icon(
+                    Icons.close,
+                    size: 16,
+                    color:
+                        widget.enabled ? null : Theme.of(context).disabledColor,
+                  ),
             ),
           ),
         ],

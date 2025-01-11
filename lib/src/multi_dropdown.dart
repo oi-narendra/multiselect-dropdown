@@ -634,7 +634,9 @@ class _MultiDropdownState<T extends Object> extends State<MultiDropdown<T>> {
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Text(option.label, style: chipDecoration.labelStyle),
+          Flexible(
+            child: Text(option.label, style: chipDecoration.labelStyle),
+          ),
           const SizedBox(width: 4),
           InkWell(
             onTap: () {

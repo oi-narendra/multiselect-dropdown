@@ -33,6 +33,9 @@ typedef SelectedItemBuilder<T> = Widget Function(DropdownItem<T> item);
 /// typedef for the future request.
 typedef FutureRequest<T> = Future<List<DropdownItem<T>>> Function();
 
+/// typedef for the search filter.
+typedef OnSearchFilter<T> = bool Function(DropdownItem<T> item, String query);
+
 /// A multiselect dropdown widget.
 ///
 class MultiDropdown<T extends Object> extends StatefulWidget {
@@ -105,6 +108,7 @@ class MultiDropdown<T extends Object> extends StatefulWidget {
     this.focusNode,
     this.onSelectionChange,
     this.onSearchChange,
+    this.onSearchFilter,
     this.closeOnBackButton = false,
     Key? key,
   })  : future = null,
@@ -153,6 +157,7 @@ class MultiDropdown<T extends Object> extends StatefulWidget {
     this.focusNode,
     this.onSelectionChange,
     this.onSearchChange,
+    this.onSearchFilter,
     this.closeOnBackButton = false,
     Key? key,
   })  : items = const [],
@@ -220,6 +225,9 @@ class MultiDropdown<T extends Object> extends StatefulWidget {
   /// The callback when the search field value changes.
   final OnSearchChanged? onSearchChange;
 
+  /// The callback to filter the dropdown items based on the search query.
+  final OnSearchFilter<T>? onSearchFilter;
+
   /// Whether to close the dropdown when the back button is pressed.
   ///
   /// Note: This option requires the app to have a router, such as MaterialApp.router, in order to work properly.
@@ -274,7 +282,8 @@ class _MultiDropdownState<T extends Object> extends State<MultiDropdown<T>> {
       _dropdownController
         ..addListener(_controllerListener)
         .._setOnSelectionChange(widget.onSelectionChange)
-        .._setOnSearchChange(widget.onSearchChange);
+        .._setOnSearchChange(widget.onSearchChange)
+        .._setOnSearchFilter(widget.onSearchFilter);
 
       // if close on back button is enabled, then add the listener
       _listenBackButton();

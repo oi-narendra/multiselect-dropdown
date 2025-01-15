@@ -370,7 +370,8 @@ class _MultiDropdownState<T extends Object> extends State<MultiDropdown<T>> {
   void didUpdateWidget(covariant MultiDropdown<T> oldWidget) {
     // if the controller is changed, then dispose the old controller
     // and initialize the new controller.
-    if (oldWidget != widget) {
+
+    if (oldWidget.controller != widget.controller) {
       _dropdownController
         ..removeListener(_controllerListener)
         ..dispose();
@@ -378,30 +379,18 @@ class _MultiDropdownState<T extends Object> extends State<MultiDropdown<T>> {
       _dropdownController = widget.controller ?? MultiSelectController<T>();
 
       _initializeController();
+    } else {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        _dropdownController.setItems(widget.items);
+      });
+    }
 
-      // if the focus node is changed, then dispose the old focus node
-      // and initialize the new focus node.
-
+    // if the focus node is changed, then dispose the old focus node
+    // and initialize the new focus node.
+    if (oldWidget.focusNode != widget.focusNode) {
       _focusNode.dispose();
       _focusNode = widget.focusNode ?? FocusNode();
     }
-
-    // if (oldWidget.controller != widget.controller) {
-    //   _dropdownController
-    //     ..removeListener(_controllerListener)
-    //     ..dispose();
-
-    //   _dropdownController = widget.controller ?? MultiSelectController<T>();
-
-    //   _initializeController();
-    // }
-
-    // // if the focus node is changed, then dispose the old focus node
-    // // and initialize the new focus node.
-    // if (oldWidget.focusNode != widget.focusNode) {
-    //   _focusNode.dispose();
-    //   _focusNode = widget.focusNode ?? FocusNode();
-    // }
 
     super.didUpdateWidget(oldWidget);
   }

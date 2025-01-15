@@ -2,7 +2,7 @@ part of '../multi_dropdown.dart';
 
 /// Dropdown widget for the multiselect dropdown.
 ///
-class _Dropdown<T> extends StatelessWidget {
+class _Dropdown<T> extends StatefulWidget {
   /// Creates a dropdown widget.
   const _Dropdown({
     required this.decoration,
@@ -56,60 +56,83 @@ class _Dropdown<T> extends StatelessWidget {
   /// Whether the selection is single.
   final bool singleSelect;
 
-  int get _selectedCount => items.where((element) => element.selected).length;
-
   static const Map<ShortcutActivator, Intent> _webShortcuts =
       <ShortcutActivator, Intent>{
-    SingleActivator(LogicalKeyboardKey.arrowDown):
-        DirectionalFocusIntent(TraversalDirection.down),
-    SingleActivator(LogicalKeyboardKey.arrowUp):
-        DirectionalFocusIntent(TraversalDirection.up),
+    SingleActivator(LogicalKeyboardKey.arrowDown): _ArrowDownIntent(),
+    SingleActivator(LogicalKeyboardKey.arrowUp): _ArrowUpdIntent(),
   };
+
+  @override
+  State<_Dropdown<T>> createState() => _DropdownState<T>();
+}
+
+class _DropdownState<T> extends State<_Dropdown<T>> {
+  int get _selectedCount =>
+      widget.items.where((element) => element.selected).length;
+
+  int _currentHighlight = 0;
+
+  final ScrollController _scrollController = ScrollController();
+  final key = GlobalKey();
+
+  final _focusNodes = <FocusNode>[];
+
+  @override
+  void initState() {
+    super.initState();
+    _focusNodes.addAll(
+      List.generate(
+        widget.items.length,
+        (_) => FocusNode(),
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
 
     final child = Material(
-      elevation: decoration.elevation,
-      borderRadius: decoration.borderRadius,
+      elevation: widget.decoration.elevation,
+      borderRadius: widget.decoration.borderRadius,
       clipBehavior: Clip.antiAlias,
-      color: decoration.backgroundColor,
-      surfaceTintColor: decoration.backgroundColor,
+      color: widget.decoration.backgroundColor,
+      surfaceTintColor: widget.decoration.backgroundColor,
       child: Focus(
         canRequestFocus: false,
         skipTraversal: true,
         child: Container(
           decoration: BoxDecoration(
-            borderRadius: decoration.borderRadius,
-            color: decoration.backgroundColor,
+            borderRadius: widget.decoration.borderRadius,
+            color: widget.decoration.backgroundColor,
             backgroundBlendMode: BlendMode.dstATop,
           ),
           constraints: BoxConstraints(
-            maxWidth: width,
-            maxHeight: decoration.maxHeight,
+            maxWidth: widget.width,
+            maxHeight: widget.decoration.maxHeight,
           ),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              if (searchEnabled)
+              if (widget.searchEnabled)
                 _SearchField(
-                  decoration: searchDecoration,
+                  decoration: widget.searchDecoration,
                   onChanged: _onSearchChange,
                 ),
-              if (decoration.header != null)
-                Flexible(child: decoration.header!),
+              if (widget.decoration.header != null)
+                Flexible(child: widget.decoration.header!),
               Flexible(
                 child: ListView.separated(
+                  controller: _scrollController,
                   separatorBuilder: (_, __) =>
-                      itemSeparator ?? const SizedBox.shrink(),
+                      widget.itemSeparator ?? const SizedBox.shrink(),
                   shrinkWrap: true,
-                  itemCount: items.length,
+                  itemCount: widget.items.length,
                   itemBuilder: (_, int index) => _buildOption(index, theme),
                 ),
               ),
-              if (items.isEmpty && searchEnabled)
+              if (widget.items.isEmpty && widget.searchEnabled)
                 Padding(
                   padding: const EdgeInsets.all(12),
                   child: Text(
@@ -118,8 +141,8 @@ class _Dropdown<T> extends StatelessWidget {
                     style: theme.textTheme.bodyMedium,
                   ),
                 ),
-              if (decoration.footer != null)
-                Flexible(child: decoration.footer!),
+              if (widget.decoration.footer != null)
+                Flexible(child: widget.decoration.footer!),
             ],
           ),
         ),
@@ -127,36 +150,82 @@ class _Dropdown<T> extends StatelessWidget {
     );
 
     if (kIsWeb || Platform.isMacOS || Platform.isLinux || Platform.isWindows) {
-      return Shortcuts(shortcuts: _webShortcuts, child: child);
+      return Actions(
+        actions: {
+          _ArrowUpdIntent: CallbackAction<_ArrowUpdIntent>(
+            onInvoke: (_ArrowUpdIntent _) {
+              _currentHighlight = (_currentHighlight - 1) % widget.items.length;
+              debugPrint('$_currentHighlight');
+              while (widget.items[_currentHighlight].disabled) {
+                _currentHighlight =
+                    (_currentHighlight - 1) % widget.items.length;
+              }
+              _scrollToHighlightedItem();
+              setState(() {});
+              return null;
+            },
+          ),
+          _ArrowDownIntent: CallbackAction<_ArrowDownIntent>(
+            onInvoke: (_ArrowDownIntent _) {
+              _currentHighlight = (_currentHighlight + 1) % widget.items.length;
+              debugPrint('$_currentHighlight');
+              while (widget.items[_currentHighlight].disabled) {
+                _currentHighlight =
+                    (_currentHighlight + 1) % widget.items.length;
+              }
+              _scrollToHighlightedItem();
+              setState(() {});
+              return null;
+            },
+          ),
+        },
+        child: Shortcuts(
+          shortcuts: _Dropdown._webShortcuts,
+          child: child,
+        ),
+      );
     }
 
     return child;
   }
 
-  Widget _buildOption(int index, ThemeData theme) {
-    final option = items[index];
+  void _scrollToHighlightedItem() {
+    // Scroll to the highlighted item
+    _scrollController.animateTo(
+      _currentHighlight * 40.0, // Hight of ink
+      duration: const Duration(milliseconds: 300),
+      curve: Curves.easeInOut,
+    );
+    _focusNodes[_currentHighlight].requestFocus();
+  }
 
-    if (itemBuilder != null) {
-      return itemBuilder!(option, index, () => onItemTap(option));
+  Widget _buildOption(int index, ThemeData theme) {
+    final option = widget.items[index];
+
+    if (widget.itemBuilder != null) {
+      return widget.itemBuilder!(option, index, () => widget.onItemTap(option));
     }
 
-    final disabledColor = dropdownItemDecoration.disabledBackgroundColor ??
-        dropdownItemDecoration.backgroundColor?.withAlpha(100);
+    final disabledColor =
+        widget.dropdownItemDecoration.disabledBackgroundColor ??
+            widget.dropdownItemDecoration.backgroundColor?.withAlpha(100);
 
     final tileColor = option.disabled
         ? disabledColor
         : option.selected
-            ? dropdownItemDecoration.selectedBackgroundColor
-            : dropdownItemDecoration.backgroundColor;
+            ? widget.dropdownItemDecoration.selectedBackgroundColor
+            : widget.dropdownItemDecoration.backgroundColor;
 
     final trailing = option.disabled
-        ? dropdownItemDecoration.disabledIcon
+        ? widget.dropdownItemDecoration.disabledIcon
         : option.selected
-            ? dropdownItemDecoration.selectedIcon
+            ? widget.dropdownItemDecoration.selectedIcon
             : null;
 
     return Ink(
+      key: index == 0 ? key : null,
       child: ListTile(
+        focusNode: _focusNodes[index],
         title: Text(option.label),
         trailing: trailing,
         dense: true,
@@ -164,19 +233,21 @@ class _Dropdown<T> extends StatelessWidget {
         enabled: !option.disabled,
         selected: option.selected,
         visualDensity: VisualDensity.adaptivePlatformDensity,
-        focusColor: dropdownItemDecoration.backgroundColor?.withAlpha(100),
-        selectedColor: dropdownItemDecoration.selectedTextColor ??
+        focusColor:
+            widget.dropdownItemDecoration.backgroundColor?.withAlpha(100),
+        selectedColor: widget.dropdownItemDecoration.selectedTextColor ??
             theme.colorScheme.onSurface,
-        textColor:
-            dropdownItemDecoration.textColor ?? theme.colorScheme.onSurface,
+        textColor: widget.dropdownItemDecoration.textColor ??
+            theme.colorScheme.onSurface,
         tileColor: tileColor ?? Colors.transparent,
-        selectedTileColor: dropdownItemDecoration.selectedBackgroundColor ??
-            Colors.grey.shade200,
+        selectedTileColor:
+            widget.dropdownItemDecoration.selectedBackgroundColor ??
+                Colors.grey.shade200,
         onTap: () {
           if (option.disabled) return;
 
-          if (singleSelect || !_reachedMaxSelection(option)) {
-            onItemTap(option);
+          if (widget.singleSelect || !_reachedMaxSelection(option)) {
+            widget.onItemTap(option);
             return;
           }
         },
@@ -184,12 +255,12 @@ class _Dropdown<T> extends StatelessWidget {
     );
   }
 
-  void _onSearchChange(String value) => onSearchChange?.call(value);
+  void _onSearchChange(String value) => widget.onSearchChange?.call(value);
 
   bool _reachedMaxSelection(DropdownItem<dynamic> option) {
     return !option.selected &&
-        maxSelections > 0 &&
-        _selectedCount >= maxSelections;
+        widget.maxSelections > 0 &&
+        _selectedCount >= widget.maxSelections;
   }
 }
 
@@ -219,4 +290,12 @@ class _SearchField extends StatelessWidget {
       ),
     );
   }
+}
+
+class _ArrowUpdIntent extends Intent {
+  const _ArrowUpdIntent();
+}
+
+class _ArrowDownIntent extends Intent {
+  const _ArrowDownIntent();
 }

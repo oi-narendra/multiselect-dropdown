@@ -220,8 +220,10 @@ class MultiSelectController<T> extends ChangeNotifier {
     this._onSearchChanged = onSearchChanged;
   }
 
+  // ignore: use_setters_to_change_properties
   void _setOnSearchFilter(
-      bool Function(DropdownItem<T> item, String query)? onSearchFilter) {
+    bool Function(DropdownItem<T> item, String query)? onSearchFilter,
+  ) {
     this._onSearchFilter = onSearchFilter;
   }
 

@@ -139,6 +139,7 @@ class DropdownDecoration {
   /// The custom header widget to display at the top of the dropdown.
   final Widget? header;
 
+  /// The text to display when no items are found.
   final String? noItemsFoundText;
 }
 

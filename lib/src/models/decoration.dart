@@ -12,7 +12,7 @@ class SearchFieldDecoration {
   ///
   /// [searchIcon] is the icon to display in the search field. The default value is Icon(Icons.search).
   const SearchFieldDecoration({
-    this.hintText = 'Search',
+    this.hintText,
     this.border = const OutlineInputBorder(
       borderSide: BorderSide(color: Color(0xFFE0E0E0)),
       borderRadius: BorderRadius.all(Radius.circular(12)),
@@ -25,7 +25,7 @@ class SearchFieldDecoration {
   });
 
   /// The hint text to display in the search field.
-  final String hintText;
+  final String? hintText;
 
   /// The border of the search field.
   final InputBorder? border;
@@ -108,17 +108,18 @@ class DropdownDecoration {
   ///
 
   const DropdownDecoration({
-    this.backgroundColor = Colors.white,
+    this.backgroundColor,
     this.elevation = 1,
     this.maxHeight = 400,
     this.marginTop = 0,
     this.borderRadius = const BorderRadius.all(Radius.circular(12)),
     this.footer,
     this.header,
+    this.noItemsFoundText,
   });
 
   /// The background color of the dropdown.
-  final Color backgroundColor;
+  final Color? backgroundColor;
 
   /// The elevation of the dropdown.
   final double elevation;
@@ -137,6 +138,9 @@ class DropdownDecoration {
 
   /// The custom header widget to display at the top of the dropdown.
   final Widget? header;
+
+  /// The text to display when no items are found.
+  final String? noItemsFoundText;
 }
 
 /// Represents the decoration for the dropdown field.
@@ -176,7 +180,7 @@ class FieldDecoration {
   /// [backgroundColor] is the background color of the dropdown field.
   const FieldDecoration({
     this.labelText,
-    this.hintText = 'Select',
+    this.hintText,
     this.border,
     this.focusedBorder,
     this.disabledBorder,
@@ -261,7 +265,7 @@ class ChipDecoration {
   /// [wrap] is whether to wrap or not.
   const ChipDecoration({
     this.deleteIcon,
-    this.backgroundColor = const Color(0xFFE0E0E0),
+    this.backgroundColor,
     this.padding = const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
     this.border = const Border(),
     this.spacing = 8,

@@ -47,6 +47,8 @@ class MultiSelectController<T> extends ChangeNotifier {
   /// on search changed callback invoker.
   OnSearchChanged? _onSearchChanged;
 
+  bool Function(DropdownItem<T> item, String query)? _onSearchFilter;
+
   /// sets the list of dropdown items.
   /// It replaces the existing list of dropdown items.
   void setItems(List<DropdownItem<T>> options) {
@@ -218,6 +220,13 @@ class MultiSelectController<T> extends ChangeNotifier {
     this._onSearchChanged = onSearchChanged;
   }
 
+  // ignore: use_setters_to_change_properties
+  void _setOnSearchFilter(
+    bool Function(DropdownItem<T> item, String query)? onSearchFilter,
+  ) {
+    this._onSearchFilter = onSearchFilter;
+  }
+
   // sets the search query.
   // The [query] parameter is the search query.
   void _setSearchQuery(String query) {
@@ -228,6 +237,7 @@ class MultiSelectController<T> extends ChangeNotifier {
       _filteredItems = _items
           .where(
             (item) =>
+                _onSearchFilter?.call(item, query) ??
                 item.label.toLowerCase().contains(_searchQuery.toLowerCase()),
           )
           .toList();

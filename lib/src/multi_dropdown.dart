@@ -90,10 +90,10 @@ class MultiDropdown<T extends Object> extends StatefulWidget {
   ///
   const MultiDropdown({
     required this.items,
-    this.fieldDecoration = const FieldDecoration(),
-    this.dropdownDecoration = const DropdownDecoration(),
-    this.searchDecoration = const SearchFieldDecoration(),
-    this.dropdownItemDecoration = const DropdownItemDecoration(),
+    this.fieldDecoration,
+    this.dropdownDecoration,
+    this.searchDecoration,
+    this.dropdownItemDecoration,
     this.autovalidateMode = AutovalidateMode.disabled,
     this.singleSelect = false,
     this.itemSeparator,
@@ -101,7 +101,7 @@ class MultiDropdown<T extends Object> extends StatefulWidget {
     this.validator,
     this.itemBuilder,
     this.enabled = true,
-    this.chipDecoration = const ChipDecoration(),
+    this.chipDecoration,
     this.searchEnabled = false,
     this.maxSelections = 0,
     this.selectedItemBuilder,
@@ -139,10 +139,10 @@ class MultiDropdown<T extends Object> extends StatefulWidget {
   /// ```
   const MultiDropdown.future({
     required this.future,
-    this.fieldDecoration = const FieldDecoration(),
-    this.dropdownDecoration = const DropdownDecoration(),
-    this.searchDecoration = const SearchFieldDecoration(),
-    this.dropdownItemDecoration = const DropdownItemDecoration(),
+    this.fieldDecoration,
+    this.dropdownDecoration,
+    this.searchDecoration,
+    this.dropdownItemDecoration,
     this.autovalidateMode = AutovalidateMode.disabled,
     this.singleSelect = false,
     this.itemSeparator,
@@ -150,7 +150,7 @@ class MultiDropdown<T extends Object> extends StatefulWidget {
     this.validator,
     this.itemBuilder,
     this.enabled = true,
-    this.chipDecoration = const ChipDecoration(),
+    this.chipDecoration,
     this.searchEnabled = false,
     this.maxSelections = 0,
     this.selectedItemBuilder,
@@ -170,19 +170,19 @@ class MultiDropdown<T extends Object> extends StatefulWidget {
   final bool singleSelect;
 
   /// The configuration for the chips.
-  final ChipDecoration chipDecoration;
+  final ChipDecoration? chipDecoration;
 
   /// The decoration of the field.
-  final FieldDecoration fieldDecoration;
+  final FieldDecoration? fieldDecoration;
 
   /// The decoration of the dropdown.
-  final DropdownDecoration dropdownDecoration;
+  final DropdownDecoration? dropdownDecoration;
 
   /// The decoration of the search field.
-  final SearchFieldDecoration searchDecoration;
+  final SearchFieldDecoration? searchDecoration;
 
   /// The decoration of the dropdown items.
-  final DropdownItemDecoration dropdownItemDecoration;
+  final DropdownItemDecoration? dropdownItemDecoration;
 
   /// The builder for the dropdown items.
   final DropdownItemBuilder<T>? itemBuilder;
@@ -253,6 +253,16 @@ class _MultiDropdownState<T extends Object> extends State<MultiDropdown<T>> {
     _loadingController,
   ]);
 
+  late final ChipDecoration _chipDecoration;
+
+  late final FieldDecoration _fieldDecoration;
+
+  late final DropdownDecoration _dropdownDecoration;
+
+  late final SearchFieldDecoration _searchDecoration;
+
+  late final DropdownItemDecoration _dropdownItemDecoration;
+
   // the global key for the form field state to update the form field state when the controller changes
   final GlobalKey<FormFieldState<List<DropdownItem<T>>?>> _formFieldKey =
       GlobalKey();
@@ -260,6 +270,15 @@ class _MultiDropdownState<T extends Object> extends State<MultiDropdown<T>> {
   @override
   void initState() {
     super.initState();
+    _chipDecoration = widget.chipDecoration ?? const ChipDecoration();
+    _fieldDecoration = widget.fieldDecoration ?? const FieldDecoration();
+    _dropdownDecoration =
+        widget.dropdownDecoration ?? const DropdownDecoration();
+    _searchDecoration =
+        widget.searchDecoration ?? const SearchFieldDecoration();
+    _dropdownItemDecoration =
+        widget.dropdownItemDecoration ?? const DropdownItemDecoration();
+
     _initializeController();
   }
 
@@ -413,8 +432,7 @@ class _MultiDropdownState<T extends Object> extends State<MultiDropdown<T>> {
                 renderBoxOffset.dy -
                 renderBoxSize.height;
 
-            final showOnTop =
-                availableHeight < widget.dropdownDecoration.maxHeight;
+            final showOnTop = availableHeight < _dropdownDecoration.maxHeight;
 
             final stack = Stack(
               children: [
@@ -431,20 +449,20 @@ class _MultiDropdownState<T extends Object> extends State<MultiDropdown<T>> {
                       showOnTop ? Alignment.topLeft : Alignment.bottomLeft,
                   followerAnchor:
                       showOnTop ? Alignment.bottomLeft : Alignment.topLeft,
-                  offset: widget.dropdownDecoration.marginTop == 0
+                  offset: _dropdownDecoration.marginTop == 0
                       ? Offset.zero
-                      : Offset(0, widget.dropdownDecoration.marginTop),
+                      : Offset(0, _dropdownDecoration.marginTop),
                   child: RepaintBoundary(
                     child: _Dropdown<T>(
-                      decoration: widget.dropdownDecoration,
+                      decoration: _dropdownDecoration,
                       onItemTap: _handleDropdownItemTap,
                       width: renderBoxSize.width,
                       items: _dropdownController.items,
                       searchEnabled: widget.searchEnabled,
-                      dropdownItemDecoration: widget.dropdownItemDecoration,
+                      dropdownItemDecoration: _dropdownItemDecoration,
                       itemBuilder: widget.itemBuilder,
                       itemSeparator: widget.itemSeparator,
-                      searchDecoration: widget.searchDecoration,
+                      searchDecoration: _searchDecoration,
                       maxSelections: widget.maxSelections,
                       singleSelect: widget.singleSelect,
                       onSearchChange: _dropdownController._setSearchQuery,
@@ -503,16 +521,16 @@ class _MultiDropdownState<T extends Object> extends State<MultiDropdown<T>> {
   InputDecoration _buildDecoration() {
     final theme = Theme.of(context);
 
-    final border = widget.fieldDecoration.border ??
+    final border = _fieldDecoration.border ??
         OutlineInputBorder(
           borderRadius: BorderRadius.circular(
-            widget.fieldDecoration.borderRadius,
+            _fieldDecoration.borderRadius,
           ),
           borderSide: theme.inputDecorationTheme.border?.borderSide ??
               const BorderSide(),
         );
 
-    final fieldDecoration = widget.fieldDecoration;
+    final fieldDecoration = _fieldDecoration;
 
     final prefixIcon = fieldDecoration.prefixIcon != null
         ? IconTheme.merge(
@@ -525,7 +543,8 @@ class _MultiDropdownState<T extends Object> extends State<MultiDropdown<T>> {
       enabled: widget.enabled,
       labelText: fieldDecoration.labelText,
       labelStyle: fieldDecoration.labelStyle,
-      hintText: fieldDecoration.hintText,
+      hintText: fieldDecoration.hintText ??
+          MaterialLocalizations.of(context).keyboardKeySelect,
       hintStyle: fieldDecoration.hintStyle,
       errorText: _formFieldKey.currentState?.errorText,
       filled: fieldDecoration.backgroundColor != null,
@@ -546,7 +565,7 @@ class _MultiDropdownState<T extends Object> extends State<MultiDropdown<T>> {
       return const CircularProgressIndicator.adaptive();
     }
 
-    if (widget.fieldDecoration.showClearIcon &&
+    if (_fieldDecoration.showClearIcon &&
         _dropdownController.selectedItems.isNotEmpty) {
       return GestureDetector(
         child: const Icon(Icons.clear),
@@ -558,18 +577,18 @@ class _MultiDropdownState<T extends Object> extends State<MultiDropdown<T>> {
       );
     }
 
-    if (widget.fieldDecoration.suffixIcon == null) {
+    if (_fieldDecoration.suffixIcon == null) {
       return null;
     }
 
-    if (!widget.fieldDecoration.animateSuffixIcon) {
-      return widget.fieldDecoration.suffixIcon;
+    if (!_fieldDecoration.animateSuffixIcon) {
+      return _fieldDecoration.suffixIcon;
     }
 
     return AnimatedRotation(
       turns: _dropdownController.isOpen ? 0.5 : 0,
       duration: const Duration(milliseconds: 200),
-      child: widget.fieldDecoration.suffixIcon,
+      child: _fieldDecoration.suffixIcon,
     );
   }
 
@@ -589,7 +608,7 @@ class _MultiDropdownState<T extends Object> extends State<MultiDropdown<T>> {
 
   /// Build the selected items for the dropdown.
   Widget _buildSelectedItems(List<DropdownItem<T>> selectedOptions) {
-    final chipDecoration = widget.chipDecoration;
+    final chipDecoration = _chipDecoration;
 
     if (widget.selectedItemBuilder != null) {
       return Wrap(
@@ -631,12 +650,14 @@ class _MultiDropdownState<T extends Object> extends State<MultiDropdown<T>> {
     DropdownItem<dynamic> option,
     ChipDecoration chipDecoration,
   ) {
+    final theme = Theme.of(context);
     return Container(
       decoration: BoxDecoration(
         borderRadius: chipDecoration.borderRadius,
         color: widget.enabled
-            ? chipDecoration.backgroundColor
-            : Colors.grey.shade100,
+            ? chipDecoration.backgroundColor ??
+                theme.colorScheme.primaryContainer
+            : theme.colorScheme.primaryContainer,
         border: chipDecoration.border,
       ),
       padding: chipDecoration.padding,
@@ -663,12 +684,11 @@ class _MultiDropdownState<T extends Object> extends State<MultiDropdown<T>> {
   }
 
   BorderRadius? _getFieldBorderRadius() {
-    if (widget.fieldDecoration.border is OutlineInputBorder) {
-      return (widget.fieldDecoration.border! as OutlineInputBorder)
-          .borderRadius;
+    if (_fieldDecoration.border is OutlineInputBorder) {
+      return (_fieldDecoration.border! as OutlineInputBorder).borderRadius;
     }
 
-    return BorderRadius.circular(widget.fieldDecoration.borderRadius);
+    return BorderRadius.circular(_fieldDecoration.borderRadius);
   }
 
   void _handleTap() {

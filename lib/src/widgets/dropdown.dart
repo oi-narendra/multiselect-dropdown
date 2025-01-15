@@ -96,15 +96,15 @@ class _DropdownState<T> extends State<_Dropdown<T>> {
       elevation: widget.decoration.elevation,
       borderRadius: widget.decoration.borderRadius,
       clipBehavior: Clip.antiAlias,
-      color: widget.decoration.backgroundColor,
-      surfaceTintColor: widget.decoration.backgroundColor,
+      color: widget.decoration.backgroundColor ?? theme.cardColor,
+      surfaceTintColor: widget.decoration.backgroundColor ?? theme.cardColor,
       child: Focus(
         canRequestFocus: false,
         skipTraversal: true,
         child: Container(
           decoration: BoxDecoration(
             borderRadius: widget.decoration.borderRadius,
-            color: widget.decoration.backgroundColor,
+            color: widget.decoration.backgroundColor ?? theme.cardColor,
             backgroundBlendMode: BlendMode.dstATop,
           ),
           constraints: BoxConstraints(
@@ -136,7 +136,7 @@ class _DropdownState<T> extends State<_Dropdown<T>> {
                 Padding(
                   padding: const EdgeInsets.all(12),
                   child: Text(
-                    'No items found',
+                    widget.decoration.noItemsFoundText ?? 'No items found',
                     textAlign: TextAlign.center,
                     style: theme.textTheme.bodyMedium,
                   ),
@@ -236,13 +236,13 @@ class _DropdownState<T> extends State<_Dropdown<T>> {
         focusColor:
             widget.dropdownItemDecoration.backgroundColor?.withAlpha(100),
         selectedColor: widget.dropdownItemDecoration.selectedTextColor ??
-            theme.colorScheme.onSurface,
+            theme.colorScheme.onPrimary,
         textColor: widget.dropdownItemDecoration.textColor ??
             theme.colorScheme.onSurface,
-        tileColor: tileColor ?? Colors.transparent,
+        tileColor: tileColor ?? theme.listTileTheme.tileColor,
         selectedTileColor:
             widget.dropdownItemDecoration.selectedBackgroundColor ??
-                Colors.grey.shade200,
+                theme.colorScheme.primary,
         onTap: () {
           if (option.disabled) return;
 
@@ -281,7 +281,8 @@ class _SearchField extends StatelessWidget {
       child: TextField(
         decoration: InputDecoration(
           isDense: true,
-          hintText: decoration.hintText,
+          hintText: decoration.hintText ??
+              MaterialLocalizations.of(context).searchFieldLabel,
           border: decoration.border,
           focusedBorder: decoration.focusedBorder,
           suffixIcon: decoration.searchIcon,

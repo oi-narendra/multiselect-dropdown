@@ -379,7 +379,9 @@ class _MultiDropdownState<T extends Object> extends State<MultiDropdown<T>> {
       _dropdownController = widget.controller ?? MultiSelectController<T>();
 
       _initializeController();
-    } else {
+    }
+
+    if (oldWidget.items != widget.items) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         _dropdownController.setItems(widget.items);
       });

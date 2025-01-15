@@ -381,12 +381,6 @@ class _MultiDropdownState<T extends Object> extends State<MultiDropdown<T>> {
       _initializeController();
     }
 
-    if (oldWidget.items != widget.items) {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        _dropdownController.setItems(widget.items);
-      });
-    }
-
     // if the focus node is changed, then dispose the old focus node
     // and initialize the new focus node.
     if (oldWidget.focusNode != widget.focusNode) {

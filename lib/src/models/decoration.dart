@@ -113,6 +113,7 @@ class DropdownDecoration {
     this.maxHeight = 400,
     this.marginTop = 0,
     this.borderRadius = const BorderRadius.all(Radius.circular(12)),
+    this.border,
     this.footer,
     this.header,
   });
@@ -128,6 +129,9 @@ class DropdownDecoration {
 
   /// The border radius of the dropdown.
   final BorderRadius borderRadius;
+
+  /// The border of the dropdown
+  final Border? border;
 
   /// the margin top of the dropdown
   final double marginTop;

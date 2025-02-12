@@ -7,10 +7,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 part 'controllers/future_controller.dart';
+
 part 'controllers/multiselect_controller.dart';
+
 part 'enum/enums.dart';
+
 part 'models/decoration.dart';
+
 part 'models/dropdown_item.dart';
+
 // part 'models/network_request.dart';
 part 'widgets/dropdown.dart';
 
@@ -93,6 +98,8 @@ class MultiDropdown<T extends Object> extends StatefulWidget {
     this.dropdownItemDecoration = const DropdownItemDecoration(),
     this.autovalidateMode = AutovalidateMode.disabled,
     this.singleSelect = false,
+    this.singleSelectFieldTextStyle,
+    this.searchFieldSeparator,
     this.itemSeparator,
     this.controller,
     this.validator,
@@ -141,6 +148,8 @@ class MultiDropdown<T extends Object> extends StatefulWidget {
     this.dropdownItemDecoration = const DropdownItemDecoration(),
     this.autovalidateMode = AutovalidateMode.disabled,
     this.singleSelect = false,
+    this.singleSelectFieldTextStyle,
+    this.searchFieldSeparator,
     this.itemSeparator,
     this.controller,
     this.validator,
@@ -164,6 +173,9 @@ class MultiDropdown<T extends Object> extends StatefulWidget {
   /// The selection type of the dropdown.
   final bool singleSelect;
 
+  /// The text style for the field when singleSelect is true.
+  final TextStyle? singleSelectFieldTextStyle;
+
   /// The configuration for the chips.
   final ChipDecoration chipDecoration;
 
@@ -184,6 +196,9 @@ class MultiDropdown<T extends Object> extends StatefulWidget {
 
   /// The builder for the selected items.
   final SelectedItemBuilder<T>? selectedItemBuilder;
+
+  /// The separator between the search field and the dropdown items.
+  final Widget? searchFieldSeparator;
 
   /// The separator between the dropdown items.
   final Widget? itemSeparator;
@@ -227,6 +242,12 @@ class MultiDropdown<T extends Object> extends StatefulWidget {
 
   @override
   State<MultiDropdown<T>> createState() => _MultiDropdownState<T>();
+
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties.add(DiagnosticsProperty<Widget?>('searchFieldSeparator', searchFieldSeparator));
+  }
 }
 
 class _MultiDropdownState<T extends Object> extends State<MultiDropdown<T>> {
@@ -434,6 +455,7 @@ class _MultiDropdownState<T extends Object> extends State<MultiDropdown<T>> {
                       searchEnabled: widget.searchEnabled,
                       dropdownItemDecoration: widget.dropdownItemDecoration,
                       itemBuilder: widget.itemBuilder,
+                      searchFieldSeparator: widget.searchFieldSeparator,
                       itemSeparator: widget.itemSeparator,
                       searchDecoration: widget.searchDecoration,
                       maxSelections: widget.maxSelections,
@@ -572,7 +594,10 @@ class _MultiDropdownState<T extends Object> extends State<MultiDropdown<T>> {
     final selectedOptions = _dropdownController.selectedItems;
 
     if (widget.singleSelect) {
-      return Text(selectedOptions.first.label);
+      return Text(
+        selectedOptions.first.label,
+        style: widget.singleSelectFieldTextStyle,
+      );
     }
 
     return _buildSelectedItems(selectedOptions);

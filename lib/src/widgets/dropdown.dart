@@ -15,6 +15,7 @@ class _Dropdown<T> extends StatelessWidget {
     required this.onItemTap,
     Key? key,
     this.onSearchChange,
+    this.searchFieldSeparator,
     this.itemBuilder,
     this.itemSeparator,
     this.singleSelect = false,
@@ -34,6 +35,9 @@ class _Dropdown<T> extends StatelessWidget {
 
   /// Dropdown item builder, if not provided, the default ListTile will be used.
   final DropdownItemBuilder<T>? itemBuilder;
+
+  /// The separator between the search field and the dropdown items.
+  final Widget? searchFieldSeparator;
 
   /// The separator between the dropdown items.
   final Widget? itemSeparator;
@@ -83,6 +87,7 @@ class _Dropdown<T> extends StatelessWidget {
           decoration: BoxDecoration(
             borderRadius: decoration.borderRadius,
             color: decoration.backgroundColor,
+            border: decoration.border,
             backgroundBlendMode: BlendMode.dstATop,
           ),
           constraints: BoxConstraints(
@@ -93,11 +98,13 @@ class _Dropdown<T> extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              if (searchEnabled)
+              if (searchEnabled) ...[
                 _SearchField(
                   decoration: searchDecoration,
                   onChanged: _onSearchChange,
                 ),
+                if (searchFieldSeparator != null) searchFieldSeparator!,
+              ],
               if (decoration.header != null)
                 Flexible(child: decoration.header!),
               Flexible(

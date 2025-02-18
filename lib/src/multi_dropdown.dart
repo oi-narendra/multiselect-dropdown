@@ -582,25 +582,17 @@ class _MultiDropdownState<T extends Object> extends State<MultiDropdown<T>> {
   Widget _buildSelectedItems(List<DropdownItem<T>> selectedOptions) {
     final chipDecoration = widget.chipDecoration;
 
-    if (widget.selectedItemBuilder != null) {
-      return Wrap(
-        spacing: chipDecoration.spacing,
-        runSpacing: chipDecoration.runSpacing,
-        crossAxisAlignment: WrapCrossAlignment.center,
-        children: selectedOptions
-            .map((option) => widget.selectedItemBuilder!(option))
-            .toList(),
-      );
-    }
-
     if (chipDecoration.wrap) {
       return Wrap(
         spacing: chipDecoration.spacing,
         runSpacing: chipDecoration.runSpacing,
         crossAxisAlignment: WrapCrossAlignment.center,
-        children: selectedOptions
-            .map((option) => _buildChip(option, chipDecoration))
-            .toList(),
+        children: selectedOptions.map((option) {
+          if (widget.selectedItemBuilder != null) {
+            return widget.selectedItemBuilder!(option);
+          }
+          return _buildChip(option, chipDecoration);
+        }).toList(),
       );
     }
 
@@ -612,6 +604,9 @@ class _MultiDropdownState<T extends Object> extends State<MultiDropdown<T>> {
         itemCount: selectedOptions.length,
         itemBuilder: (context, index) {
           final option = selectedOptions[index];
+          if (widget.selectedItemBuilder != null) {
+            return widget.selectedItemBuilder!(option);
+          }
           return _buildChip(option, chipDecoration);
         },
       ),

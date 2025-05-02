@@ -51,7 +51,7 @@ class DropdownItemDecoration {
   ///
   /// [textColor] is the text color of the dropdown item. The default value is black.
   ///
-  ///  [textStyle] is the textSTyle of the dropdown item.  The default value is none.
+  /// [textStyle] is the textSTyle of the dropdown item.  The default value is none.
   ///
   /// [disabledTextColor] is the text color of the disabled dropdown item. The default value is black.
   ///
@@ -85,7 +85,7 @@ class DropdownItemDecoration {
   /// The text color of the dropdown item.
   final Color? textColor;
 
-  /// The textSTyle to apply to the dropdown item.
+  /// The text style to apply to the dropdown item.
   final TextStyle? textStyle;
 
   /// The text color of the disabled dropdown item.

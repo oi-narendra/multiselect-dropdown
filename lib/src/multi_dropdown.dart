@@ -521,6 +521,8 @@ class _MultiDropdownState<T extends Object> extends State<MultiDropdown<T>> {
       errorBorder: fieldDecoration.errorBorder,
       suffixIcon: _buildSuffixIcon(),
       contentPadding: fieldDecoration.padding,
+      isDense: fieldDecoration.isDense,
+      isCollapsed: fieldDecoration.isCollapsed,
     );
   }
 

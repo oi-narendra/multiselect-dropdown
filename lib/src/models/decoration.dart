@@ -113,6 +113,7 @@ class DropdownDecoration {
     this.maxHeight = 400,
     this.marginTop = 0,
     this.borderRadius = const BorderRadius.all(Radius.circular(12)),
+    this.border,
     this.footer,
     this.header,
   });
@@ -131,6 +132,9 @@ class DropdownDecoration {
 
   /// the margin top of the dropdown
   final double marginTop;
+
+  /// The border of the dropdown.
+  final Border? border;
 
   /// The custom footer widget to display at the bottom of the dropdown.
   final Widget? footer;

@@ -81,6 +81,7 @@ class _Dropdown<T> extends StatelessWidget {
         skipTraversal: true,
         child: Container(
           decoration: BoxDecoration(
+            border: decoration.border,
             borderRadius: decoration.borderRadius,
             color: decoration.backgroundColor,
             backgroundBlendMode: BlendMode.dstATop,

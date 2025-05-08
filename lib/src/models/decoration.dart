@@ -113,6 +113,7 @@ class DropdownDecoration {
     this.maxHeight = 400,
     this.marginTop = 0,
     this.borderRadius = const BorderRadius.all(Radius.circular(12)),
+    this.border,
     this.footer,
     this.header,
   });
@@ -131,6 +132,9 @@ class DropdownDecoration {
 
   /// the margin top of the dropdown
   final double marginTop;
+
+  /// The border of the dropdown.
+  final Border? border;
 
   /// The custom footer widget to display at the bottom of the dropdown.
   final Widget? footer;
@@ -190,6 +194,8 @@ class FieldDecoration {
     this.padding = const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
     this.backgroundColor,
     this.showClearIcon = true,
+    this.isDense = false,
+    this.isCollapsed = false,
   });
 
   /// The label text to display above the dropdown field.
@@ -236,6 +242,9 @@ class FieldDecoration {
 
   /// show clear icon or not in the dropdown field
   final bool showClearIcon;
+
+  final bool isDense;
+  final bool isCollapsed;
 }
 
 /// Configuration class for customizing the appearance of chips in the multi-select dropdown.

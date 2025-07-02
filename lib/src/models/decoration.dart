@@ -147,6 +147,8 @@ class DropdownDecoration {
 class FieldDecoration {
   /// Creates a new instance of [FieldDecoration].
   ///
+  /// [isDense] Whether the dropdown field is part of a dense form.
+  ///
   /// [labelText] is the label text to display above the dropdown field.
   ///
   /// [hintText] is the hint text to display in the dropdown field. The default value is 'Select'.
@@ -189,6 +191,7 @@ class FieldDecoration {
   /// 
   /// [backgroundColor] is the background color of the dropdown field.
   const FieldDecoration({
+    this.isDense,
     this.labelText,
     this.hintText = 'Select',
     this.helperText,
@@ -210,6 +213,9 @@ class FieldDecoration {
     this.showClearIcon = true,
     this.constraints
   });
+
+  /// The label text to display above the dropdown field.
+  final bool? isDense;
 
   /// The label text to display above the dropdown field.
   final String? labelText;

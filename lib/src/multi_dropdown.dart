@@ -514,6 +514,7 @@ class _MultiDropdownState<T extends Object> extends State<MultiDropdown<T>> {
 
     return InputDecoration(
       enabled: widget.enabled,
+      isDense: fieldDecoration.isDense,
       labelText: fieldDecoration.labelText,
       labelStyle: fieldDecoration.labelStyle,
       hintText: fieldDecoration.hintText,

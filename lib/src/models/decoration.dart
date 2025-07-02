@@ -147,7 +147,7 @@ class DropdownDecoration {
 class FieldDecoration {
   /// Creates a new instance of [FieldDecoration].
   ///
-  /// [isDense] Whether the dropdown field is part of a dense form.
+  /// [isDense] whether the dropdown field is part of a dense form.
   ///
   /// [labelText] is the label text to display above the dropdown field.
   ///
@@ -165,8 +165,12 @@ class FieldDecoration {
   ///
   /// [errorBorder] is the border of the dropdown field when there is an error.
   ///
+  /// [suffixIconConstraints] the constraints for the suffix icon.
+  /// 
   /// [suffixIcon] is the icon to display at the end of dropdown field. The default value is Icon(Icons.arrow_drop_down).
   ///
+  /// [prefixIconConstraints] the constraints for the prefix icon.
+  /// 
   /// [prefixIcon] is the icon to display at the start of dropdown field.
   ///
   /// [labelStyle] is the style of the label text.
@@ -200,7 +204,9 @@ class FieldDecoration {
     this.focusedBorder,
     this.disabledBorder,
     this.errorBorder,
+    this.suffixIconConstraints,
     this.suffixIcon = const Icon(Icons.arrow_drop_down),
+    this.prefixIconConstraints,
     this.prefixIcon,
     this.labelStyle,
     this.borderRadius = 12,
@@ -241,8 +247,14 @@ class FieldDecoration {
   /// The border of the dropdown field when there is an error.
   final InputBorder? errorBorder;
 
+  /// The constraints for suffix icon
+  final BoxConstraints? suffixIconConstraints;
+
   /// The icon to display at the end of dropdown field.
   final Widget? suffixIcon;
+
+  /// The constraints for prefix icon
+  final BoxConstraints? prefixIconConstraints;
 
   /// The icon to display at the start of dropdown field.
   final Widget? prefixIcon;

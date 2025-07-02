@@ -108,6 +108,7 @@ class MultiDropdown<T extends Object> extends StatefulWidget {
     this.closeOnBackButton = false,
     Key? key,
   })  : future = null,
+        loadingIndicator = null,
         super(key: key);
 
   /// Creates a multiselect dropdown widget with future request.
@@ -135,6 +136,7 @@ class MultiDropdown<T extends Object> extends StatefulWidget {
   /// ```
   const MultiDropdown.future({
     required this.future,
+    this.loadingIndicator,
     this.fieldDecoration = const FieldDecoration(),
     this.dropdownDecoration = const DropdownDecoration(),
     this.searchDecoration = const SearchFieldDecoration(),
@@ -208,6 +210,9 @@ class MultiDropdown<T extends Object> extends StatefulWidget {
 
   /// The focus node for the dropdown.
   final FocusNode? focusNode;
+
+  /// The future request for the dropdown items.
+  final Widget? loadingIndicator;
 
   /// The future request for the dropdown items.
   final FutureRequest<T>? future;
@@ -541,7 +546,7 @@ class _MultiDropdownState<T extends Object> extends State<MultiDropdown<T>> {
 
   Widget? _buildSuffixIcon() {
     if (_loadingController.value) {
-      return const CircularProgressIndicator.adaptive();
+      return widget.loadingIndicator ?? const CircularProgressIndicator.adaptive();
     }
 
     if (widget.fieldDecoration.showClearIcon &&

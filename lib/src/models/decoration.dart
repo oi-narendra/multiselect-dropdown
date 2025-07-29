@@ -22,6 +22,7 @@ class SearchFieldDecoration {
       borderRadius: BorderRadius.all(Radius.circular(12)),
     ),
     this.searchIcon = const Icon(Icons.search),
+    this.constraints
   });
 
   /// The hint text to display in the search field.
@@ -35,6 +36,9 @@ class SearchFieldDecoration {
 
   /// The icon to display in the search field.
   final Icon searchIcon;
+
+  /// Determine min/max width/height of search field.
+  final BoxConstraints? constraints;
 }
 
 /// Represents the decoration for the dropdown items.
@@ -143,9 +147,15 @@ class DropdownDecoration {
 class FieldDecoration {
   /// Creates a new instance of [FieldDecoration].
   ///
+  /// [isDense] whether the dropdown field is part of a dense form.
+  ///
   /// [labelText] is the label text to display above the dropdown field.
   ///
   /// [hintText] is the hint text to display in the dropdown field. The default value is 'Select'.
+  /// 
+  /// [helperText] is the helper text to display below dropdown field. Default is `null`.
+  /// 
+  /// [errorText] is the error text to display below dropdown field. Default is `null`.
   ///
   /// [border] is the border of the dropdown field.
   ///
@@ -155,14 +165,24 @@ class FieldDecoration {
   ///
   /// [errorBorder] is the border of the dropdown field when there is an error.
   ///
+  /// [focusedErrorBorder] is the border of the dropdown field when there is an error and field is focused
+  /// 
+  /// [suffixIconConstraints] the constraints for the suffix icon.
+  /// 
   /// [suffixIcon] is the icon to display at the end of dropdown field. The default value is Icon(Icons.arrow_drop_down).
   ///
+  /// [prefixIconConstraints] the constraints for the prefix icon.
+  /// 
   /// [prefixIcon] is the icon to display at the start of dropdown field.
   ///
   /// [labelStyle] is the style of the label text.
   ///
   /// [hintStyle] is the style of the hint text.
-  ///
+  /// 
+  /// [helperStyle] is the style of the helper text.
+  /// 
+  /// [errorStyle] is the style of the error text.
+  /// 
   /// [borderRadius] is the border radius of the dropdown field. The default value is 12.
   ///
   /// [animateSuffixIcon] is whether to animate the suffix icon or not when dropdown is opened/closed. The default value is true.
@@ -172,31 +192,51 @@ class FieldDecoration {
   /// [prefixIcon] is the icon to display at the start of dropdown field.
   ///
   /// [padding] is the padding around the dropdown field.
-  ///
+  /// 
+  /// [constraints] defines minimum and maximum sizes for the dropdown field.
+  /// 
   /// [backgroundColor] is the background color of the dropdown field.
   const FieldDecoration({
+    this.isDense,
     this.labelText,
     this.hintText = 'Select',
+    this.helperText,
+    this.errorText,
     this.border,
     this.focusedBorder,
     this.disabledBorder,
     this.errorBorder,
+    this.focusedErrorBorder,
+    this.suffixIconConstraints,
     this.suffixIcon = const Icon(Icons.arrow_drop_down),
+    this.prefixIconConstraints,
     this.prefixIcon,
     this.labelStyle,
     this.borderRadius = 12,
     this.hintStyle,
+    this.helperStyle,
+    this.errorStyle,
     this.animateSuffixIcon = true,
     this.padding = const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
     this.backgroundColor,
     this.showClearIcon = true,
+    this.constraints
   });
+
+  /// The label text to display above the dropdown field.
+  final bool? isDense;
 
   /// The label text to display above the dropdown field.
   final String? labelText;
 
   /// The hint text to display in the dropdown field.
   final String? hintText;
+
+  /// The helper text to display under the dropdown field.
+  final String? helperText;
+
+  /// The error text to display under the dropdown field.
+  final String? errorText;
 
   /// The border of the dropdown field.
   final InputBorder? border;
@@ -210,8 +250,17 @@ class FieldDecoration {
   /// The border of the dropdown field when there is an error.
   final InputBorder? errorBorder;
 
+  /// The border of the dropdown field when there is an error and is focused.
+  final InputBorder? focusedErrorBorder;
+
+  /// The constraints for suffix icon
+  final BoxConstraints? suffixIconConstraints;
+
   /// The icon to display at the end of dropdown field.
   final Widget? suffixIcon;
+
+  /// The constraints for prefix icon
+  final BoxConstraints? prefixIconConstraints;
 
   /// The icon to display at the start of dropdown field.
   final Widget? prefixIcon;
@@ -221,6 +270,12 @@ class FieldDecoration {
 
   /// The style of the hint text.
   final TextStyle? hintStyle;
+
+  /// The style of the helper text.
+  final TextStyle? helperStyle;
+
+  /// The style of the helper text.
+  final TextStyle? errorStyle;
 
   /// The border radius of the dropdown field.
   final double borderRadius;
@@ -236,6 +291,9 @@ class FieldDecoration {
 
   /// show clear icon or not in the dropdown field
   final bool showClearIcon;
+
+  /// defines minimum and maximum sizes for the dropdown field
+  final BoxConstraints? constraints;
 }
 
 /// Configuration class for customizing the appearance of chips in the multi-select dropdown.

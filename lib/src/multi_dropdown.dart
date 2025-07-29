@@ -108,6 +108,7 @@ class MultiDropdown<T extends Object> extends StatefulWidget {
     this.closeOnBackButton = false,
     Key? key,
   })  : future = null,
+        loadingIndicator = null,
         super(key: key);
 
   /// Creates a multiselect dropdown widget with future request.
@@ -135,6 +136,7 @@ class MultiDropdown<T extends Object> extends StatefulWidget {
   /// ```
   const MultiDropdown.future({
     required this.future,
+    this.loadingIndicator,
     this.fieldDecoration = const FieldDecoration(),
     this.dropdownDecoration = const DropdownDecoration(),
     this.searchDecoration = const SearchFieldDecoration(),
@@ -208,6 +210,9 @@ class MultiDropdown<T extends Object> extends StatefulWidget {
 
   /// The focus node for the dropdown.
   final FocusNode? focusNode;
+
+  /// The future request for the dropdown items.
+  final Widget? loadingIndicator;
 
   /// The future request for the dropdown items.
   final FutureRequest<T>? future;
@@ -514,27 +519,35 @@ class _MultiDropdownState<T extends Object> extends State<MultiDropdown<T>> {
 
     return InputDecoration(
       enabled: widget.enabled,
+      isDense: fieldDecoration.isDense,
       labelText: fieldDecoration.labelText,
       labelStyle: fieldDecoration.labelStyle,
       hintText: fieldDecoration.hintText,
       hintStyle: fieldDecoration.hintStyle,
-      errorText: _formFieldKey.currentState?.errorText,
+      helperText: fieldDecoration.helperText,
+      helperStyle: fieldDecoration.helperStyle,
+      errorText: fieldDecoration.errorText ?? _formFieldKey.currentState?.errorText,
+      errorStyle: fieldDecoration.errorStyle,
       filled: fieldDecoration.backgroundColor != null,
       fillColor: fieldDecoration.backgroundColor,
       border: fieldDecoration.border ?? border,
       enabledBorder: fieldDecoration.border ?? border,
       disabledBorder: fieldDecoration.disabledBorder,
+      prefixIconConstraints: fieldDecoration.prefixIconConstraints,
       prefixIcon: prefixIcon,
       focusedBorder: fieldDecoration.focusedBorder ?? border,
       errorBorder: fieldDecoration.errorBorder,
+      focusedErrorBorder: fieldDecoration.focusedErrorBorder,
+      suffixIconConstraints: fieldDecoration.suffixIconConstraints,
       suffixIcon: _buildSuffixIcon(),
       contentPadding: fieldDecoration.padding,
+      constraints: fieldDecoration.constraints
     );
   }
 
   Widget? _buildSuffixIcon() {
     if (_loadingController.value) {
-      return const CircularProgressIndicator.adaptive();
+      return widget.loadingIndicator ?? const CircularProgressIndicator.adaptive();
     }
 
     if (widget.fieldDecoration.showClearIcon &&

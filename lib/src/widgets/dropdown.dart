@@ -214,6 +214,7 @@ class _SearchField extends StatelessWidget {
           border: decoration.border,
           focusedBorder: decoration.focusedBorder,
           suffixIcon: decoration.searchIcon,
+          constraints: decoration.constraints,
         ),
         onChanged: onChanged,
       ),

@@ -165,6 +165,8 @@ class FieldDecoration {
   ///
   /// [errorBorder] is the border of the dropdown field when there is an error.
   ///
+  /// [focusedErrorBorder] is the border of the dropdown field when there is an error and field is focused
+  /// 
   /// [suffixIconConstraints] the constraints for the suffix icon.
   /// 
   /// [suffixIcon] is the icon to display at the end of dropdown field. The default value is Icon(Icons.arrow_drop_down).
@@ -204,6 +206,7 @@ class FieldDecoration {
     this.focusedBorder,
     this.disabledBorder,
     this.errorBorder,
+    this.focusedErrorBorder,
     this.suffixIconConstraints,
     this.suffixIcon = const Icon(Icons.arrow_drop_down),
     this.prefixIconConstraints,
@@ -246,6 +249,9 @@ class FieldDecoration {
 
   /// The border of the dropdown field when there is an error.
   final InputBorder? errorBorder;
+
+  /// The border of the dropdown field when there is an error and is focused.
+  final InputBorder? focusedErrorBorder;
 
   /// The constraints for suffix icon
   final BoxConstraints? suffixIconConstraints;

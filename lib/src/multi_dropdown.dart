@@ -537,6 +537,7 @@ class _MultiDropdownState<T extends Object> extends State<MultiDropdown<T>> {
       prefixIcon: prefixIcon,
       focusedBorder: fieldDecoration.focusedBorder ?? border,
       errorBorder: fieldDecoration.errorBorder,
+      focusedErrorBorder: fieldDecoration.focusedErrorBorder,
       suffixIconConstraints: fieldDecoration.suffixIconConstraints,
       suffixIcon: _buildSuffixIcon(),
       contentPadding: fieldDecoration.padding,

@@ -190,6 +190,7 @@ class FieldDecoration {
     this.padding = const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
     this.backgroundColor,
     this.showClearIcon = true,
+    this.floatingLabelBehavior,
   });
 
   /// The label text to display above the dropdown field.
@@ -236,6 +237,9 @@ class FieldDecoration {
 
   /// show clear icon or not in the dropdown field
   final bool showClearIcon;
+
+  /// Defines **how** the floating label should behave.
+  final FloatingLabelBehavior? floatingLabelBehavior;
 }
 
 /// Configuration class for customizing the appearance of chips in the multi-select dropdown.

@@ -246,6 +246,8 @@ class ChipDecoration {
   ///
   /// [backgroundColor] is the background color of the chip.
   ///
+  /// [disabledBackgroundColor] is the background color of the chip when disabled.
+  ///
   /// [labelStyle] is the style of the chip label.
   ///
   /// [padding] is the padding around the chip.
@@ -262,6 +264,7 @@ class ChipDecoration {
   const ChipDecoration({
     this.deleteIcon,
     this.backgroundColor = const Color(0xFFE0E0E0),
+    this.disabledBackgroundColor,
     this.padding = const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
     this.border = const Border(),
     this.spacing = 8,
@@ -276,6 +279,9 @@ class ChipDecoration {
 
   /// The background color of the chip.
   final Color? backgroundColor;
+
+  /// The background color of the chip when disabled.
+  final Color? disabledBackgroundColor;
 
   /// The style of the chip label.
   final TextStyle? labelStyle;

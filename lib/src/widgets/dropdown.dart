@@ -58,6 +58,9 @@ class _Dropdown<T> extends StatelessWidget {
 
   int get _selectedCount => items.where((element) => element.selected).length;
 
+  /// Alpha value for disabled state opacity
+  static const int _disabledAlpha = 100;
+
   static const Map<ShortcutActivator, Intent> _webShortcuts =
       <ShortcutActivator, Intent>{
     SingleActivator(LogicalKeyboardKey.arrowDown):
@@ -141,7 +144,7 @@ class _Dropdown<T> extends StatelessWidget {
     }
 
     final disabledColor = dropdownItemDecoration.disabledBackgroundColor ??
-        dropdownItemDecoration.backgroundColor?.withAlpha(100);
+        dropdownItemDecoration.backgroundColor?.withAlpha(_disabledAlpha);
 
     final tileColor = option.disabled
         ? disabledColor
@@ -155,6 +158,14 @@ class _Dropdown<T> extends StatelessWidget {
             ? dropdownItemDecoration.selectedIcon
             : null;
 
+    final textColor = option.disabled
+        ? (dropdownItemDecoration.disabledTextColor ??
+            theme.colorScheme.onSurface.withAlpha(_disabledAlpha))
+        : option.selected
+            ? (dropdownItemDecoration.selectedTextColor ??
+                theme.colorScheme.onSurface)
+            : (dropdownItemDecoration.textColor ?? theme.colorScheme.onSurface);
+
     return Ink(
       child: ListTile(
         title: Text(option.label),
@@ -164,11 +175,8 @@ class _Dropdown<T> extends StatelessWidget {
         enabled: !option.disabled,
         selected: option.selected,
         visualDensity: VisualDensity.adaptivePlatformDensity,
-        focusColor: dropdownItemDecoration.backgroundColor?.withAlpha(100),
-        selectedColor: dropdownItemDecoration.selectedTextColor ??
-            theme.colorScheme.onSurface,
-        textColor:
-            dropdownItemDecoration.textColor ?? theme.colorScheme.onSurface,
+        focusColor: dropdownItemDecoration.backgroundColor?.withAlpha(_disabledAlpha),
+        textColor: textColor,
         tileColor: tileColor ?? Colors.transparent,
         selectedTileColor: dropdownItemDecoration.selectedBackgroundColor ??
             Colors.grey.shade200,

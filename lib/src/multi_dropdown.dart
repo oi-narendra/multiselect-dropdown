@@ -453,7 +453,7 @@ class _MultiDropdownState<T extends Object> extends State<MultiDropdown<T>> {
               builder: (_, __) {
                 return InkWell(
                   mouseCursor: widget.enabled
-                      ? SystemMouseCursors.grab
+                      ? SystemMouseCursors.click
                       : SystemMouseCursors.forbidden,
                   onTap: widget.enabled ? _handleTap : null,
                   focusNode: _focusNode,
@@ -507,7 +507,9 @@ class _MultiDropdownState<T extends Object> extends State<MultiDropdown<T>> {
 
     final prefixIcon = fieldDecoration.prefixIcon != null
         ? IconTheme.merge(
-            data: IconThemeData(color: widget.enabled ? null : Colors.grey),
+            data: IconThemeData(
+              color: widget.enabled ? null : theme.disabledColor,
+            ),
             child: fieldDecoration.prefixIcon!,
           )
         : null;
@@ -573,7 +575,10 @@ class _MultiDropdownState<T extends Object> extends State<MultiDropdown<T>> {
     final selectedOptions = _dropdownController.selectedItems;
 
     if (widget.singleSelect) {
-      return Text(selectedOptions.first.label);
+      return Text(
+        selectedOptions.first.label,
+        style: widget.chipDecoration.labelStyle,
+      );
     }
 
     return _buildSelectedItems(selectedOptions);
@@ -628,7 +633,8 @@ class _MultiDropdownState<T extends Object> extends State<MultiDropdown<T>> {
         borderRadius: chipDecoration.borderRadius,
         color: widget.enabled
             ? chipDecoration.backgroundColor
-            : Colors.grey.shade100,
+            : (chipDecoration.disabledBackgroundColor ??
+                Colors.grey.shade100),
         border: chipDecoration.border,
       ),
       padding: chipDecoration.padding,

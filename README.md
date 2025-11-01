@@ -54,7 +54,7 @@ _controller.selectAtIndex(int index); /// Select item at index
 
 _controller.selectWhere(bool Function(DropdownItem<User>) predicate); /// Select items based on a predicate
 
-_controller.deselectWhere(bool Function(DropdownItem<User>) predicate); /// Deselect items based on a predicate
+_controller.unselectWhere(bool Function(DropdownItem<User>) predicate); /// Unselect items based on a predicate
 
 _controller.items; /// Get all items
 

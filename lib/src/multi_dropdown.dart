@@ -538,7 +538,8 @@ class _MultiDropdownState<T extends Object> extends State<MultiDropdown<T>> {
     }
 
     if (widget.fieldDecoration.showClearIcon &&
-        _dropdownController.selectedItems.isNotEmpty) {
+        _dropdownController.selectedItems.isNotEmpty &&
+        widget.enabled) {
       return GestureDetector(
         child: const Icon(Icons.clear),
         onTap: () {
@@ -637,10 +638,13 @@ class _MultiDropdownState<T extends Object> extends State<MultiDropdown<T>> {
           Text(option.label, style: chipDecoration.labelStyle),
           const SizedBox(width: 4),
           InkWell(
-            onTap: () {
-              _dropdownController
-                  .unselectWhere((element) => element.label == option.label);
-            },
+            onTap: widget.enabled
+                ? () {
+                    _dropdownController.unselectWhere(
+                      (element) => element.label == option.label,
+                    );
+                  }
+                : null,
             child: SizedBox(
               width: 16,
               height: 16,

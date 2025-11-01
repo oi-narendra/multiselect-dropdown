@@ -155,6 +155,14 @@ class _Dropdown<T> extends StatelessWidget {
             ? dropdownItemDecoration.selectedIcon
             : null;
 
+    final textColor = option.disabled
+        ? (dropdownItemDecoration.disabledTextColor ??
+            theme.colorScheme.onSurface.withAlpha(100))
+        : option.selected
+            ? (dropdownItemDecoration.selectedTextColor ??
+                theme.colorScheme.onSurface)
+            : (dropdownItemDecoration.textColor ?? theme.colorScheme.onSurface);
+
     return Ink(
       child: ListTile(
         title: Text(option.label),
@@ -167,8 +175,7 @@ class _Dropdown<T> extends StatelessWidget {
         focusColor: dropdownItemDecoration.backgroundColor?.withAlpha(100),
         selectedColor: dropdownItemDecoration.selectedTextColor ??
             theme.colorScheme.onSurface,
-        textColor:
-            dropdownItemDecoration.textColor ?? theme.colorScheme.onSurface,
+        textColor: textColor,
         tileColor: tileColor ?? Colors.transparent,
         selectedTileColor: dropdownItemDecoration.selectedBackgroundColor ??
             Colors.grey.shade200,

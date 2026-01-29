@@ -623,6 +623,7 @@ class _MultiDropdownState<T extends Object> extends State<MultiDropdown<T>> {
     ChipDecoration chipDecoration,
   ) {
     return Container(
+      clipBehavior: Clip.antiAlias,
       decoration: BoxDecoration(
         borderRadius: chipDecoration.borderRadius,
         color: widget.enabled
@@ -634,7 +635,11 @@ class _MultiDropdownState<T extends Object> extends State<MultiDropdown<T>> {
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Text(option.label, style: chipDecoration.labelStyle),
+          Text(
+            option.label,
+            style: chipDecoration.labelStyle
+                ?.copyWith(overflow: TextOverflow.ellipsis),
+          ),
           const SizedBox(width: 4),
           InkWell(
             onTap: () {

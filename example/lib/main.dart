@@ -59,7 +59,10 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     var items = [
-      DropdownItem(label: 'Nepal', value: User(name: 'Nepal', id: 1)),
+      DropdownItem(
+          label:
+              'Country with a very long name for testing lorem ipsum dolor sit amet',
+          value: User(name: 'Nepal', id: 1)),
       DropdownItem(label: 'Australia', value: User(name: 'Australia', id: 6)),
       DropdownItem(label: 'India', value: User(name: 'India', id: 2)),
       DropdownItem(label: 'China', value: User(name: 'China', id: 3)),

@@ -13,7 +13,7 @@ The MultiSelect Dropdown for Flutter is a powerful and customizable widget that 
 
 - The `MultiSelectDropDown` widget has been renamed to `MultiDropdown`, which now supports `FormValidation`.
 - The `MultiSelectController` methods have been updated/renamed.
-- The `ValueItem` class has replaced the `DropdownItem` class.
+- The `ValueItem` class has been replaced by the `DropdownItem` class.
 - The `.network` constructor has been removed and has been replaced with the `future` constructor, which accepts a future callback to fetch the data from the server. Use it to handle future your own way.
 - `onOptionsSelected` has been replaced with `onSelectionChange`. The `onSelectionChange` callback is called whenever the selection changes in the dropdown, whether it is selected or deselected.
 - A lot of parameters have been renamed and updated. Please check the documentation for the updated parameters.

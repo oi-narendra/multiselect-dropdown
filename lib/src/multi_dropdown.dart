@@ -424,7 +424,9 @@ class _MultiDropdownState<T extends Object> extends State<MultiDropdown<T>> {
                       showOnTop ? Alignment.bottomLeft : Alignment.topLeft,
                   offset: widget.dropdownDecoration.marginTop == 0
                       ? Offset.zero
-                      : Offset(0, widget.dropdownDecoration.marginTop),
+                      : showOnTop
+                          ? Offset(0, -widget.dropdownDecoration.marginTop)
+                          : Offset(0, widget.dropdownDecoration.marginTop),
                   child: RepaintBoundary(
                     child: _Dropdown<T>(
                       decoration: widget.dropdownDecoration,

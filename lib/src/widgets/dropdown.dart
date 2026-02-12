@@ -80,11 +80,7 @@ class _Dropdown<T> extends StatelessWidget {
         canRequestFocus: false,
         skipTraversal: true,
         child: Container(
-          decoration: BoxDecoration(
-            borderRadius: decoration.borderRadius,
-            color: decoration.backgroundColor,
-            backgroundBlendMode: BlendMode.dstATop,
-          ),
+            width: double.infinity,
           constraints: BoxConstraints(
             maxWidth: width,
             maxHeight: decoration.maxHeight,
@@ -98,15 +94,19 @@ class _Dropdown<T> extends StatelessWidget {
                   decoration: searchDecoration,
                   onChanged: _onSearchChange,
                 ),
-              if (decoration.header != null)
-                Flexible(child: decoration.header!),
+              if (decoration.header != null) decoration.header!,
               Flexible(
-                child: ListView.separated(
-                  separatorBuilder: (_, __) =>
-                      itemSeparator ?? const SizedBox.shrink(),
-                  shrinkWrap: true,
-                  itemCount: items.length,
-                  itemBuilder: (_, int index) => _buildOption(index, theme),
+                child: Material(
+                  type: MaterialType.transparency,
+                  clipBehavior: Clip.hardEdge,
+                  child: ListView.separated(
+                    padding: EdgeInsets.zero,
+                    separatorBuilder: (_, __) =>
+                        itemSeparator ?? const SizedBox.shrink(),
+                    shrinkWrap: true,
+                    itemCount: items.length,
+                    itemBuilder: (_, int index) => _buildOption(index, theme),
+                  ),
                 ),
               ),
               if (items.isEmpty && searchEnabled)
@@ -118,8 +118,7 @@ class _Dropdown<T> extends StatelessWidget {
                     style: theme.textTheme.bodyMedium,
                   ),
                 ),
-              if (decoration.footer != null)
-                Flexible(child: decoration.footer!),
+              if (decoration.footer != null) decoration.footer!,
             ],
           ),
         ),

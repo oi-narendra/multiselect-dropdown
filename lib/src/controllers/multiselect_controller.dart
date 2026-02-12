@@ -210,12 +210,12 @@ class MultiSelectController<T> extends ChangeNotifier {
 
   // ignore: use_setters_to_change_properties
   void _setOnSelectionChange(OnSelectionChanged<T>? onSelectionChanged) {
-    this._onSelectionChanged = onSelectionChanged;
+    _onSelectionChanged = onSelectionChanged;
   }
 
   // ignore: use_setters_to_change_properties
   void _setOnSearchChange(OnSearchChanged? onSearchChanged) {
-    this._onSearchChanged = onSearchChanged;
+    _onSearchChanged = onSearchChanged;
   }
 
   // sets the search query.

@@ -289,16 +289,16 @@ class FieldDecoration {
   /// The border radius of the dropdown field.
   final double borderRadius;
 
-  /// animate the icon or not
+  /// Whether to animate the suffix icon rotation when the dropdown opens/closes.
   final bool animateSuffixIcon;
 
-  /// padding around the dropdown field
+  /// The padding around the dropdown field content.
   final EdgeInsets? padding;
 
-  /// background color of the dropdown field
+  /// The background fill color of the dropdown field.
   final Color? backgroundColor;
 
-  /// show clear icon or not in the dropdown field
+  /// Whether to show a clear/deselect icon when items are selected.
   final bool showClearIcon;
 
   /// The text style of the selected item in single-select mode.

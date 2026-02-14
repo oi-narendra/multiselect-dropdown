@@ -1,6 +1,19 @@
 part of '../multi_dropdown.dart';
 
-/// Controller for the multiselect dropdown.
+/// Controller for programmatically managing the [MultiDropdown] widget.
+///
+/// Provides methods to set, add, select, deselect, disable, and toggle
+/// items as well as open/close the dropdown and manage search state.
+///
+/// ```dart
+/// final controller = MultiSelectController<String>();
+///
+/// // Select items matching a condition
+/// controller.selectWhere((item) => item.value == 'dart');
+///
+/// // Clear all selections
+/// controller.clearAll();
+/// ```
 class MultiSelectController<T> extends ChangeNotifier {
   /// a flag to indicate whether the controller is initialized.
   bool _initialized = false;
@@ -47,8 +60,9 @@ class MultiSelectController<T> extends ChangeNotifier {
   /// on search changed callback invoker.
   OnSearchChanged? _onSearchChanged;
 
-  /// sets the list of dropdown items.
-  /// It replaces the existing list of dropdown items.
+  /// Sets the list of dropdown items, replacing any existing items.
+  ///
+  /// Also resets the search query and filtered items.
   void setItems(List<DropdownItem<T>> options) {
     _items
       ..clear()
@@ -80,7 +94,7 @@ class MultiSelectController<T> extends ChangeNotifier {
     _onSelectionChanged?.call(_selectedValues);
   }
 
-  /// clears all the selected items.
+  /// Clears all the selected items.
   void clearAll() {
     _items = _items
         .map(
@@ -92,7 +106,7 @@ class MultiSelectController<T> extends ChangeNotifier {
     _onSelectionChanged?.call(_selectedValues);
   }
 
-  /// selects all the items.
+  /// Selects all the items.
   void selectAll() {
     _items = _items
         .map(
@@ -104,9 +118,9 @@ class MultiSelectController<T> extends ChangeNotifier {
     _onSelectionChanged?.call(_selectedValues);
   }
 
-  /// select the item at the specified index.
+  /// Selects the item at the specified [index].
   ///
-  /// The [index] parameter is the index of the item to select.
+  /// Does nothing if [index] is out of range, or the item is already selected or disabled.
   void selectAtIndex(int index) {
     if (index < 0 || index >= _items.length) return;
 
@@ -117,7 +131,10 @@ class MultiSelectController<T> extends ChangeNotifier {
     selectWhere((element) => element == _items[index]);
   }
 
-  /// deselects all the items.
+  /// Toggles the selection state of items matching the [predicate].
+  ///
+  /// Items that match the predicate and are currently selected will be
+  /// deselected, and vice versa.
   void toggleWhere(bool Function(DropdownItem<T> item) predicate) {
     _items = _items
         .map(
@@ -138,9 +155,9 @@ class MultiSelectController<T> extends ChangeNotifier {
     _onSelectionChanged?.call(_selectedValues);
   }
 
-  /// selects the items that satisfy the predicate.
+  /// Selects items matching the [predicate].
   ///
-  /// The [predicate] parameter is a function that takes a [DropdownItem] and returns a boolean.
+  /// Only items that are not already selected will be updated.
   void selectWhere(bool Function(DropdownItem<T> item) predicate) {
     _items = _items
         .map(
@@ -174,9 +191,9 @@ class MultiSelectController<T> extends ChangeNotifier {
     _onSelectionChanged?.call(_selectedValues);
   }
 
-  /// unselects the items that satisfy the predicate.
+  /// Deselects items matching the [predicate].
   ///
-  /// The [predicate] parameter is a function that takes a [DropdownItem] and returns a boolean.
+  /// Only items that are currently selected will be updated.
   void unselectWhere(bool Function(DropdownItem<T> item) predicate) {
     _items = _items
         .map(
@@ -197,9 +214,9 @@ class MultiSelectController<T> extends ChangeNotifier {
     _onSelectionChanged?.call(_selectedValues);
   }
 
-  /// disables the items that satisfy the predicate.
+  /// Disables items matching the [predicate].
   ///
-  /// The [predicate] parameter is a function that takes a [DropdownItem] and returns a boolean.
+  /// Disabled items cannot be selected or deselected by the user.
   void disableWhere(bool Function(DropdownItem<T> item) predicate) {
     _items = _items
         .map(
@@ -212,7 +229,7 @@ class MultiSelectController<T> extends ChangeNotifier {
     _onSelectionChanged?.call(_selectedValues);
   }
 
-  /// shows the dropdown, if it is not already open.
+  /// Opens the dropdown overlay, if it is not already open.
   void openDropdown() {
     if (_open) return;
 
@@ -220,7 +237,7 @@ class MultiSelectController<T> extends ChangeNotifier {
     notifyListeners();
   }
 
-  /// hides the dropdown, if it is not already closed.
+  /// Closes the dropdown overlay, if it is not already closed.
   void closeDropdown() {
     if (!_open) return;
 

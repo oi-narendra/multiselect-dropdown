@@ -35,6 +35,11 @@ typedef FutureRequest<T> = Future<List<DropdownItem<T>>> Function();
 
 /// A multiselect dropdown widget.
 ///
+/// Supports multi-select and single-select modes, search, form validation,
+/// async data loading via [MultiDropdown.future], programmatic control via
+/// [MultiSelectController], and extensive visual customization through
+/// [ChipDecoration], [FieldDecoration], [DropdownDecoration],
+/// [DropdownItemDecoration], and [SearchFieldDecoration].
 class MultiDropdown<T extends Object> extends StatefulWidget {
   /// Creates a multiselect dropdown widget.
   ///

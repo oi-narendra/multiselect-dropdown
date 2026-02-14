@@ -2,156 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:multi_dropdown/multi_dropdown.dart';
 
-// Helper to wrap widget in MaterialApp for testing
-Widget buildTestApp(Widget child) {
-  return MaterialApp(
-    home: Scaffold(
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.all(16),
-          child: child,
-        ),
-      ),
-    ),
-  );
-}
-
-// Helper to create basic dropdown items
-List<DropdownItem<int>> createItems([int count = 5]) {
-  return List.generate(
-    count,
-    (i) => DropdownItem(label: 'Item ${i + 1}', value: i + 1),
-  );
-}
+import 'test_helpers.dart';
 
 void main() {
-  group('MultiSelectController', () {
-    late MultiSelectController<int> controller;
-
-    setUp(() {
-      controller = MultiSelectController<int>();
-    });
-
-    tearDown(() {
-      controller.dispose();
-    });
-
-    test('setItems replaces existing items', () {
-      controller.setItems(createItems(3));
-      expect(controller.items.length, 3);
-
-      controller.setItems(createItems());
-      expect(controller.items.length, 5);
-    });
-
-    test('selectAll marks all items as selected', () {
-      controller.setItems(createItems());
-      controller.selectAll();
-      expect(controller.selectedItems.length, 5);
-    });
-
-    test('clearAll deselects all items', () {
-      final items = List.generate(
-        3,
-        (i) => DropdownItem(
-          label: 'Item ${i + 1}',
-          value: i + 1,
-          selected: true,
-        ),
-      );
-      controller.setItems(items);
-      expect(controller.selectedItems.length, 3);
-
-      controller.clearAll();
-      expect(controller.selectedItems.length, 0);
-    });
-
-    test('selectAtIndex selects the correct item', () {
-      controller.setItems(createItems());
-      controller.selectAtIndex(2);
-      expect(controller.selectedItems.length, 1);
-      expect(controller.selectedItems.first.value, 3);
-    });
-
-    test('selectAtIndex does nothing for out of range index', () {
-      controller.setItems(createItems());
-      controller.selectAtIndex(-1);
-      controller.selectAtIndex(10);
-      expect(controller.selectedItems.length, 0);
-    });
-
-    test('selectWhere selects matching items', () {
-      controller.setItems(createItems());
-      controller.selectWhere((item) => item.value <= 2);
-      expect(controller.selectedItems.length, 2);
-    });
-
-    test('unselectWhere deselects matching items', () {
-      final items = List.generate(
-        3,
-        (i) => DropdownItem(
-          label: 'Item ${i + 1}',
-          value: i + 1,
-          selected: true,
-        ),
-      );
-      controller.setItems(items);
-      controller.unselectWhere((item) => item.value == 2);
-      expect(controller.selectedItems.length, 2);
-    });
-
-    test('toggleWhere toggles selection state', () {
-      controller.setItems(createItems());
-      controller.toggleWhere((item) => item.value == 1);
-      expect(controller.selectedItems.length, 1);
-
-      controller.toggleWhere((item) => item.value == 1);
-      expect(controller.selectedItems.length, 0);
-    });
-
-    test('disableWhere disables items', () {
-      controller.setItems(createItems());
-      controller.disableWhere((item) => item.value <= 2);
-      expect(controller.disabledItems.length, 2);
-    });
-
-    test('openDropdown and closeDropdown toggle isOpen', () {
-      expect(controller.isOpen, false);
-      controller.openDropdown();
-      expect(controller.isOpen, true);
-      controller.closeDropdown();
-      expect(controller.isOpen, false);
-    });
-
-    test('addItem adds item to the list', () {
-      controller.setItems(createItems(3));
-      controller.addItem(DropdownItem(label: 'Item 4', value: 4));
-      expect(controller.items.length, 4);
-    });
-
-    test('addItems adds multiple items', () {
-      controller.setItems(createItems(2));
-      controller.addItems([
-        DropdownItem(label: 'Item 3', value: 3),
-        DropdownItem(label: 'Item 4', value: 4),
-      ]);
-      expect(controller.items.length, 4);
-    });
-
-    // #142/#145/#188/#190: clearSearch resets filtered items
-    test('clearSearch is callable and does not throw', () {
-      controller.setItems(createItems());
-      expect(() => controller.clearSearch(), returnsNormally);
-    });
-  });
-
   group('MultiDropdown Widget', () {
     // --- #158: Cursor should be click, not grab ---
 
     testWidgets('uses click cursor when enabled', (tester) async {
       await tester.pumpWidget(buildTestApp(
         MultiDropdown<int>(items: createItems()),
-      ),);
+      ));
 
       final inkWell = tester.widget<InkWell>(find.byType(InkWell));
       expect(inkWell.mouseCursor, SystemMouseCursors.click);
@@ -160,7 +20,7 @@ void main() {
     testWidgets('uses forbidden cursor when disabled', (tester) async {
       await tester.pumpWidget(buildTestApp(
         MultiDropdown<int>(items: createItems(), enabled: false),
-      ),);
+      ));
 
       final inkWell = tester.widget<InkWell>(find.byType(InkWell));
       expect(inkWell.mouseCursor, SystemMouseCursors.forbidden);
@@ -176,7 +36,7 @@ void main() {
           enabled: false,
           controller: controller,
         ),
-      ),);
+      ));
 
       await tester.tap(find.byType(InkWell));
       await tester.pumpAndSettle();
@@ -205,7 +65,7 @@ void main() {
             selectedItemTextStyle: textStyle,
           ),
         ),
-      ),);
+      ));
 
       final textWidget = tester.widget<Text>(find.text('Selected Item'));
       expect(textWidget.style?.fontSize, 20);
@@ -226,7 +86,7 @@ void main() {
             noItemsFoundText: 'Nothing here!',
           ),
         ),
-      ),);
+      ));
 
       await tester.tap(find.byType(InkWell));
       await tester.pumpAndSettle();
@@ -251,7 +111,7 @@ void main() {
             inputDecoration: customDecoration,
           ),
         ),
-      ),);
+      ));
 
       expect(find.text('Custom Label'), findsOneWidget);
       expect(find.text('Custom Hint'), findsOneWidget);
@@ -275,7 +135,7 @@ void main() {
           items: items,
           chipDecoration: const ChipDecoration(maxDisplayCount: 2),
         ),
-      ),);
+      ));
 
       expect(find.text('Chip 1'), findsOneWidget);
       expect(find.text('Chip 2'), findsOneWidget);
@@ -295,7 +155,7 @@ void main() {
           ],
           selectedItemBuilder: (item) => Chip(label: Text(item.label)),
         ),
-      ),);
+      ));
 
       expect(find.byType(Wrap), findsOneWidget);
     });
@@ -311,7 +171,7 @@ void main() {
           selectedItemBuilder: (item) => Chip(label: Text(item.label)),
           chipDecoration: const ChipDecoration(wrap: false),
         ),
-      ),);
+      ));
 
       expect(find.byType(ListView), findsOneWidget);
     });
@@ -325,7 +185,7 @@ void main() {
           items: createItems(),
           controller: controller,
         ),
-      ),);
+      ));
 
       await tester.tap(find.byType(InkWell));
       await tester.pumpAndSettle();
@@ -339,7 +199,7 @@ void main() {
     testWidgets('renders with expandDirection auto', (tester) async {
       await tester.pumpWidget(buildTestApp(
         MultiDropdown<int>(items: createItems()),
-      ),);
+      ));
       expect(find.byType(MultiDropdown<int>), findsOneWidget);
     });
 
@@ -351,7 +211,7 @@ void main() {
             expandDirection: ExpandDirection.down,
           ),
         ),
-      ),);
+      ));
       expect(find.byType(MultiDropdown<int>), findsOneWidget);
     });
 
@@ -363,7 +223,7 @@ void main() {
             expandDirection: ExpandDirection.up,
           ),
         ),
-      ),);
+      ));
       expect(find.byType(MultiDropdown<int>), findsOneWidget);
     });
 
@@ -379,7 +239,7 @@ void main() {
             disabledIcon: Icon(Icons.block, color: Colors.red),
           ),
         ),
-      ),);
+      ));
       expect(find.byType(MultiDropdown<int>), findsOneWidget);
     });
 
@@ -388,7 +248,7 @@ void main() {
     testWidgets('renders with default parameters', (tester) async {
       await tester.pumpWidget(buildTestApp(
         MultiDropdown<int>(items: createItems()),
-      ),);
+      ));
       expect(find.byType(MultiDropdown<int>), findsOneWidget);
     });
 
@@ -398,7 +258,7 @@ void main() {
           items: createItems(),
           fieldDecoration: const FieldDecoration(hintText: 'Select items'),
         ),
-      ),);
+      ));
       expect(find.text('Select items'), findsOneWidget);
     });
 
@@ -408,7 +268,7 @@ void main() {
           items: createItems(),
           fieldDecoration: const FieldDecoration(labelText: 'My Dropdown'),
         ),
-      ),);
+      ));
       expect(find.text('My Dropdown'), findsOneWidget);
     });
 
@@ -422,7 +282,7 @@ void main() {
           singleSelect: true,
           controller: controller,
         ),
-      ),);
+      ));
 
       await tester.tap(find.byType(InkWell));
       await tester.pumpAndSettle();
@@ -446,7 +306,7 @@ void main() {
           searchEnabled: true,
           controller: controller,
         ),
-      ),);
+      ));
 
       await tester.tap(find.byType(InkWell));
       await tester.pumpAndSettle();
@@ -454,7 +314,6 @@ void main() {
       await tester.enterText(find.byType(TextField), 'Item 1');
       await tester.pumpAndSettle();
 
-      // Should only show Item 1
       expect(find.text('Item 1'), findsWidgets);
       expect(find.text('Item 2'), findsNothing);
       controller.dispose();
@@ -474,7 +333,7 @@ void main() {
             filled: true,
           ),
         ),
-      ),);
+      ));
 
       await tester.tap(find.byType(InkWell));
       await tester.pumpAndSettle();
@@ -495,12 +354,11 @@ void main() {
             textStyle: TextStyle(fontSize: 20, color: Colors.blue),
           ),
         ),
-      ),);
+      ));
 
       await tester.tap(find.byType(InkWell));
       await tester.pumpAndSettle();
 
-      // Verify items are rendered (dropdown is open)
       expect(find.text('Item 1'), findsOneWidget);
       expect(find.text('Item 2'), findsOneWidget);
       controller.dispose();
@@ -519,88 +377,9 @@ void main() {
             return null;
           },
         ),
-      ),);
+      ));
 
       expect(find.byType(MultiDropdown<int>), findsOneWidget);
-    });
-  });
-
-  group('Decoration Models', () {
-    test('SearchFieldDecoration has customization properties', () {
-      const decoration = SearchFieldDecoration(
-        textStyle: TextStyle(fontSize: 16),
-        hintStyle: TextStyle(color: Colors.grey),
-        fillColor: Colors.white,
-        filled: true,
-        cursorColor: Colors.blue,
-        autofocus: true,
-      );
-
-      expect(decoration.textStyle?.fontSize, 16);
-      expect(decoration.filled, true);
-      expect(decoration.showClearIcon, true);
-      expect(decoration.autofocus, true);
-      expect(decoration.cursorColor, Colors.blue);
-      expect(decoration.fillColor, Colors.white);
-    });
-
-    test('DropdownItemDecoration accepts Widget? for icons', () {
-      const decoration = DropdownItemDecoration(
-        disabledIcon: Icon(Icons.block),
-        textStyle: TextStyle(fontSize: 14),
-        selectedTextStyle: TextStyle(fontWeight: FontWeight.bold),
-      );
-
-      expect(decoration.selectedIcon, isA<Icon>());
-      expect(decoration.disabledIcon, isA<Icon>());
-      expect(decoration.textStyle?.fontSize, 14);
-      expect(decoration.selectedTextStyle?.fontWeight, FontWeight.bold);
-    });
-
-    test('DropdownDecoration has noItemsFoundText and expandDirection', () {
-      const decoration = DropdownDecoration(
-        noItemsFoundText: 'Custom empty text',
-        expandDirection: ExpandDirection.down,
-      );
-
-      expect(decoration.noItemsFoundText, 'Custom empty text');
-      expect(decoration.expandDirection, ExpandDirection.down);
-    });
-
-    test('DropdownDecoration defaults to auto expandDirection', () {
-      const decoration = DropdownDecoration();
-      expect(decoration.expandDirection, ExpandDirection.auto);
-    });
-
-    test('ChipDecoration has maxDisplayCount', () {
-      const decoration = ChipDecoration(maxDisplayCount: 3);
-      expect(decoration.maxDisplayCount, 3);
-    });
-
-    test('ChipDecoration maxDisplayCount defaults to null', () {
-      const decoration = ChipDecoration();
-      expect(decoration.maxDisplayCount, null);
-    });
-
-    test('FieldDecoration has selectedItemTextStyle', () {
-      const decoration = FieldDecoration(
-        selectedItemTextStyle: TextStyle(fontSize: 18),
-      );
-      expect(decoration.selectedItemTextStyle?.fontSize, 18);
-    });
-
-    test('FieldDecoration has inputDecoration override', () {
-      const decoration = FieldDecoration(
-        inputDecoration: InputDecoration(labelText: 'Test'),
-      );
-      expect(decoration.inputDecoration?.labelText, 'Test');
-    });
-
-    test('ExpandDirection enum has all expected values', () {
-      expect(ExpandDirection.values.length, 3);
-      expect(ExpandDirection.values, contains(ExpandDirection.auto));
-      expect(ExpandDirection.values, contains(ExpandDirection.up));
-      expect(ExpandDirection.values, contains(ExpandDirection.down));
     });
   });
 }

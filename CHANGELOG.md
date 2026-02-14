@@ -1,5 +1,32 @@
 # ChangeLOG
 
+## 3.1.0
+
+### Bug Fixes
+
+- **Cursor**: Use pointer cursor instead of grab cursor on web/desktop (#158)
+- **Disabled state**: Prevent interaction with clear icon and chip delete when disabled (#173, #174)
+- **Disabled state**: Use theme colors for disabled elements instead of hardcoded grey (#174)
+- **Disabled icon**: Apply `disabledTextColor` and render `disabledIcon` correctly (#199)
+- **Keyboard**: Dismiss keyboard before opening dropdown overlay (#136)
+- **Controller**: Fix stale search results when calling `setItems` (#142, #188, #190)
+- **Controller**: Keep filtered items in sync after `selectWhere`/`unselectWhere` (#145)
+- **Selected items**: Respect `chipDecoration.wrap` when using `selectedItemBuilder` (#170)
+- **Positioning**: Improved auto-positioning to compare space above vs below (#147)
+- **Scroll**: Allow page scrolling when dropdown overlay is open (#180)
+
+### Features
+
+- **Single-select styling**: Added `selectedItemTextStyle` to `FieldDecoration` for styling the selected item text in single-select mode (#137, #195)
+- **Search field**: Added `textStyle`, `hintStyle`, `fillColor`, `filled`, `cursorColor`, `showClearIcon`, and `autofocus` to `SearchFieldDecoration` (#155, #152, #160, #165, #206)
+- **Dropdown items**: Added `textStyle` and `selectedTextStyle` to `DropdownItemDecoration` (#175, #197)
+- **No items text**: Added `noItemsFoundText` to `DropdownDecoration` (#201)
+- **Icon types**: Changed `selectedIcon`, `disabledIcon`, and `deleteIcon` types from `Icon?` to `Widget?` (#200)
+- **Chip overflow**: Added `maxDisplayCount` to `ChipDecoration` to limit visible chips and show "+N more" label (#194, #187)
+- **Input decoration**: Added `inputDecoration` to `FieldDecoration` for full `InputDecoration` override (#141, #150)
+- **Expand direction**: Added `ExpandDirection` enum (`auto`, `up`, `down`) to `DropdownDecoration` (#210)
+- **Controller**: Added public `clearSearch()` method to `MultiSelectController`
+
 ## 3.0.1
 
 - Fixed overlay exception error.

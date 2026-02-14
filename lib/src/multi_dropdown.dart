@@ -605,14 +605,38 @@ class _MultiDropdownState<T extends Object> extends State<MultiDropdown<T>> {
       );
     }
 
+    final maxCount = chipDecoration.maxDisplayCount;
+    final displayOptions = maxCount != null && selectedOptions.length > maxCount
+        ? selectedOptions.take(maxCount).toList()
+        : selectedOptions;
+    final remainingCount = selectedOptions.length - displayOptions.length;
+
+    final chips = displayOptions
+        .map((option) => _buildChip(option, chipDecoration))
+        .toList();
+
+    if (remainingCount > 0) {
+      chips.add(
+        Container(
+          padding: chipDecoration.padding,
+          child: Text(
+            '+$remainingCount more',
+            style: chipDecoration.labelStyle ??
+                TextStyle(
+                  fontSize: 12,
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                ),
+          ),
+        ),
+      );
+    }
+
     if (chipDecoration.wrap) {
       return Wrap(
         spacing: chipDecoration.spacing,
         runSpacing: chipDecoration.runSpacing,
         crossAxisAlignment: WrapCrossAlignment.center,
-        children: selectedOptions
-            .map((option) => _buildChip(option, chipDecoration))
-            .toList(),
+        children: chips,
       );
     }
 
@@ -621,11 +645,8 @@ class _MultiDropdownState<T extends Object> extends State<MultiDropdown<T>> {
       child: ListView.separated(
         separatorBuilder: (context, index) => const SizedBox(width: 8),
         scrollDirection: Axis.horizontal,
-        itemCount: selectedOptions.length,
-        itemBuilder: (context, index) {
-          final option = selectedOptions[index];
-          return _buildChip(option, chipDecoration);
-        },
+        itemCount: chips.length,
+        itemBuilder: (context, index) => chips[index],
       ),
     );
   }

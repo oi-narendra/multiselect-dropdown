@@ -332,6 +332,7 @@ class ChipDecoration {
     this.labelStyle,
     this.borderRadius = const BorderRadius.all(Radius.circular(12)),
     this.wrap = true,
+    this.maxDisplayCount,
   });
 
   /// The icon to display for deleting a chip.
@@ -363,4 +364,11 @@ class ChipDecoration {
   /// If true, the chips will wrap to the next line when they reach the end of the row.
   /// If false, the chips will not wrap and will be displayed in a single line, scrolling horizontally if necessary.
   final bool wrap;
+
+  /// The maximum number of chips to display.
+  ///
+  /// If the number of selected items exceeds this value, a "+N" label will be
+  /// shown after the visible chips indicating the remaining count.
+  /// If null, all chips are displayed.
+  final int? maxDisplayCount;
 }

@@ -507,7 +507,11 @@ class _MultiDropdownState<T extends Object> extends State<MultiDropdown<T>> {
 
     final prefixIcon = fieldDecoration.prefixIcon != null
         ? IconTheme.merge(
-            data: IconThemeData(color: widget.enabled ? null : Colors.grey),
+            data: IconThemeData(
+              color: widget.enabled
+                  ? null
+                  : theme.disabledColor,
+            ),
             child: fieldDecoration.prefixIcon!,
           )
         : null;
@@ -538,6 +542,7 @@ class _MultiDropdownState<T extends Object> extends State<MultiDropdown<T>> {
     }
 
     if (widget.fieldDecoration.showClearIcon &&
+        widget.enabled &&
         _dropdownController.selectedItems.isNotEmpty) {
       return GestureDetector(
         child: const Icon(Icons.clear),
@@ -622,32 +627,49 @@ class _MultiDropdownState<T extends Object> extends State<MultiDropdown<T>> {
     DropdownItem<dynamic> option,
     ChipDecoration chipDecoration,
   ) {
+    final theme = Theme.of(context);
+
     return Container(
       decoration: BoxDecoration(
         borderRadius: chipDecoration.borderRadius,
         color: widget.enabled
             ? chipDecoration.backgroundColor
-            : Colors.grey.shade100,
+            : theme.disabledColor.withAlpha(30),
         border: chipDecoration.border,
       ),
       padding: chipDecoration.padding,
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Text(option.label, style: chipDecoration.labelStyle),
-          const SizedBox(width: 4),
-          InkWell(
-            onTap: () {
-              _dropdownController
-                  .unselectWhere((element) => element.label == option.label);
-            },
-            child: SizedBox(
-              width: 16,
-              height: 16,
-              child: chipDecoration.deleteIcon ??
-                  const Icon(Icons.close, size: 16),
+          Text(
+            option.label,
+            style: chipDecoration.labelStyle?.copyWith(
+              color: widget.enabled
+                  ? chipDecoration.labelStyle?.color
+                  : theme.disabledColor,
+            ) ?? TextStyle(
+              color: widget.enabled ? null : theme.disabledColor,
             ),
           ),
+          if (widget.enabled) ...[
+            const SizedBox(width: 4),
+            InkWell(
+              onTap: () {
+                _dropdownController
+                    .unselectWhere((element) => element.label == option.label);
+              },
+              child: SizedBox(
+                width: 16,
+                height: 16,
+                child: chipDecoration.deleteIcon ??
+                    Icon(
+                      Icons.close,
+                      size: 16,
+                      color: theme.colorScheme.onSurface,
+                    ),
+              ),
+            ),
+          ],
         ],
       ),
     );

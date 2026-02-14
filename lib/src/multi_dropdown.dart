@@ -437,7 +437,7 @@ class _MultiDropdownState<T extends Object> extends State<MultiDropdown<T>> {
                 Positioned.fill(
                   child: Listener(
                     behavior: HitTestBehavior.translucent,
-                    onPointerDown: (_) => _handleOutsideTap(),
+                    onPointerDown: _handleOutsideTap,
                   ),
                 ),
                 CompositedTransformFollower(
@@ -806,7 +806,10 @@ class _MultiDropdownState<T extends Object> extends State<MultiDropdown<T>> {
       return;
     }
 
-    if (_portalController.isShowing && _dropdownController.isOpen) return;
+    if (_dropdownController.isOpen) {
+      _dropdownController.closeDropdown();
+      return;
+    }
 
     // Dismiss the keyboard and unfocus any currently focused widget
     // (e.g., TextFormField) before opening the dropdown.
@@ -815,8 +818,18 @@ class _MultiDropdownState<T extends Object> extends State<MultiDropdown<T>> {
     _dropdownController.openDropdown();
   }
 
-  void _handleOutsideTap() {
+  void _handleOutsideTap(PointerDownEvent event) {
     if (!_dropdownController.isOpen) return;
+
+    // Check if the tap landed on the field itself. If so, let the
+    // field's InkWell handle the toggle — don't treat it as "outside".
+    final renderBox = context.findRenderObject() as RenderBox?;
+    if (renderBox != null && renderBox.attached) {
+      final localPosition = renderBox.globalToLocal(event.position);
+      if (renderBox.paintBounds.contains(localPosition)) {
+        return;
+      }
+    }
 
     _dropdownController.closeDropdown();
   }

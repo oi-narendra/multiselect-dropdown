@@ -224,10 +224,10 @@ class _SearchFieldState extends State<_SearchField> {
   }
 
   void _onTextChanged() {
-    final hasText = _controller.text.isNotEmpty;
-    if (hasText != _hasText) {
+    final currentHasText = _controller.text.isNotEmpty;
+    if (currentHasText != _hasText) {
       setState(() {
-        _hasText = hasText;
+        _hasText = currentHasText;
       });
     }
   }

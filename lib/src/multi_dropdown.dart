@@ -698,10 +698,11 @@ class _MultiDropdownState<T extends Object> extends State<MultiDropdown<T>> {
 
     if (_portalController.isShowing && _dropdownController.isOpen) return;
 
-    _dropdownController.openDropdown();
-
-    // unfocus the current focus of other widgets
+    // Dismiss the keyboard and unfocus any currently focused widget
+    // (e.g., TextFormField) before opening the dropdown.
     FocusManager.instance.primaryFocus?.unfocus();
+
+    _dropdownController.openDropdown();
   }
 
   void _handleOutsideTap() {

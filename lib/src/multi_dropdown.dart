@@ -433,9 +433,9 @@ class _MultiDropdownState<T extends Object> extends State<MultiDropdown<T>> {
             final stack = Stack(
               children: [
                 Positioned.fill(
-                  child: GestureDetector(
+                  child: Listener(
                     behavior: HitTestBehavior.translucent,
-                    onTap: _handleOutsideTap,
+                    onPointerDown: (_) => _handleOutsideTap(),
                   ),
                 ),
                 CompositedTransformFollower(

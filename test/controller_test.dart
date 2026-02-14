@@ -24,8 +24,9 @@ void main() {
     });
 
     test('selectAll marks all items as selected', () {
-      controller.setItems(createItems());
-      controller.selectAll();
+      controller
+        ..setItems(createItems())
+        ..selectAll();
       expect(controller.selectedItems.length, 5);
     });
 
@@ -46,22 +47,25 @@ void main() {
     });
 
     test('selectAtIndex selects the correct item', () {
-      controller.setItems(createItems());
-      controller.selectAtIndex(2);
+      controller
+        ..setItems(createItems())
+        ..selectAtIndex(2);
       expect(controller.selectedItems.length, 1);
       expect(controller.selectedItems.first.value, 3);
     });
 
     test('selectAtIndex does nothing for out of range index', () {
-      controller.setItems(createItems());
-      controller.selectAtIndex(-1);
-      controller.selectAtIndex(10);
+      controller
+        ..setItems(createItems())
+        ..selectAtIndex(-1)
+        ..selectAtIndex(10);
       expect(controller.selectedItems.length, 0);
     });
 
     test('selectWhere selects matching items', () {
-      controller.setItems(createItems());
-      controller.selectWhere((item) => item.value <= 2);
+      controller
+        ..setItems(createItems())
+        ..selectWhere((item) => item.value <= 2);
       expect(controller.selectedItems.length, 2);
     });
 
@@ -74,14 +78,16 @@ void main() {
           selected: true,
         ),
       );
-      controller.setItems(items);
-      controller.unselectWhere((item) => item.value == 2);
+      controller
+        ..setItems(items)
+        ..unselectWhere((item) => item.value == 2);
       expect(controller.selectedItems.length, 2);
     });
 
     test('toggleWhere toggles selection state', () {
-      controller.setItems(createItems());
-      controller.toggleWhere((item) => item.value == 1);
+      controller
+        ..setItems(createItems())
+        ..toggleWhere((item) => item.value == 1);
       expect(controller.selectedItems.length, 1);
 
       controller.toggleWhere((item) => item.value == 1);
@@ -89,8 +95,9 @@ void main() {
     });
 
     test('disableWhere disables items', () {
-      controller.setItems(createItems());
-      controller.disableWhere((item) => item.value <= 2);
+      controller
+        ..setItems(createItems())
+        ..disableWhere((item) => item.value <= 2);
       expect(controller.disabledItems.length, 2);
     });
 
@@ -103,17 +110,19 @@ void main() {
     });
 
     test('addItem adds item to the list', () {
-      controller.setItems(createItems(3));
-      controller.addItem(DropdownItem(label: 'Item 4', value: 4));
+      controller
+        ..setItems(createItems(3))
+        ..addItem(DropdownItem(label: 'Item 4', value: 4));
       expect(controller.items.length, 4);
     });
 
     test('addItems adds multiple items', () {
-      controller.setItems(createItems(2));
-      controller.addItems([
-        DropdownItem(label: 'Item 3', value: 3),
-        DropdownItem(label: 'Item 4', value: 4),
-      ]);
+      controller
+        ..setItems(createItems(2))
+        ..addItems([
+          DropdownItem(label: 'Item 3', value: 3),
+          DropdownItem(label: 'Item 4', value: 4),
+        ]);
       expect(controller.items.length, 4);
     });
 

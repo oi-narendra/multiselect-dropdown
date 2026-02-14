@@ -2,7 +2,7 @@ part of '../multi_dropdown.dart';
 
 /// Dropdown widget for the multiselect dropdown.
 ///
-class _Dropdown<T> extends StatelessWidget {
+class _Dropdown<T> extends StatefulWidget {
   /// Creates a dropdown widget.
   const _Dropdown({
     required this.decoration,
@@ -56,7 +56,18 @@ class _Dropdown<T> extends StatelessWidget {
   /// Whether the selection is single.
   final bool singleSelect;
 
-  int get _selectedCount => items.where((element) => element.selected).length;
+  @override
+  State<_Dropdown<T>> createState() => _DropdownState<T>();
+}
+
+class _DropdownState<T> extends State<_Dropdown<T>>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _animationController;
+  late final Animation<double> _fadeAnimation;
+  late final Animation<Offset> _slideAnimation;
+
+  int get _selectedCount =>
+      widget.items.where((element) => element.selected).length;
 
   static const Map<ShortcutActivator, Intent> _webShortcuts =
       <ShortcutActivator, Intent>{
@@ -67,60 +78,98 @@ class _Dropdown<T> extends StatelessWidget {
   };
 
   @override
+  void initState() {
+    super.initState();
+    _animationController = AnimationController(
+      vsync: this,
+      duration: widget.decoration.animationDuration,
+    );
+    _fadeAnimation = CurvedAnimation(
+      parent: _animationController,
+      curve: widget.decoration.animationCurve,
+    );
+    _slideAnimation = Tween<Offset>(
+      begin: const Offset(0, -0.05),
+      end: Offset.zero,
+    ).animate(
+      CurvedAnimation(
+        parent: _animationController,
+        curve: widget.decoration.animationCurve,
+      ),
+    );
+    unawaited(_animationController.forward());
+  }
+
+  @override
+  void dispose() {
+    _animationController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final resolvedBg =
+        widget.decoration.backgroundColor ?? theme.colorScheme.surface;
 
-    final child = Material(
-      elevation: decoration.elevation,
-      borderRadius: decoration.borderRadius,
-      clipBehavior: Clip.antiAlias,
-      color: decoration.backgroundColor,
-      surfaceTintColor: decoration.backgroundColor,
-      child: Focus(
-        canRequestFocus: false,
-        skipTraversal: true,
-        child: Container(
-          decoration: BoxDecoration(
-            borderRadius: decoration.borderRadius,
-            color: decoration.backgroundColor,
-            backgroundBlendMode: BlendMode.dstATop,
-          ),
-          constraints: BoxConstraints(
-            maxWidth: width,
-            maxHeight: decoration.maxHeight,
-          ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              if (searchEnabled)
-                _SearchField(
-                  decoration: searchDecoration,
-                  onChanged: _onSearchChange,
-                ),
-              if (decoration.header != null)
-                Flexible(child: decoration.header!),
-              Flexible(
-                child: ListView.separated(
-                  separatorBuilder: (_, __) =>
-                      itemSeparator ?? const SizedBox.shrink(),
-                  shrinkWrap: true,
-                  itemCount: items.length,
-                  itemBuilder: (_, index) => _buildOption(index, theme),
-                ),
+    final child = SlideTransition(
+      position: _slideAnimation,
+      child: FadeTransition(
+        opacity: _fadeAnimation,
+        child: Material(
+          elevation: widget.decoration.elevation,
+          borderRadius: widget.decoration.borderRadius,
+          clipBehavior: Clip.antiAlias,
+          color: resolvedBg,
+          surfaceTintColor: resolvedBg,
+          child: Focus(
+            canRequestFocus: false,
+            skipTraversal: true,
+            child: Container(
+              decoration: BoxDecoration(
+                borderRadius: widget.decoration.borderRadius,
+                color: resolvedBg,
+                backgroundBlendMode: BlendMode.dstATop,
               ),
-              if (items.isEmpty && searchEnabled)
-                Padding(
-                  padding: const EdgeInsets.all(12),
-                  child: Text(
-                    decoration.noItemsFoundText,
-                    textAlign: TextAlign.center,
-                    style: theme.textTheme.bodyMedium,
-                  ),
-                ),
-              if (decoration.footer != null)
-                Flexible(child: decoration.footer!),
-            ],
+              constraints: BoxConstraints(
+                maxWidth: widget.width,
+                maxHeight: widget.decoration.maxHeight,
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  if (widget.searchEnabled)
+                    _SearchField(
+                      decoration: widget.searchDecoration,
+                      onChanged: _onSearchChange,
+                    ),
+                  if (widget.decoration.header != null)
+                    Flexible(child: widget.decoration.header!),
+                  if (widget.items.isNotEmpty)
+                    Flexible(
+                      child: ListView.separated(
+                        separatorBuilder: (_, __) =>
+                            widget.itemSeparator ?? const SizedBox.shrink(),
+                        shrinkWrap: true,
+                        itemCount: widget.items.length,
+                        itemBuilder: (_, index) => _buildOption(index, theme),
+                      ),
+                    ),
+                  if (widget.items.isEmpty)
+                    Padding(
+                      padding: const EdgeInsets.all(12),
+                      child: Text(
+                        widget.decoration.noItemsFoundText,
+                        textAlign: TextAlign.center,
+                        style: theme.textTheme.bodyMedium,
+                      ),
+                    ),
+                  if (widget.decoration.footer != null)
+                    Flexible(child: widget.decoration.footer!),
+                ],
+              ),
+            ),
           ),
         ),
       ),
@@ -134,34 +183,42 @@ class _Dropdown<T> extends StatelessWidget {
   }
 
   Widget _buildOption(int index, ThemeData theme) {
-    final option = items[index];
+    final option = widget.items[index];
 
-    if (itemBuilder != null) {
-      return itemBuilder!(option, index, () => onItemTap(option));
+    if (widget.itemBuilder != null) {
+      return widget.itemBuilder!(option, index, () => widget.onItemTap(option));
     }
 
-    final disabledColor = dropdownItemDecoration.disabledBackgroundColor ??
-        dropdownItemDecoration.backgroundColor?.withAlpha(100);
+    final disabledColor =
+        widget.dropdownItemDecoration.disabledBackgroundColor ??
+            widget.dropdownItemDecoration.backgroundColor?.withAlpha(100);
 
     final tileColor = option.disabled
         ? disabledColor
         : option.selected
-            ? dropdownItemDecoration.selectedBackgroundColor
-            : dropdownItemDecoration.backgroundColor;
+            ? widget.dropdownItemDecoration.selectedBackgroundColor
+            : widget.dropdownItemDecoration.backgroundColor;
 
     final trailing = option.disabled
-        ? dropdownItemDecoration.disabledIcon
+        ? widget.dropdownItemDecoration.disabledIcon
         : option.selected
-            ? dropdownItemDecoration.selectedIcon
+            ? AnimatedScale(
+                scale: 1,
+                duration: const Duration(milliseconds: 200),
+                curve: Curves.elasticOut,
+                child: widget.dropdownItemDecoration.selectedIcon,
+              )
             : null;
 
-    return Ink(
+    return AnimatedContainer(
+      duration: const Duration(milliseconds: 200),
+      color: tileColor ?? Colors.transparent,
       child: ListTile(
         title: Text(
           option.label,
           style: option.selected
-              ? dropdownItemDecoration.selectedTextStyle
-              : dropdownItemDecoration.textStyle,
+              ? widget.dropdownItemDecoration.selectedTextStyle
+              : widget.dropdownItemDecoration.textStyle,
         ),
         trailing: trailing,
         dense: true,
@@ -169,20 +226,22 @@ class _Dropdown<T> extends StatelessWidget {
         enabled: !option.disabled,
         selected: option.selected,
         visualDensity: VisualDensity.adaptivePlatformDensity,
-        focusColor: dropdownItemDecoration.backgroundColor?.withAlpha(100),
-        selectedColor: dropdownItemDecoration.selectedTextColor ??
+        focusColor:
+            widget.dropdownItemDecoration.backgroundColor?.withAlpha(100),
+        selectedColor: widget.dropdownItemDecoration.selectedTextColor ??
             theme.colorScheme.onSurface,
         textColor: option.disabled
-            ? dropdownItemDecoration.disabledTextColor ?? theme.disabledColor
-            : dropdownItemDecoration.textColor ?? theme.colorScheme.onSurface,
-        tileColor: tileColor ?? Colors.transparent,
-        selectedTileColor: dropdownItemDecoration.selectedBackgroundColor ??
-            Colors.grey.shade200,
+            ? widget.dropdownItemDecoration.disabledTextColor ??
+                theme.disabledColor
+            : widget.dropdownItemDecoration.textColor ??
+                theme.colorScheme.onSurface,
+        tileColor: Colors.transparent,
+        selectedTileColor: Colors.transparent,
         onTap: () {
           if (option.disabled) return;
 
-          if (singleSelect || !_reachedMaxSelection(option)) {
-            onItemTap(option);
+          if (widget.singleSelect || !_reachedMaxSelection(option)) {
+            widget.onItemTap(option);
             return;
           }
         },
@@ -190,12 +249,12 @@ class _Dropdown<T> extends StatelessWidget {
     );
   }
 
-  void _onSearchChange(String value) => onSearchChange?.call(value);
+  void _onSearchChange(String value) => widget.onSearchChange?.call(value);
 
   bool _reachedMaxSelection(DropdownItem<dynamic> option) {
     return !option.selected &&
-        maxSelections > 0 &&
-        _selectedCount >= maxSelections;
+        widget.maxSelections > 0 &&
+        _selectedCount >= widget.maxSelections;
   }
 }
 
@@ -216,6 +275,7 @@ class _SearchField extends StatefulWidget {
 class _SearchFieldState extends State<_SearchField> {
   late final TextEditingController _controller = TextEditingController();
   bool _hasText = false;
+  Timer? _debounce;
 
   @override
   void initState() {
@@ -232,8 +292,22 @@ class _SearchFieldState extends State<_SearchField> {
     }
   }
 
+  void _handleSearchChange(String value) {
+    final debounceMs = widget.decoration.searchDebounceMs;
+    if (debounceMs <= 0) {
+      widget.onChanged(value);
+      return;
+    }
+
+    _debounce?.cancel();
+    _debounce = Timer(Duration(milliseconds: debounceMs), () {
+      widget.onChanged(value);
+    });
+  }
+
   @override
   void dispose() {
+    _debounce?.cancel();
     _controller
       ..removeListener(_onTextChanged)
       ..dispose();
@@ -259,16 +333,20 @@ class _SearchFieldState extends State<_SearchField> {
           fillColor: widget.decoration.fillColor,
           prefixIcon: widget.decoration.searchIcon,
           suffixIcon: widget.decoration.showClearIcon && _hasText
-              ? IconButton(
-                  icon: const Icon(Icons.clear, size: 18),
-                  onPressed: () {
-                    _controller.clear();
-                    widget.onChanged('');
-                  },
+              ? Tooltip(
+                  message: 'Clear search',
+                  child: IconButton(
+                    icon: const Icon(Icons.clear, size: 18),
+                    onPressed: () {
+                      _controller.clear();
+                      _debounce?.cancel();
+                      widget.onChanged('');
+                    },
+                  ),
                 )
               : null,
         ),
-        onChanged: widget.onChanged,
+        onChanged: _handleSearchChange,
       ),
     );
   }

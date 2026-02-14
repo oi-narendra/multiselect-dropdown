@@ -11,7 +11,6 @@ part 'controllers/multiselect_controller.dart';
 part 'enum/enums.dart';
 part 'models/decoration.dart';
 part 'models/dropdown_item.dart';
-// part 'models/network_request.dart';
 part 'widgets/dropdown.dart';
 
 /// typedef for the dropdown item builder.
@@ -470,29 +469,39 @@ class _MultiDropdownState<T extends Object> extends State<MultiDropdown<T>> {
             );
             return stack;
           },
-          child: CompositedTransformTarget(
-            link: _layerLink,
-            child: ListenableBuilder(
-              listenable: _listenable,
-              builder: (_, __) {
-                return InkWell(
-                  mouseCursor: widget.enabled
-                      ? SystemMouseCursors.click
-                      : SystemMouseCursors.forbidden,
-                  onTap: widget.enabled ? _handleTap : null,
-                  focusNode: _focusNode,
-                  canRequestFocus: widget.enabled,
-                  borderRadius: _getFieldBorderRadius(),
-                  child: InputDecorator(
-                    isEmpty: _dropdownController.selectedItems.isEmpty,
-                    isFocused: _dropdownController.isOpen,
-                    decoration: _buildDecoration(),
-                    textAlign: TextAlign.start,
-                    textAlignVertical: TextAlignVertical.center,
-                    child: _buildField(),
-                  ),
-                );
-              },
+          child: AnimatedSize(
+            duration: const Duration(milliseconds: 200),
+            curve: Curves.easeInOut,
+            alignment: Alignment.topCenter,
+            child: CompositedTransformTarget(
+              link: _layerLink,
+              child: ListenableBuilder(
+                listenable: _listenable,
+                builder: (_, __) {
+                  return Semantics(
+                    label: widget.fieldDecoration.labelText ?? 'Dropdown field',
+                    button: true,
+                    enabled: widget.enabled,
+                    child: InkWell(
+                      mouseCursor: widget.enabled
+                          ? SystemMouseCursors.click
+                          : SystemMouseCursors.forbidden,
+                      onTap: widget.enabled ? _handleTap : null,
+                      focusNode: _focusNode,
+                      canRequestFocus: widget.enabled,
+                      borderRadius: _getFieldBorderRadius(),
+                      child: InputDecorator(
+                        isEmpty: _dropdownController.selectedItems.isEmpty,
+                        isFocused: _dropdownController.isOpen,
+                        decoration: _buildDecoration(),
+                        textAlign: TextAlign.start,
+                        textAlignVertical: TextAlignVertical.center,
+                        child: _buildField(),
+                      ),
+                    ),
+                  );
+                },
+              ),
             ),
           ),
         );
@@ -569,19 +578,30 @@ class _MultiDropdownState<T extends Object> extends State<MultiDropdown<T>> {
 
   Widget? _buildSuffixIcon() {
     if (_loadingController.value) {
-      return const CircularProgressIndicator.adaptive();
+      return const SizedBox(
+        width: 24,
+        height: 24,
+        child: CircularProgressIndicator.adaptive(strokeWidth: 2),
+      );
     }
 
     if (widget.fieldDecoration.showClearIcon &&
         widget.enabled &&
         _dropdownController.selectedItems.isNotEmpty) {
-      return GestureDetector(
-        child: const Icon(Icons.clear),
-        onTap: () {
-          _dropdownController.clearAll();
-          _formFieldKey.currentState
-              ?.didChange(_dropdownController.selectedItems);
-        },
+      return Tooltip(
+        message: 'Clear selection',
+        child: Semantics(
+          label: 'Clear all selections',
+          button: true,
+          child: GestureDetector(
+            child: const Icon(Icons.clear),
+            onTap: () {
+              _dropdownController.clearAll();
+              _formFieldKey.currentState
+                  ?.didChange(_dropdownController.selectedItems);
+            },
+          ),
+        ),
       );
     }
 
@@ -677,11 +697,23 @@ class _MultiDropdownState<T extends Object> extends State<MultiDropdown<T>> {
     }
 
     if (chipDecoration.wrap) {
-      return Wrap(
-        spacing: chipDecoration.spacing,
-        runSpacing: chipDecoration.runSpacing,
-        crossAxisAlignment: WrapCrossAlignment.center,
-        children: chips,
+      return AnimatedSwitcher(
+        duration: const Duration(milliseconds: 200),
+        layoutBuilder: (currentChild, previousChildren) {
+          return Stack(
+            alignment: Alignment.topLeft,
+            children: [
+              ...previousChildren,
+              if (currentChild != null) currentChild,
+            ],
+          );
+        },
+        child: Wrap(
+          key: ValueKey(selectedOptions.length),
+          spacing: chipDecoration.spacing,
+          runSpacing: chipDecoration.runSpacing,
+          children: chips,
+        ),
       );
     }
 
@@ -701,13 +733,15 @@ class _MultiDropdownState<T extends Object> extends State<MultiDropdown<T>> {
     ChipDecoration chipDecoration,
   ) {
     final theme = Theme.of(context);
+    final resolvedChipBg =
+        chipDecoration.backgroundColor ?? theme.colorScheme.surface;
 
-    return Container(
+    return AnimatedContainer(
+      duration: const Duration(milliseconds: 200),
       decoration: BoxDecoration(
         borderRadius: chipDecoration.borderRadius,
-        color: widget.enabled
-            ? chipDecoration.backgroundColor
-            : theme.disabledColor.withAlpha(30),
+        color:
+            widget.enabled ? resolvedChipBg : theme.disabledColor.withAlpha(30),
         border: chipDecoration.border,
       ),
       padding: chipDecoration.padding,
@@ -727,20 +761,29 @@ class _MultiDropdownState<T extends Object> extends State<MultiDropdown<T>> {
           ),
           if (widget.enabled) ...[
             const SizedBox(width: 4),
-            InkWell(
-              onTap: () {
-                _dropdownController
-                    .unselectWhere((element) => element.value == option.value);
-              },
-              child: SizedBox(
-                width: 16,
-                height: 16,
-                child: chipDecoration.deleteIcon ??
-                    Icon(
-                      Icons.close,
-                      size: 16,
-                      color: theme.colorScheme.onSurface,
-                    ),
+            Semantics(
+              label: 'Remove ${option.label}',
+              button: true,
+              child: Tooltip(
+                message: 'Remove ${option.label}',
+                child: InkWell(
+                  borderRadius: BorderRadius.circular(8),
+                  onTap: () {
+                    _dropdownController.unselectWhere(
+                      (element) => element.value == option.value,
+                    );
+                  },
+                  child: SizedBox(
+                    width: 16,
+                    height: 16,
+                    child: chipDecoration.deleteIcon ??
+                        Icon(
+                          Icons.close,
+                          size: 16,
+                          color: theme.colorScheme.onSurface,
+                        ),
+                  ),
+                ),
               ),
             ),
           ],

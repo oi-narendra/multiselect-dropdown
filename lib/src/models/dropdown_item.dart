@@ -36,10 +36,10 @@ class DropdownItem<T> {
   final T value;
 
   /// Indicates whether the dropdown item is disabled.
-  bool disabled;
+  final bool disabled;
 
   /// Indicates whether the dropdown item is selected.
-  bool selected;
+  final bool selected;
 
   /// Converts the [DropdownItem] instance to a map.
   ///

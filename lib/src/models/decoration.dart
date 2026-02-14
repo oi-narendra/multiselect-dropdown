@@ -11,6 +11,20 @@ class SearchFieldDecoration {
   /// [focusedBorder] is the border of the search field when it is focused. The default value is OutlineInputBorder().
   ///
   /// [searchIcon] is the icon to display in the search field. The default value is Icon(Icons.search).
+  ///
+  /// [textStyle] is the text style of the search field input.
+  ///
+  /// [hintStyle] is the text style of the hint text.
+  ///
+  /// [fillColor] is the fill color of the search field.
+  ///
+  /// [filled] is whether the search field is filled with [fillColor].
+  ///
+  /// [cursorColor] is the cursor color of the search field.
+  ///
+  /// [showClearIcon] is whether to show a clear icon in the search field. The default value is true.
+  ///
+  /// [autofocus] is whether the search field should be focused when the dropdown is opened. The default value is false.
   const SearchFieldDecoration({
     this.hintText = 'Search',
     this.border = const OutlineInputBorder(
@@ -22,6 +36,13 @@ class SearchFieldDecoration {
       borderRadius: BorderRadius.all(Radius.circular(12)),
     ),
     this.searchIcon = const Icon(Icons.search),
+    this.textStyle,
+    this.hintStyle,
+    this.fillColor,
+    this.filled,
+    this.cursorColor,
+    this.showClearIcon = true,
+    this.autofocus = false,
   });
 
   /// The hint text to display in the search field.
@@ -35,6 +56,27 @@ class SearchFieldDecoration {
 
   /// The icon to display in the search field.
   final Icon searchIcon;
+
+  /// The text style of the search field input.
+  final TextStyle? textStyle;
+
+  /// The text style of the hint text.
+  final TextStyle? hintStyle;
+
+  /// The fill color of the search field.
+  final Color? fillColor;
+
+  /// Whether the search field is filled with [fillColor].
+  final bool? filled;
+
+  /// The cursor color of the search field.
+  final Color? cursorColor;
+
+  /// Whether to show a clear icon in the search field when text is entered.
+  final bool showClearIcon;
+
+  /// Whether the search field should be automatically focused when the dropdown is opened.
+  final bool autofocus;
 }
 
 /// Represents the decoration for the dropdown items.

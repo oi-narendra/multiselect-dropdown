@@ -194,7 +194,7 @@ class _Dropdown<T> extends StatelessWidget {
   }
 }
 
-class _SearchField extends StatelessWidget {
+class _SearchField extends StatefulWidget {
   const _SearchField({
     required this.decoration,
     required this.onChanged,
@@ -205,18 +205,53 @@ class _SearchField extends StatelessWidget {
   final ValueChanged<String> onChanged;
 
   @override
+  State<_SearchField> createState() => _SearchFieldState();
+}
+
+class _SearchFieldState extends State<_SearchField> {
+  late final TextEditingController _controller = TextEditingController();
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.all(8),
       child: TextField(
+        controller: _controller,
+        autofocus: widget.decoration.autofocus,
+        style: widget.decoration.textStyle,
+        cursorColor: widget.decoration.cursorColor,
         decoration: InputDecoration(
           isDense: true,
-          hintText: decoration.hintText,
-          border: decoration.border,
-          focusedBorder: decoration.focusedBorder,
-          suffixIcon: decoration.searchIcon,
+          hintText: widget.decoration.hintText,
+          hintStyle: widget.decoration.hintStyle,
+          border: widget.decoration.border,
+          focusedBorder: widget.decoration.focusedBorder,
+          filled: widget.decoration.filled,
+          fillColor: widget.decoration.fillColor,
+          suffixIcon: widget.decoration.searchIcon,
+          prefixIcon: widget.decoration.showClearIcon
+              ? ValueListenableBuilder<TextEditingValue>(
+                  valueListenable: _controller,
+                  builder: (_, value, __) {
+                    if (value.text.isEmpty) return const SizedBox.shrink();
+                    return IconButton(
+                      icon: const Icon(Icons.clear, size: 18),
+                      onPressed: () {
+                        _controller.clear();
+                        widget.onChanged('');
+                      },
+                    );
+                  },
+                )
+              : null,
         ),
-        onChanged: onChanged,
+        onChanged: widget.onChanged,
       ),
     );
   }

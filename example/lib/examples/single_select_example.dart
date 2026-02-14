@@ -92,7 +92,8 @@ class _SingleSelectExampleState extends State<SingleSelectExample> {
                 color: colorScheme.tertiary,
                 size: 20,
               ),
-              selectedBackgroundColor: colorScheme.tertiaryContainer.withAlpha(80),
+              selectedBackgroundColor:
+                  colorScheme.tertiaryContainer.withAlpha(80),
             ),
             onSelectionChange: (values) {
               setState(() => _selected = values.firstOrNull);

@@ -401,9 +401,8 @@ class _MultiDropdownState<T extends Object> extends State<MultiDropdown<T>> {
             final renderBoxOffset = renderBox.localToGlobal(Offset.zero);
 
             final screenHeight = MediaQuery.of(context).size.height;
-            final spaceBelow = screenHeight -
-                renderBoxOffset.dy -
-                renderBoxSize.height;
+            final spaceBelow =
+                screenHeight - renderBoxOffset.dy - renderBoxSize.height;
             final spaceAbove = renderBoxOffset.dy;
 
             final bool showOnTop;
@@ -415,9 +414,8 @@ class _MultiDropdownState<T extends Object> extends State<MultiDropdown<T>> {
                 showOnTop = true;
                 break;
               case ExpandDirection.auto:
-                showOnTop =
-                    spaceBelow < widget.dropdownDecoration.maxHeight &&
-                        spaceAbove > spaceBelow;
+                showOnTop = spaceBelow < widget.dropdownDecoration.maxHeight &&
+                    spaceAbove > spaceBelow;
                 break;
             }
 
@@ -538,9 +536,7 @@ class _MultiDropdownState<T extends Object> extends State<MultiDropdown<T>> {
     final prefixIcon = fieldDecoration.prefixIcon != null
         ? IconTheme.merge(
             data: IconThemeData(
-              color: widget.enabled
-                  ? null
-                  : theme.disabledColor,
+              color: widget.enabled ? null : theme.disabledColor,
             ),
             child: fieldDecoration.prefixIcon!,
           )
@@ -716,12 +712,13 @@ class _MultiDropdownState<T extends Object> extends State<MultiDropdown<T>> {
           Text(
             option.label,
             style: chipDecoration.labelStyle?.copyWith(
-              color: widget.enabled
-                  ? chipDecoration.labelStyle?.color
-                  : theme.disabledColor,
-            ) ?? TextStyle(
-              color: widget.enabled ? null : theme.disabledColor,
-            ),
+                  color: widget.enabled
+                      ? chipDecoration.labelStyle?.color
+                      : theme.disabledColor,
+                ) ??
+                TextStyle(
+                  color: widget.enabled ? null : theme.disabledColor,
+                ),
           ),
           if (widget.enabled) ...[
             const SizedBox(width: 4),

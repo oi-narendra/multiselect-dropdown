@@ -13,10 +13,28 @@ class SearchableExample extends StatefulWidget {
 
 class _SearchableExampleState extends State<SearchableExample> {
   final _items = [
-    'C', 'C++', 'C#', 'Dart', 'Elixir', 'Erlang',
-    'Go', 'Haskell', 'Java', 'JavaScript', 'Kotlin',
-    'Lua', 'Objective-C', 'PHP', 'Python', 'R',
-    'Ruby', 'Rust', 'Scala', 'Swift', 'TypeScript', 'Zig',
+    'C',
+    'C++',
+    'C#',
+    'Dart',
+    'Elixir',
+    'Erlang',
+    'Go',
+    'Haskell',
+    'Java',
+    'JavaScript',
+    'Kotlin',
+    'Lua',
+    'Objective-C',
+    'PHP',
+    'Python',
+    'R',
+    'Ruby',
+    'Rust',
+    'Scala',
+    'Swift',
+    'TypeScript',
+    'Zig',
   ].map((lang) => DropdownItem(label: lang, value: lang)).toList();
 
   List<String> _selected = [];

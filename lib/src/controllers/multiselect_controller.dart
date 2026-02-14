@@ -53,6 +53,10 @@ class MultiSelectController<T> extends ChangeNotifier {
     _items
       ..clear()
       ..addAll(options);
+    // Reset the search query and filtered items when new items are set
+    // to prevent stale search results.
+    _searchQuery = '';
+    _filteredItems = List.from(_items);
     notifyListeners();
     _onSelectionChanged?.call(_selectedValues);
   }
@@ -145,6 +149,14 @@ class MultiSelectController<T> extends ChangeNotifier {
               : element,
         )
         .toList();
+    if (_searchQuery.isNotEmpty) {
+      _filteredItems = _items
+          .where(
+            (item) =>
+                item.label.toLowerCase().contains(_searchQuery.toLowerCase()),
+          )
+          .toList();
+    }
     notifyListeners();
     _onSelectionChanged?.call(_selectedValues);
   }
@@ -173,6 +185,14 @@ class MultiSelectController<T> extends ChangeNotifier {
               : element,
         )
         .toList();
+    if (_searchQuery.isNotEmpty) {
+      _filteredItems = _items
+          .where(
+            (item) =>
+                item.label.toLowerCase().contains(_searchQuery.toLowerCase()),
+          )
+          .toList();
+    }
     notifyListeners();
     _onSelectionChanged?.call(_selectedValues);
   }
@@ -243,7 +263,16 @@ class MultiSelectController<T> extends ChangeNotifier {
   // clears the search query.
   void _clearSearchQuery({bool notify = false}) {
     _searchQuery = '';
+    _filteredItems = List.from(_items);
     if (notify) notifyListeners();
+  }
+
+  /// Clears the current search query and resets the filtered items.
+  ///
+  /// This is useful when you want to programmatically clear the search
+  /// field and show all items again.
+  void clearSearch() {
+    _clearSearchQuery(notify: true);
   }
 
   @override

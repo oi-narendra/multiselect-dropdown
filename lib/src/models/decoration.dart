@@ -86,10 +86,10 @@ class DropdownItemDecoration {
   final Color? disabledTextColor;
 
   /// The icon to display for the selected dropdown item.
-  final Icon? selectedIcon;
+  final Widget? selectedIcon;
 
   /// The icon to display for the disabled dropdown item.
-  final Icon? disabledIcon;
+  final Widget? disabledIcon;
 }
 
 /// Represents the decoration for the dropdown.
@@ -272,7 +272,7 @@ class ChipDecoration {
   });
 
   /// The icon to display for deleting a chip.
-  final Icon? deleteIcon;
+  final Widget? deleteIcon;
 
   /// The background color of the chip.
   final Color? backgroundColor;

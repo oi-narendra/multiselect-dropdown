@@ -400,12 +400,35 @@ class _MultiDropdownState<T extends Object> extends State<MultiDropdown<T>> {
             final renderBoxSize = renderBox.size;
             final renderBoxOffset = renderBox.localToGlobal(Offset.zero);
 
-            final availableHeight = MediaQuery.of(context).size.height -
+            final screenHeight = MediaQuery.of(context).size.height;
+            final spaceBelow = screenHeight -
                 renderBoxOffset.dy -
                 renderBoxSize.height;
+            final spaceAbove = renderBoxOffset.dy;
 
-            final showOnTop =
-                availableHeight < widget.dropdownDecoration.maxHeight;
+            final bool showOnTop;
+            switch (widget.dropdownDecoration.expandDirection) {
+              case ExpandDirection.down:
+                showOnTop = false;
+                break;
+              case ExpandDirection.up:
+                showOnTop = true;
+                break;
+              case ExpandDirection.auto:
+                showOnTop =
+                    spaceBelow < widget.dropdownDecoration.maxHeight &&
+                        spaceAbove > spaceBelow;
+                break;
+            }
+
+            final marginOffset = widget.dropdownDecoration.marginTop == 0
+                ? Offset.zero
+                : Offset(
+                    0,
+                    showOnTop
+                        ? -widget.dropdownDecoration.marginTop
+                        : widget.dropdownDecoration.marginTop,
+                  );
 
             final stack = Stack(
               children: [
@@ -422,9 +445,7 @@ class _MultiDropdownState<T extends Object> extends State<MultiDropdown<T>> {
                       showOnTop ? Alignment.topLeft : Alignment.bottomLeft,
                   followerAnchor:
                       showOnTop ? Alignment.bottomLeft : Alignment.topLeft,
-                  offset: widget.dropdownDecoration.marginTop == 0
-                      ? Offset.zero
-                      : Offset(0, widget.dropdownDecoration.marginTop),
+                  offset: marginOffset,
                   child: RepaintBoundary(
                     child: _Dropdown<T>(
                       decoration: widget.dropdownDecoration,

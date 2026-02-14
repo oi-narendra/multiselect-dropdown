@@ -166,6 +166,7 @@ class DropdownDecoration {
     this.footer,
     this.header,
     this.noItemsFoundText = 'No items found',
+    this.expandDirection = ExpandDirection.auto,
   });
 
   /// The background color of the dropdown.
@@ -192,6 +193,12 @@ class DropdownDecoration {
   /// The text to display when no items are found in the dropdown.
   /// Defaults to 'No items found'.
   final String noItemsFoundText;
+
+  /// The direction in which the dropdown expands.
+  ///
+  /// Defaults to [ExpandDirection.auto], which automatically determines
+  /// the direction based on available screen space.
+  final ExpandDirection expandDirection;
 }
 
 /// Represents the decoration for the dropdown field.

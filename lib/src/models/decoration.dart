@@ -107,6 +107,8 @@ class DropdownItemDecoration {
     this.disabledTextColor,
     this.selectedIcon = const Icon(Icons.check),
     this.disabledIcon,
+    this.textStyle,
+    this.selectedTextStyle,
   });
 
   /// The background color of the dropdown item.
@@ -132,6 +134,12 @@ class DropdownItemDecoration {
 
   /// The icon to display for the disabled dropdown item.
   final Widget? disabledIcon;
+
+  /// The text style of the dropdown item label.
+  final TextStyle? textStyle;
+
+  /// The text style of the selected dropdown item label.
+  final TextStyle? selectedTextStyle;
 }
 
 /// Represents the decoration for the dropdown.

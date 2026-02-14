@@ -11,6 +11,20 @@ class SearchFieldDecoration {
   /// [focusedBorder] is the border of the search field when it is focused. The default value is OutlineInputBorder().
   ///
   /// [searchIcon] is the icon to display in the search field. The default value is Icon(Icons.search).
+  ///
+  /// [textStyle] is the text style of the search field input.
+  ///
+  /// [hintStyle] is the text style of the hint text.
+  ///
+  /// [fillColor] is the fill color of the search field.
+  ///
+  /// [filled] is whether the search field is filled with [fillColor].
+  ///
+  /// [cursorColor] is the cursor color of the search field.
+  ///
+  /// [showClearIcon] is whether to show a clear icon in the search field. The default value is true.
+  ///
+  /// [autofocus] is whether the search field should be focused when the dropdown is opened. The default value is false.
   const SearchFieldDecoration({
     this.hintText = 'Search',
     this.border = const OutlineInputBorder(
@@ -22,6 +36,13 @@ class SearchFieldDecoration {
       borderRadius: BorderRadius.all(Radius.circular(12)),
     ),
     this.searchIcon = const Icon(Icons.search),
+    this.textStyle,
+    this.hintStyle,
+    this.fillColor,
+    this.filled,
+    this.cursorColor,
+    this.showClearIcon = true,
+    this.autofocus = false,
   });
 
   /// The hint text to display in the search field.
@@ -35,6 +56,27 @@ class SearchFieldDecoration {
 
   /// The icon to display in the search field.
   final Icon searchIcon;
+
+  /// The text style of the search field input.
+  final TextStyle? textStyle;
+
+  /// The text style of the hint text.
+  final TextStyle? hintStyle;
+
+  /// The fill color of the search field.
+  final Color? fillColor;
+
+  /// Whether the search field is filled with [fillColor].
+  final bool? filled;
+
+  /// The cursor color of the search field.
+  final Color? cursorColor;
+
+  /// Whether to show a clear icon in the search field when text is entered.
+  final bool showClearIcon;
+
+  /// Whether the search field should be automatically focused when the dropdown is opened.
+  final bool autofocus;
 }
 
 /// Represents the decoration for the dropdown items.
@@ -65,6 +107,8 @@ class DropdownItemDecoration {
     this.disabledTextColor,
     this.selectedIcon = const Icon(Icons.check),
     this.disabledIcon,
+    this.textStyle,
+    this.selectedTextStyle,
   });
 
   /// The background color of the dropdown item.
@@ -86,10 +130,16 @@ class DropdownItemDecoration {
   final Color? disabledTextColor;
 
   /// The icon to display for the selected dropdown item.
-  final Icon? selectedIcon;
+  final Widget? selectedIcon;
 
   /// The icon to display for the disabled dropdown item.
-  final Icon? disabledIcon;
+  final Widget? disabledIcon;
+
+  /// The text style of the dropdown item label.
+  final TextStyle? textStyle;
+
+  /// The text style of the selected dropdown item label.
+  final TextStyle? selectedTextStyle;
 }
 
 /// Represents the decoration for the dropdown.
@@ -115,6 +165,8 @@ class DropdownDecoration {
     this.borderRadius = const BorderRadius.all(Radius.circular(12)),
     this.footer,
     this.header,
+    this.noItemsFoundText = 'No items found',
+    this.expandDirection = ExpandDirection.auto,
   });
 
   /// The background color of the dropdown.
@@ -137,6 +189,16 @@ class DropdownDecoration {
 
   /// The custom header widget to display at the top of the dropdown.
   final Widget? header;
+
+  /// The text to display when no items are found in the dropdown.
+  /// Defaults to 'No items found'.
+  final String noItemsFoundText;
+
+  /// The direction in which the dropdown expands.
+  ///
+  /// Defaults to [ExpandDirection.auto], which automatically determines
+  /// the direction based on available screen space.
+  final ExpandDirection expandDirection;
 }
 
 /// Represents the decoration for the dropdown field.
@@ -190,6 +252,8 @@ class FieldDecoration {
     this.padding = const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
     this.backgroundColor,
     this.showClearIcon = true,
+    this.selectedItemTextStyle,
+    this.inputDecoration,
   });
 
   /// The label text to display above the dropdown field.
@@ -225,17 +289,34 @@ class FieldDecoration {
   /// The border radius of the dropdown field.
   final double borderRadius;
 
-  /// animate the icon or not
+  /// Whether to animate the suffix icon rotation when the dropdown opens/closes.
   final bool animateSuffixIcon;
 
-  /// padding around the dropdown field
+  /// The padding around the dropdown field content.
   final EdgeInsets? padding;
 
-  /// background color of the dropdown field
+  /// The background fill color of the dropdown field.
   final Color? backgroundColor;
 
-  /// show clear icon or not in the dropdown field
+  /// Whether to show a clear/deselect icon when items are selected.
   final bool showClearIcon;
+
+  /// The text style of the selected item in single-select mode.
+  ///
+  /// This style is applied to the selected item text displayed in the field
+  /// when [MultiDropdown.singleSelect] is true. If not provided, the default
+  /// text style is used.
+  final TextStyle? selectedItemTextStyle;
+
+  /// A custom [InputDecoration] for the dropdown field.
+  ///
+  /// When provided, this replaces the auto-built InputDecoration entirely,
+  /// giving full control over the field's appearance. Only `suffixIcon` and
+  /// `errorText` from the validator will still be managed internally.
+  ///
+  /// Useful for making the dropdown visually consistent with other
+  /// `TextFormField` widgets in the same form.
+  final InputDecoration? inputDecoration;
 }
 
 /// Configuration class for customizing the appearance of chips in the multi-select dropdown.
@@ -269,10 +350,11 @@ class ChipDecoration {
     this.labelStyle,
     this.borderRadius = const BorderRadius.all(Radius.circular(12)),
     this.wrap = true,
+    this.maxDisplayCount,
   });
 
   /// The icon to display for deleting a chip.
-  final Icon? deleteIcon;
+  final Widget? deleteIcon;
 
   /// The background color of the chip.
   final Color? backgroundColor;
@@ -300,4 +382,11 @@ class ChipDecoration {
   /// If true, the chips will wrap to the next line when they reach the end of the row.
   /// If false, the chips will not wrap and will be displayed in a single line, scrolling horizontally if necessary.
   final bool wrap;
+
+  /// The maximum number of chips to display.
+  ///
+  /// If the number of selected items exceeds this value, a "+N" label will be
+  /// shown after the visible chips indicating the remaining count.
+  /// If null, all chips are displayed.
+  final int? maxDisplayCount;
 }

@@ -106,14 +106,14 @@ class _Dropdown<T> extends StatelessWidget {
                       itemSeparator ?? const SizedBox.shrink(),
                   shrinkWrap: true,
                   itemCount: items.length,
-                  itemBuilder: (_, int index) => _buildOption(index, theme),
+                  itemBuilder: (_, index) => _buildOption(index, theme),
                 ),
               ),
               if (items.isEmpty && searchEnabled)
                 Padding(
                   padding: const EdgeInsets.all(12),
                   child: Text(
-                    'No items found',
+                    decoration.noItemsFoundText,
                     textAlign: TextAlign.center,
                     style: theme.textTheme.bodyMedium,
                   ),
@@ -157,7 +157,12 @@ class _Dropdown<T> extends StatelessWidget {
 
     return Ink(
       child: ListTile(
-        title: Text(option.label),
+        title: Text(
+          option.label,
+          style: option.selected
+              ? dropdownItemDecoration.selectedTextStyle
+              : dropdownItemDecoration.textStyle,
+        ),
         trailing: trailing,
         dense: true,
         autofocus: true,
@@ -167,8 +172,9 @@ class _Dropdown<T> extends StatelessWidget {
         focusColor: dropdownItemDecoration.backgroundColor?.withAlpha(100),
         selectedColor: dropdownItemDecoration.selectedTextColor ??
             theme.colorScheme.onSurface,
-        textColor:
-            dropdownItemDecoration.textColor ?? theme.colorScheme.onSurface,
+        textColor: option.disabled
+            ? dropdownItemDecoration.disabledTextColor ?? theme.disabledColor
+            : dropdownItemDecoration.textColor ?? theme.colorScheme.onSurface,
         tileColor: tileColor ?? Colors.transparent,
         selectedTileColor: dropdownItemDecoration.selectedBackgroundColor ??
             Colors.grey.shade200,
@@ -193,7 +199,7 @@ class _Dropdown<T> extends StatelessWidget {
   }
 }
 
-class _SearchField extends StatelessWidget {
+class _SearchField extends StatefulWidget {
   const _SearchField({
     required this.decoration,
     required this.onChanged,
@@ -204,18 +210,65 @@ class _SearchField extends StatelessWidget {
   final ValueChanged<String> onChanged;
 
   @override
+  State<_SearchField> createState() => _SearchFieldState();
+}
+
+class _SearchFieldState extends State<_SearchField> {
+  late final TextEditingController _controller = TextEditingController();
+  bool _hasText = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller.addListener(_onTextChanged);
+  }
+
+  void _onTextChanged() {
+    final currentHasText = _controller.text.isNotEmpty;
+    if (currentHasText != _hasText) {
+      setState(() {
+        _hasText = currentHasText;
+      });
+    }
+  }
+
+  @override
+  void dispose() {
+    _controller
+      ..removeListener(_onTextChanged)
+      ..dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.all(8),
       child: TextField(
+        controller: _controller,
+        autofocus: widget.decoration.autofocus,
+        style: widget.decoration.textStyle,
+        cursorColor: widget.decoration.cursorColor,
         decoration: InputDecoration(
           isDense: true,
-          hintText: decoration.hintText,
-          border: decoration.border,
-          focusedBorder: decoration.focusedBorder,
-          suffixIcon: decoration.searchIcon,
+          hintText: widget.decoration.hintText,
+          hintStyle: widget.decoration.hintStyle,
+          border: widget.decoration.border,
+          focusedBorder: widget.decoration.focusedBorder,
+          filled: widget.decoration.filled,
+          fillColor: widget.decoration.fillColor,
+          prefixIcon: widget.decoration.searchIcon,
+          suffixIcon: widget.decoration.showClearIcon && _hasText
+              ? IconButton(
+                  icon: const Icon(Icons.clear, size: 18),
+                  onPressed: () {
+                    _controller.clear();
+                    widget.onChanged('');
+                  },
+                )
+              : null,
         ),
-        onChanged: onChanged,
+        onChanged: widget.onChanged,
       ),
     );
   }

@@ -106,7 +106,7 @@ class _Dropdown<T> extends StatelessWidget {
                       itemSeparator ?? const SizedBox.shrink(),
                   shrinkWrap: true,
                   itemCount: items.length,
-                  itemBuilder: (_, int index) => _buildOption(index, theme),
+                  itemBuilder: (_, index) => _buildOption(index, theme),
                 ),
               ),
               if (items.isEmpty && searchEnabled)

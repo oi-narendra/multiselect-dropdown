@@ -252,7 +252,7 @@ class _MultiDropdownState<T extends Object> extends State<MultiDropdown<T>> {
   @override
   void initState() {
     super.initState();
-    _initializeController();
+    unawaited(_initializeController());
   }
 
   Future<void> _initializeController() async {
@@ -287,7 +287,7 @@ class _MultiDropdownState<T extends Object> extends State<MultiDropdown<T>> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       try {
         _registerBackButtonDispatcherCallback();
-      } catch (e) {
+      } on Exception catch (e) {
         debugPrint('Error: $e');
       }
     });
@@ -349,7 +349,7 @@ class _MultiDropdownState<T extends Object> extends State<MultiDropdown<T>> {
 
       _dropdownController = widget.controller ?? MultiSelectController<T>();
 
-      _initializeController();
+      unawaited(_initializeController());
     }
 
     // if the focus node is changed, then dispose the old focus node

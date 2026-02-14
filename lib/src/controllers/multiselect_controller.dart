@@ -208,14 +208,18 @@ class MultiSelectController<T> extends ChangeNotifier {
     notifyListeners();
   }
 
+  // Using a method instead of a setter to maintain a consistent cascade-style
+  // API when called with other methods (e.g., controller.._initialize().._setOnSelectionChange()).
   // ignore: use_setters_to_change_properties
   void _setOnSelectionChange(OnSelectionChanged<T>? onSelectionChanged) {
-    this._onSelectionChanged = onSelectionChanged;
+    _onSelectionChanged = onSelectionChanged;
   }
 
+  // Using a method instead of a setter to maintain a consistent cascade-style
+  // API when called with other methods (e.g., controller.._initialize().._setOnSearchChange()).
   // ignore: use_setters_to_change_properties
   void _setOnSearchChange(OnSearchChanged? onSearchChanged) {
-    this._onSearchChanged = onSearchChanged;
+    _onSearchChanged = onSearchChanged;
   }
 
   // sets the search query.

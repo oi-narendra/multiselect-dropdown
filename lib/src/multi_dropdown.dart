@@ -595,13 +595,27 @@ class _MultiDropdownState<T extends Object> extends State<MultiDropdown<T>> {
     final chipDecoration = widget.chipDecoration;
 
     if (widget.selectedItemBuilder != null) {
-      return Wrap(
-        spacing: chipDecoration.spacing,
-        runSpacing: chipDecoration.runSpacing,
-        crossAxisAlignment: WrapCrossAlignment.center,
-        children: selectedOptions
-            .map((option) => widget.selectedItemBuilder!(option))
-            .toList(),
+      final children = selectedOptions
+          .map((option) => widget.selectedItemBuilder!(option))
+          .toList();
+
+      if (chipDecoration.wrap) {
+        return Wrap(
+          spacing: chipDecoration.spacing,
+          runSpacing: chipDecoration.runSpacing,
+          crossAxisAlignment: WrapCrossAlignment.center,
+          children: children,
+        );
+      }
+
+      return ConstrainedBox(
+        constraints: BoxConstraints.loose(const Size(double.infinity, 32)),
+        child: ListView.separated(
+          separatorBuilder: (context, index) => const SizedBox(width: 8),
+          scrollDirection: Axis.horizontal,
+          itemCount: children.length,
+          itemBuilder: (context, index) => children[index],
+        ),
       );
     }
 

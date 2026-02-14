@@ -246,6 +246,7 @@ class FieldDecoration {
     this.backgroundColor,
     this.showClearIcon = true,
     this.selectedItemTextStyle,
+    this.inputDecoration,
   });
 
   /// The label text to display above the dropdown field.
@@ -299,6 +300,16 @@ class FieldDecoration {
   /// when [MultiDropdown.singleSelect] is true. If not provided, the default
   /// text style is used.
   final TextStyle? selectedItemTextStyle;
+
+  /// A custom [InputDecoration] for the dropdown field.
+  ///
+  /// When provided, this replaces the auto-built InputDecoration entirely,
+  /// giving full control over the field's appearance. Only `suffixIcon` and
+  /// `errorText` from the validator will still be managed internally.
+  ///
+  /// Useful for making the dropdown visually consistent with other
+  /// `TextFormField` widgets in the same form.
+  final InputDecoration? inputDecoration;
 }
 
 /// Configuration class for customizing the appearance of chips in the multi-select dropdown.

@@ -493,17 +493,26 @@ class _MultiDropdownState<T extends Object> extends State<MultiDropdown<T>> {
 
   InputDecoration _buildDecoration() {
     final theme = Theme.of(context);
+    final fieldDecoration = widget.fieldDecoration;
 
-    final border = widget.fieldDecoration.border ??
+    // If a custom InputDecoration is provided, use it as the base
+    // and only override the internally-managed properties.
+    if (fieldDecoration.inputDecoration != null) {
+      return fieldDecoration.inputDecoration!.copyWith(
+        enabled: widget.enabled,
+        suffixIcon: _buildSuffixIcon(),
+        errorText: _formFieldKey.currentState?.errorText,
+      );
+    }
+
+    final border = fieldDecoration.border ??
         OutlineInputBorder(
           borderRadius: BorderRadius.circular(
-            widget.fieldDecoration.borderRadius,
+            fieldDecoration.borderRadius,
           ),
           borderSide: theme.inputDecorationTheme.border?.borderSide ??
               const BorderSide(),
         );
-
-    final fieldDecoration = widget.fieldDecoration;
 
     final prefixIcon = fieldDecoration.prefixIcon != null
         ? IconTheme.merge(

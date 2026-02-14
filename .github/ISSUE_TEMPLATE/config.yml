@@ -1,0 +1,8 @@
+blank_issues_enabled: true
+contact_links:
+  - name: 📖 Documentation
+    url: https://pub.dev/packages/multi_dropdown
+    about: Check the package documentation on pub.dev
+  - name: 💬 Discussions
+    url: https://github.com/oi-narendra/multiselect-dropdown/discussions
+    about: Ask questions or discuss ideas

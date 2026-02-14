@@ -1,0 +1,61 @@
+name: ✨ Feature Request
+description: Suggest a new feature or improvement for multi_dropdown
+title: "[Feature]: "
+labels: ["enhancement"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for suggesting an improvement! Please describe your idea below.
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem or motivation
+      description: What problem does this solve? Is this related to a frustration with the current API?
+    validations:
+      required: true
+
+  - type: textarea
+    id: solution
+    attributes:
+      label: Proposed solution
+      description: Describe the API or behavior you'd like. Include code examples if possible.
+    validations:
+      required: true
+
+  - type: textarea
+    id: api
+    attributes:
+      label: Proposed API (optional)
+      description: |
+        If you have a specific API design in mind, sketch it out here.
+      render: dart
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered
+      description: What other approaches have you considered? Why are they less preferred?
+
+  - type: dropdown
+    id: platform
+    attributes:
+      label: Target platform(s)
+      description: Which platform(s) would benefit from this?
+      multiple: true
+      options:
+        - All platforms
+        - Android
+        - iOS
+        - Web
+        - macOS
+        - Windows
+        - Linux
+
+  - type: checkboxes
+    id: contribution
+    attributes:
+      label: Willingness to contribute
+      options:
+        - label: I'm willing to submit a PR for this feature

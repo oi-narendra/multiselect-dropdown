@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 
+import 'examples/accessibility_example.dart';
 import 'examples/basic_example.dart';
 import 'examples/controller_example.dart';
 import 'examples/custom_style_example.dart';
 import 'examples/form_validation_example.dart';
+import 'examples/future_example.dart';
 import 'examples/searchable_example.dart';
 import 'examples/single_select_example.dart';
 
@@ -20,157 +22,136 @@ class ExampleApp extends StatelessWidget {
       title: 'MultiDropdown Examples',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        colorSchemeSeed: const Color(0xFF6750A4),
+        colorSchemeSeed: const Color(0xFF6366F1),
         useMaterial3: true,
         brightness: Brightness.light,
-        appBarTheme: const AppBarTheme(
-          centerTitle: true,
-          elevation: 0,
-          scrolledUnderElevation: 1,
-        ),
+        appBarTheme: const AppBarTheme(centerTitle: true),
       ),
       darkTheme: ThemeData(
-        colorSchemeSeed: const Color(0xFF6750A4),
+        colorSchemeSeed: const Color(0xFF6366F1),
         useMaterial3: true,
         brightness: Brightness.dark,
-        appBarTheme: const AppBarTheme(
-          centerTitle: true,
-          elevation: 0,
-          scrolledUnderElevation: 1,
-        ),
+        appBarTheme: const AppBarTheme(centerTitle: true),
       ),
-      home: const HomePage(),
+      home: const _HomePage(),
     );
   }
 }
 
-class HomePage extends StatelessWidget {
-  const HomePage({super.key});
+class _HomePage extends StatelessWidget {
+  const _HomePage();
+
+  static const _examples = <_ExampleEntry>[
+    _ExampleEntry(
+      title: 'Country Picker',
+      subtitle: 'Basic multi-select with flag emojis',
+      icon: Icons.public_rounded,
+      color: Color(0xFF6366F1),
+      builder: BasicExample.new,
+    ),
+    _ExampleEntry(
+      title: 'Task Priority',
+      subtitle: 'Single-select with color-coded result',
+      icon: Icons.flag_rounded,
+      color: Color(0xFFEC4899),
+      builder: SingleSelectExample.new,
+    ),
+    _ExampleEntry(
+      title: 'Team Members',
+      subtitle: 'Search with custom item builder',
+      icon: Icons.group_add_rounded,
+      color: Color(0xFF14B8A6),
+      builder: SearchableExample.new,
+    ),
+    _ExampleEntry(
+      title: 'Issue Labels',
+      subtitle: 'Custom chip styles & overflow',
+      icon: Icons.label_rounded,
+      color: Color(0xFFF59E0B),
+      builder: CustomStyleExample.new,
+    ),
+    _ExampleEntry(
+      title: 'Recipe Ingredients',
+      subtitle: 'Controller actions & programmatic control',
+      icon: Icons.restaurant_rounded,
+      color: Color(0xFF10B981),
+      builder: ControllerExample.new,
+    ),
+    _ExampleEntry(
+      title: 'Job Application',
+      subtitle: 'Form validation & max selections',
+      icon: Icons.work_outline_rounded,
+      color: Color(0xFF4F46E5),
+      builder: FormValidationExample.new,
+    ),
+    _ExampleEntry(
+      title: 'Async Loading',
+      subtitle: 'Fetch items from a Future',
+      icon: Icons.cloud_download_rounded,
+      color: Color(0xFF06B6D4),
+      builder: FutureExample.new,
+    ),
+    _ExampleEntry(
+      title: 'Accessibility',
+      subtitle: 'Font scaling & high contrast',
+      icon: Icons.accessibility_new_rounded,
+      color: Color(0xFF8B5CF6),
+      builder: AccessibilityExample.new,
+    ),
+  ];
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
-
-    final examples = <_ExampleEntry>[
-      _ExampleEntry(
-        title: 'Basic Multi-Select',
-        subtitle: 'Select multiple items with chips',
-        icon: Icons.checklist_rounded,
-        gradient: [const Color(0xFF667EEA), const Color(0xFF764BA2)],
-        builder: (_) => const BasicExample(),
-      ),
-      _ExampleEntry(
-        title: 'Single Select',
-        subtitle: 'Pick exactly one item',
-        icon: Icons.touch_app_rounded,
-        gradient: [const Color(0xFFF093FB), const Color(0xFFF5576C)],
-        builder: (_) => const SingleSelectExample(),
-      ),
-      _ExampleEntry(
-        title: 'Searchable',
-        subtitle: 'Filter items by typing',
-        icon: Icons.search_rounded,
-        gradient: [const Color(0xFF4FACFE), const Color(0xFF00F2FE)],
-        builder: (_) => const SearchableExample(),
-      ),
-      _ExampleEntry(
-        title: 'Custom Styling',
-        subtitle: 'Chips, borders, colors & disabled items',
-        icon: Icons.palette_rounded,
-        gradient: [const Color(0xFFF6D365), const Color(0xFFFDA085)],
-        builder: (_) => const CustomStyleExample(),
-      ),
-      _ExampleEntry(
-        title: 'Controller Actions',
-        subtitle: 'Programmatic control via controller',
-        icon: Icons.tune_rounded,
-        gradient: [const Color(0xFF89F7FE), const Color(0xFF66A6FF)],
-        builder: (_) => const ControllerExample(),
-      ),
-      _ExampleEntry(
-        title: 'Form Validation',
-        subtitle: 'Form integration with validators',
-        icon: Icons.verified_rounded,
-        gradient: [const Color(0xFF38F9D7), const Color(0xFF43E97B)],
-        builder: (_) => const FormValidationExample(),
-      ),
-    ];
+    final screenWidth = MediaQuery.sizeOf(context).width;
+    final crossAxisCount = screenWidth >= 600 ? 2 : 1;
+    final isWide = crossAxisCount == 2;
 
     return Scaffold(
-      body: CustomScrollView(
-        slivers: [
-          // Hero header
-          SliverAppBar.large(
-            expandedHeight: 200,
-            pinned: true,
-            flexibleSpace: FlexibleSpaceBar(
-              titlePadding: const EdgeInsets.only(left: 20, bottom: 16),
-              title: Text(
-                'MultiDropdown',
-                style: TextStyle(
-                  fontWeight: FontWeight.w800,
-                  color: colorScheme.onSurface,
-                ),
-              ),
-              background: Container(
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: [
-                      colorScheme.primaryContainer.withAlpha(100),
-                      colorScheme.surface,
-                    ],
-                    begin: Alignment.topCenter,
-                    end: Alignment.bottomCenter,
-                  ),
-                ),
-                child: Align(
-                  alignment: Alignment.topRight,
-                  child: Padding(
-                    padding: const EdgeInsets.only(top: 60, right: 24),
-                    child: Icon(
-                      Icons.widgets_rounded,
-                      size: 80,
-                      color: colorScheme.primary.withAlpha(30),
-                    ),
-                  ),
-                ),
+      appBar: AppBar(
+        title: const Text('MultiDropdown'),
+        elevation: 0,
+      ),
+      body: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Padding(
+            padding: const EdgeInsets.fromLTRB(20, 16, 20, 4),
+            child: Text(
+              'Examples',
+              style: theme.textTheme.headlineSmall?.copyWith(
+                fontWeight: FontWeight.w700,
+                color: colorScheme.onSurface,
               ),
             ),
           ),
-
-          // Subtitle
-          SliverToBoxAdapter(
-            child: Padding(
-              padding: const EdgeInsets.fromLTRB(20, 4, 20, 20),
-              child: Text(
-                'Explore different use cases and customization options.',
-                style: theme.textTheme.bodyLarge?.copyWith(
-                  color: colorScheme.onSurfaceVariant,
-                ),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(20, 0, 20, 16),
+            child: Text(
+              'Real-world use cases showcasing features of the '
+              'multi_dropdown package.',
+              style: theme.textTheme.bodyMedium?.copyWith(
+                color: colorScheme.onSurfaceVariant,
               ),
             ),
           ),
-
-          // Example cards grid
-          SliverPadding(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            sliver: SliverGrid(
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 2,
-                mainAxisSpacing: 14,
-                crossAxisSpacing: 14,
-                childAspectRatio: 0.95,
+          Expanded(
+            child: GridView.builder(
+              padding: const EdgeInsets.fromLTRB(16, 0, 16, 24),
+              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: crossAxisCount,
+                childAspectRatio: isWide ? 2.8 : 3.4,
+                crossAxisSpacing: 12,
+                mainAxisSpacing: 12,
               ),
-              delegate: SliverChildBuilderDelegate(
-                (context, index) => _ExampleCard(entry: examples[index]),
-                childCount: examples.length,
-              ),
+              itemCount: _examples.length,
+              itemBuilder: (context, index) {
+                final example = _examples[index];
+                return _ExampleCard(example: example);
+              },
             ),
           ),
-
-          // Bottom spacing
-          const SliverToBoxAdapter(child: SizedBox(height: 40)),
         ],
       ),
     );
@@ -182,131 +163,99 @@ class _ExampleEntry {
     required this.title,
     required this.subtitle,
     required this.icon,
-    required this.gradient,
+    required this.color,
     required this.builder,
   });
 
   final String title;
   final String subtitle;
   final IconData icon;
-  final List<Color> gradient;
-  final WidgetBuilder builder;
+  final Color color;
+  final Widget Function({Key? key}) builder;
 }
 
 class _ExampleCard extends StatelessWidget {
-  const _ExampleCard({required this.entry});
+  const _ExampleCard({required this.example});
 
-  final _ExampleEntry entry;
+  final _ExampleEntry example;
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
 
-    return Card(
-      elevation: 0,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(20),
-        side: BorderSide(
-          color: colorScheme.outlineVariant.withAlpha(80),
+    return Semantics(
+      button: true,
+      label: '${example.title} example: ${example.subtitle}',
+      child: Card(
+        elevation: 0,
+        clipBehavior: Clip.hardEdge,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16),
+          side: BorderSide(
+            color: colorScheme.outlineVariant.withAlpha(120),
+          ),
         ),
-      ),
-      clipBehavior: Clip.antiAlias,
-      child: InkWell(
-        onTap: () {
-          Navigator.of(context).push(
-            MaterialPageRoute<void>(builder: entry.builder),
-          );
-        },
-        borderRadius: BorderRadius.circular(20),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            // Gradient header with icon
-            Container(
-              height: 90,
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  colors: entry.gradient,
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                ),
+        child: InkWell(
+          onTap: () {
+            Navigator.of(context).push(
+              MaterialPageRoute<void>(
+                builder: (_) => example.builder(),
               ),
-              child: Stack(
-                children: [
-                  // Decorative circles
-                  Positioned(
-                    top: -10,
-                    right: -10,
-                    child: Container(
-                      width: 60,
-                      height: 60,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: Colors.white.withAlpha(20),
-                      ),
-                    ),
-                  ),
-                  Positioned(
-                    bottom: -15,
-                    left: -15,
-                    child: Container(
-                      width: 50,
-                      height: 50,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: Colors.white.withAlpha(15),
-                      ),
-                    ),
-                  ),
-                  // Icon
-                  Center(
-                    child: Container(
-                      padding: const EdgeInsets.all(12),
-                      decoration: BoxDecoration(
-                        color: Colors.white.withAlpha(30),
-                        borderRadius: BorderRadius.circular(14),
-                      ),
-                      child: Icon(
-                        entry.icon,
-                        size: 28,
-                        color: Colors.white,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
+            );
+          },
+          child: Padding(
+            padding: const EdgeInsets.symmetric(
+              horizontal: 16,
+              vertical: 14,
             ),
-
-            // Text content
-            Expanded(
-              child: Padding(
-                padding: const EdgeInsets.fromLTRB(14, 14, 14, 10),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      entry.title,
-                      style: theme.textTheme.titleSmall?.copyWith(
-                        fontWeight: FontWeight.w700,
-                      ),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      entry.subtitle,
-                      style: theme.textTheme.bodySmall?.copyWith(
-                        color: colorScheme.onSurfaceVariant,
-                      ),
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ],
+            child: Row(
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(10),
+                  decoration: BoxDecoration(
+                    color: example.color.withAlpha(25),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Icon(
+                    example.icon,
+                    color: example.color,
+                    size: 24,
+                  ),
                 ),
-              ),
+                const SizedBox(width: 14),
+                Expanded(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        example.title,
+                        style: theme.textTheme.titleSmall?.copyWith(
+                          fontWeight: FontWeight.w600,
+                        ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                      const SizedBox(height: 2),
+                      Text(
+                        example.subtitle,
+                        style: theme.textTheme.bodySmall?.copyWith(
+                          color: colorScheme.onSurfaceVariant,
+                        ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ],
+                  ),
+                ),
+                Icon(
+                  Icons.chevron_right_rounded,
+                  color: colorScheme.onSurfaceVariant.withAlpha(120),
+                ),
+              ],
             ),
-          ],
+          ),
         ),
       ),
     );

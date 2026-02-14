@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:multi_dropdown/multi_dropdown.dart';
 
-/// Demonstrates heavy customization of chip, field, dropdown, and item
-/// decorations to create a unique, branded look.
+/// GitHub-style issue labels demonstrating heavy customization.
+///
+/// Three sub-sections show different visual treatments:
+/// 1. Color-coded labels with matching chip colors
+/// 2. Tag chips with [maxDisplayCount] overflow
+/// 3. Pre-selected & disabled labels
 class CustomStyleExample extends StatelessWidget {
   const CustomStyleExample({super.key});
 
@@ -11,29 +15,9 @@ class CustomStyleExample extends StatelessWidget {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
 
-    final fruits = [
-      DropdownItem(label: '🍎 Apple', value: 'apple'),
-      DropdownItem(label: '🍌 Banana', value: 'banana'),
-      DropdownItem(label: '🫐 Blueberry', value: 'blueberry'),
-      DropdownItem(label: '🍒 Cherry', value: 'cherry'),
-      DropdownItem(label: '🥭 Mango', value: 'mango'),
-      DropdownItem(label: '🍊 Orange', value: 'orange'),
-      DropdownItem(label: '🍑 Peach', value: 'peach'),
-      DropdownItem(label: '🍓 Strawberry', value: 'strawberry'),
-    ];
-
-    final tags = [
-      DropdownItem(label: 'Urgent', value: 'urgent'),
-      DropdownItem(label: 'Bug', value: 'bug'),
-      DropdownItem(label: 'Feature', value: 'feature'),
-      DropdownItem(label: 'Enhancement', value: 'enhancement'),
-      DropdownItem(label: 'Documentation', value: 'docs'),
-      DropdownItem(label: 'Help Wanted', value: 'help'),
-    ];
-
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Custom Styling'),
+        title: const Text('Issue Labels'),
       ),
       body: ListView(
         padding: const EdgeInsets.all(20),
@@ -53,12 +37,12 @@ class CustomStyleExample extends StatelessWidget {
             ),
             child: Row(
               children: [
-                const Icon(Icons.palette_outlined, color: Colors.orange),
+                const Icon(Icons.label_rounded, color: Colors.orange),
                 const SizedBox(width: 12),
                 Expanded(
                   child: Text(
-                    'Customize every visual aspect — chips, borders, '
-                    'dropdown background, item colors, and more.',
+                    'Apply labels to issues — like GitHub. '
+                    'Customize chips, colors, and overflow behavior.',
                     style: theme.textTheme.bodyMedium?.copyWith(
                       color: colorScheme.onSurface,
                     ),
@@ -69,17 +53,33 @@ class CustomStyleExample extends StatelessWidget {
           ),
           const SizedBox(height: 28),
 
-          // ---------- Example 1: Rounded pill chips ----------
+          // ---------- Section 1: Color-coded labels ----------
           Text(
-            'Pill-Style Chips',
+            'Color-Coded Labels',
             style: theme.textTheme.titleSmall?.copyWith(
               fontWeight: FontWeight.w600,
               color: colorScheme.primary,
             ),
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: 4),
+          Text(
+            'Each label type has its own color scheme.',
+            style: theme.textTheme.bodySmall?.copyWith(
+              color: colorScheme.onSurfaceVariant,
+            ),
+          ),
+          const SizedBox(height: 12),
           MultiDropdown<String>(
-            items: fruits,
+            items: [
+              DropdownItem(label: '🐛 Bug', value: 'bug'),
+              DropdownItem(label: '✨ Feature', value: 'feature'),
+              DropdownItem(label: '🔧 Enhancement', value: 'enhancement'),
+              DropdownItem(label: '📚 Documentation', value: 'docs'),
+              DropdownItem(label: '🧪 Testing', value: 'testing'),
+              DropdownItem(label: '🚀 Performance', value: 'performance'),
+              DropdownItem(label: '🔒 Security', value: 'security'),
+              DropdownItem(label: '♿ Accessibility', value: 'a11y'),
+            ],
             chipDecoration: ChipDecoration(
               backgroundColor: Colors.deepOrange.shade50,
               labelStyle: TextStyle(
@@ -105,9 +105,9 @@ class CustomStyleExample extends StatelessWidget {
               runSpacing: 8,
             ),
             fieldDecoration: FieldDecoration(
-              hintText: 'Pick your fruits',
+              hintText: 'Apply labels',
               prefixIcon: Icon(
-                Icons.eco_outlined,
+                Icons.label_outline_rounded,
                 color: Colors.deepOrange.shade400,
               ),
               border: OutlineInputBorder(
@@ -140,17 +140,31 @@ class CustomStyleExample extends StatelessWidget {
           ),
           const SizedBox(height: 36),
 
-          // ---------- Example 2: Dark tag style ----------
+          // ---------- Section 2: Tag overflow ----------
           Text(
-            'Tag-Style Chips with Max Display Count',
+            'Tags with Overflow (+N more)',
             style: theme.textTheme.titleSmall?.copyWith(
               fontWeight: FontWeight.w600,
               color: colorScheme.primary,
             ),
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: 4),
+          Text(
+            'Shows max 3 chips, then a "+N more" label.',
+            style: theme.textTheme.bodySmall?.copyWith(
+              color: colorScheme.onSurfaceVariant,
+            ),
+          ),
+          const SizedBox(height: 12),
           MultiDropdown<String>(
-            items: tags,
+            items: [
+              DropdownItem(label: 'Frontend', value: 'frontend'),
+              DropdownItem(label: 'Backend', value: 'backend'),
+              DropdownItem(label: 'Mobile', value: 'mobile'),
+              DropdownItem(label: 'DevOps', value: 'devops'),
+              DropdownItem(label: 'Database', value: 'database'),
+              DropdownItem(label: 'API', value: 'api'),
+            ],
             chipDecoration: ChipDecoration(
               backgroundColor: colorScheme.inverseSurface,
               labelStyle: TextStyle(
@@ -173,9 +187,9 @@ class CustomStyleExample extends StatelessWidget {
               maxDisplayCount: 3,
             ),
             fieldDecoration: FieldDecoration(
-              hintText: 'Add tags',
+              hintText: 'Add area tags',
               prefixIcon: Icon(
-                Icons.label_outline_rounded,
+                Icons.tag_rounded,
                 color: colorScheme.onSurfaceVariant,
               ),
               border: OutlineInputBorder(
@@ -200,31 +214,39 @@ class CustomStyleExample extends StatelessWidget {
           ),
           const SizedBox(height: 36),
 
-          // ---------- Example 3: Disabled items ----------
+          // ---------- Section 3: Pre-selected & disabled items ----------
           Text(
-            'With Pre-Selected & Disabled Items',
+            'Pre-Selected & Disabled Labels',
             style: theme.textTheme.titleSmall?.copyWith(
               fontWeight: FontWeight.w600,
               color: colorScheme.primary,
             ),
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: 4),
+          Text(
+            '"In Progress" is locked. "Duplicate" is disabled.',
+            style: theme.textTheme.bodySmall?.copyWith(
+              color: colorScheme.onSurfaceVariant,
+            ),
+          ),
+          const SizedBox(height: 12),
           MultiDropdown<String>(
             items: [
               DropdownItem(
-                label: 'Admin',
-                value: 'admin',
+                label: '🔄 In Progress',
+                value: 'in_progress',
                 selected: true,
                 disabled: true,
               ),
-              DropdownItem(label: 'Editor', value: 'editor'),
-              DropdownItem(label: 'Viewer', value: 'viewer'),
+              DropdownItem(label: '📋 To Do', value: 'todo'),
+              DropdownItem(label: '✅ Done', value: 'done'),
+              DropdownItem(label: '🔍 In Review', value: 'in_review'),
               DropdownItem(
-                label: 'Guest',
-                value: 'guest',
+                label: '🚫 Duplicate',
+                value: 'duplicate',
                 disabled: true,
               ),
-              DropdownItem(label: 'Moderator', value: 'moderator'),
+              DropdownItem(label: '⏸️ On Hold', value: 'on_hold'),
             ],
             chipDecoration: ChipDecoration(
               backgroundColor: colorScheme.primaryContainer,
@@ -243,8 +265,8 @@ class CustomStyleExample extends StatelessWidget {
               runSpacing: 8,
             ),
             fieldDecoration: FieldDecoration(
-              hintText: 'Assign roles',
-              prefixIcon: const Icon(Icons.people_outline_rounded),
+              hintText: 'Set status',
+              prefixIcon: const Icon(Icons.track_changes_rounded),
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(14),
                 borderSide: BorderSide(color: colorScheme.outline),

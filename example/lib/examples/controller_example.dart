@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:multi_dropdown/multi_dropdown.dart';
 
-/// Demonstrates programmatic control via [MultiSelectController].
+/// Recipe ingredient selector with programmatic controller actions.
 ///
-/// Showcases: selectAll, clearAll, selectWhere, selectAtIndex,
-/// openDropdown, closeDropdown, and addItem.
+/// Demonstrates all [MultiSelectController] methods in a realistic
+/// cooking/meal planning scenario.
 class ControllerExample extends StatefulWidget {
   const ControllerExample({super.key});
 
@@ -13,15 +13,28 @@ class ControllerExample extends StatefulWidget {
 }
 
 class _ControllerExampleState extends State<ControllerExample> {
-  final _controller = MultiSelectController<int>();
-  int _addCounter = 6;
+  final _controller = MultiSelectController<String>();
+  int _customCounter = 0;
 
   final _items = [
-    DropdownItem(label: 'React', value: 1),
-    DropdownItem(label: 'Angular', value: 2),
-    DropdownItem(label: 'Vue', value: 3),
-    DropdownItem(label: 'Svelte', value: 4),
-    DropdownItem(label: 'Flutter', value: 5),
+    DropdownItem(label: '🧅 Onion', value: 'onion'),
+    DropdownItem(label: '🍅 Tomato', value: 'tomato'),
+    DropdownItem(label: '🧄 Garlic', value: 'garlic'),
+    DropdownItem(label: '🫑 Bell Pepper', value: 'bell_pepper'),
+    DropdownItem(label: '🥕 Carrot', value: 'carrot'),
+    DropdownItem(label: '🥔 Potato', value: 'potato'),
+    DropdownItem(label: '🌶️ Chili', value: 'chili'),
+    DropdownItem(label: '🍄 Mushroom', value: 'mushroom'),
+    DropdownItem(label: '🥦 Broccoli', value: 'broccoli'),
+    DropdownItem(label: '🌽 Corn', value: 'corn'),
+  ];
+
+  static const _customIngredients = [
+    '🧂 Salt',
+    '🫒 Olive Oil',
+    '🧈 Butter',
+    '🍋 Lemon',
+    '🌿 Basil',
   ];
 
   @override
@@ -37,7 +50,7 @@ class _ControllerExampleState extends State<ControllerExample> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Controller Actions'),
+        title: const Text('Recipe Ingredients'),
       ),
       body: ListView(
         padding: const EdgeInsets.all(20),
@@ -47,8 +60,8 @@ class _ControllerExampleState extends State<ControllerExample> {
             decoration: BoxDecoration(
               gradient: LinearGradient(
                 colors: [
-                  Colors.indigo.withAlpha(40),
-                  Colors.blue.withAlpha(30),
+                  Colors.teal.withAlpha(40),
+                  Colors.green.withAlpha(30),
                 ],
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
@@ -57,12 +70,12 @@ class _ControllerExampleState extends State<ControllerExample> {
             ),
             child: Row(
               children: [
-                const Icon(Icons.gamepad_outlined, color: Colors.indigo),
+                const Icon(Icons.restaurant_rounded, color: Colors.teal),
                 const SizedBox(width: 12),
                 Expanded(
                   child: Text(
-                    'Control the dropdown programmatically using '
-                    'MultiSelectController methods.',
+                    'Select ingredients for your recipe. Use the '
+                    'controller buttons below to manage selection.',
                     style: theme.textTheme.bodyMedium?.copyWith(
                       color: colorScheme.onSurface,
                     ),
@@ -74,39 +87,39 @@ class _ControllerExampleState extends State<ControllerExample> {
           const SizedBox(height: 24),
 
           // Dropdown
-          MultiDropdown<int>(
+          MultiDropdown<String>(
             items: _items,
             controller: _controller,
             chipDecoration: ChipDecoration(
-              backgroundColor: Colors.indigo.shade50,
+              backgroundColor: Colors.teal.shade50,
               labelStyle: TextStyle(
-                color: Colors.indigo.shade700,
+                color: Colors.teal.shade800,
                 fontSize: 13,
               ),
               borderRadius: BorderRadius.circular(20),
               deleteIcon: Icon(
                 Icons.close_rounded,
                 size: 14,
-                color: Colors.indigo.shade400,
+                color: Colors.teal.shade400,
               ),
               wrap: true,
               spacing: 8,
               runSpacing: 8,
             ),
             fieldDecoration: FieldDecoration(
-              hintText: 'Select frameworks',
+              hintText: 'Select ingredients',
               prefixIcon: Icon(
-                Icons.widgets_outlined,
-                color: Colors.indigo.shade400,
+                Icons.egg_outlined,
+                color: Colors.teal.shade400,
               ),
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(14),
-                borderSide: BorderSide(color: Colors.indigo.shade200),
+                borderSide: BorderSide(color: Colors.teal.shade200),
               ),
               focusedBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(14),
                 borderSide: BorderSide(
-                  color: Colors.indigo.shade400,
+                  color: Colors.teal.shade400,
                   width: 2,
                 ),
               ),
@@ -120,7 +133,7 @@ class _ControllerExampleState extends State<ControllerExample> {
 
           // Controller action buttons
           Text(
-            'Controller Actions',
+            'Quick Actions',
             style: theme.textTheme.titleSmall?.copyWith(
               fontWeight: FontWeight.w600,
               color: colorScheme.onSurfaceVariant,
@@ -144,41 +157,47 @@ class _ControllerExampleState extends State<ControllerExample> {
                 onTap: () => _controller.clearAll(),
               ),
               _ActionChip(
-                icon: Icons.filter_alt_outlined,
-                label: 'Select Where (value ≤ 3)',
+                icon: Icons.restaurant_menu_rounded,
+                label: 'Common (first 4)',
                 color: Colors.orange,
-                onTap: () => _controller.selectWhere(
-                  (item) => item.value <= 3,
-                ),
+                onTap: () {
+                  _controller.clearAll();
+                  _controller.selectWhere(
+                    (item) => ['onion', 'tomato', 'garlic', 'bell_pepper']
+                        .contains(item.value),
+                  );
+                },
               ),
               _ActionChip(
                 icon: Icons.looks_one_outlined,
-                label: 'Select At Index 0',
+                label: 'Select First',
                 color: Colors.teal,
                 onTap: () => _controller.selectAtIndex(0),
               ),
               _ActionChip(
                 icon: Icons.arrow_drop_down_circle_outlined,
-                label: 'Open Dropdown',
+                label: 'Open',
                 color: Colors.blue,
                 onTap: () => _controller.openDropdown(),
               ),
               _ActionChip(
                 icon: Icons.arrow_drop_up_outlined,
-                label: 'Close Dropdown',
+                label: 'Close',
                 color: Colors.blueGrey,
                 onTap: () => _controller.closeDropdown(),
               ),
               _ActionChip(
                 icon: Icons.add_circle_outline,
-                label: 'Add Item',
+                label: 'Add Ingredient',
                 color: Colors.purple,
                 onTap: () {
-                  _addCounter++;
+                  final name = _customIngredients[
+                      _customCounter % _customIngredients.length];
+                  _customCounter++;
                   _controller.addItem(
                     DropdownItem(
-                      label: 'Framework $_addCounter',
-                      value: _addCounter,
+                      label: name,
+                      value: 'custom_$_customCounter',
                     ),
                   );
                 },
@@ -207,28 +226,35 @@ class _ActionChip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Material(
-      color: color.withAlpha(20),
-      borderRadius: BorderRadius.circular(12),
-      child: InkWell(
+    return Semantics(
+      button: true,
+      label: label,
+      child: Material(
+        color: color.withAlpha(20),
         borderRadius: BorderRadius.circular(12),
-        onTap: onTap,
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Icon(icon, size: 18, color: color),
-              const SizedBox(width: 8),
-              Text(
-                label,
-                style: TextStyle(
-                  color: color,
-                  fontWeight: FontWeight.w600,
-                  fontSize: 13,
+        child: InkWell(
+          borderRadius: BorderRadius.circular(12),
+          onTap: onTap,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(
+              horizontal: 14,
+              vertical: 10,
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(icon, size: 18, color: color),
+                const SizedBox(width: 8),
+                Text(
+                  label,
+                  style: TextStyle(
+                    color: color,
+                    fontWeight: FontWeight.w600,
+                    fontSize: 13,
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),

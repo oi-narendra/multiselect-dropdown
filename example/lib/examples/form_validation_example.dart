@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:multi_dropdown/multi_dropdown.dart';
 
+/// Job application form with validation, max selections, and submit flow.
+///
 /// Demonstrates [MultiDropdown] within a [Form] with validation,
-/// `maxSelections` limit, and a submit flow.
+/// `maxSelections` limit, single-select for job title, and a submit flow.
 class FormValidationExample extends StatefulWidget {
   const FormValidationExample({super.key});
 
@@ -13,8 +15,20 @@ class FormValidationExample extends StatefulWidget {
 class _FormValidationExampleState extends State<FormValidationExample> {
   final _formKey = GlobalKey<FormState>();
   final _nameController = TextEditingController();
+  final _emailController = TextEditingController();
   bool _submitted = false;
+  String? _selectedRole;
   List<String> _selectedSkills = [];
+
+  final _roleItems = [
+    DropdownItem(label: 'Software Engineer', value: 'swe'),
+    DropdownItem(label: 'Product Manager', value: 'pm'),
+    DropdownItem(label: 'UX Designer', value: 'ux'),
+    DropdownItem(label: 'Data Scientist', value: 'ds'),
+    DropdownItem(label: 'DevOps Engineer', value: 'devops'),
+    DropdownItem(label: 'QA Engineer', value: 'qa'),
+    DropdownItem(label: 'Tech Lead', value: 'lead'),
+  ];
 
   final _skillItems = [
     DropdownItem(label: 'Dart', value: 'dart'),
@@ -26,11 +40,13 @@ class _FormValidationExampleState extends State<FormValidationExample> {
     DropdownItem(label: 'CI/CD', value: 'cicd'),
     DropdownItem(label: 'Testing', value: 'testing'),
     DropdownItem(label: 'UI/UX Design', value: 'uiux'),
+    DropdownItem(label: 'Cloud Services', value: 'cloud'),
   ];
 
   @override
   void dispose() {
     _nameController.dispose();
+    _emailController.dispose();
     super.dispose();
   }
 
@@ -41,7 +57,7 @@ class _FormValidationExampleState extends State<FormValidationExample> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Form Validation'),
+        title: const Text('Job Application'),
       ),
       body: ListView(
         padding: const EdgeInsets.all(20),
@@ -51,8 +67,8 @@ class _FormValidationExampleState extends State<FormValidationExample> {
             decoration: BoxDecoration(
               gradient: LinearGradient(
                 colors: [
-                  Colors.green.withAlpha(40),
-                  Colors.teal.withAlpha(30),
+                  Colors.blue.withAlpha(40),
+                  Colors.indigo.withAlpha(30),
                 ],
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
@@ -61,12 +77,12 @@ class _FormValidationExampleState extends State<FormValidationExample> {
             ),
             child: Row(
               children: [
-                const Icon(Icons.verified_outlined, color: Colors.green),
+                const Icon(Icons.work_outline_rounded, color: Colors.indigo),
                 const SizedBox(width: 12),
                 Expanded(
                   child: Text(
-                    'Embed MultiDropdown in a Form with validation. '
-                    'Max 4 skills allowed. Submit to see the results.',
+                    'Fill in your application. Select a role and '
+                    'up to 5 skills. All fields are validated on submit.',
                     style: theme.textTheme.bodyMedium?.copyWith(
                       color: colorScheme.onSurface,
                     ),
@@ -85,6 +101,7 @@ class _FormValidationExampleState extends State<FormValidationExample> {
                 // Name field
                 TextFormField(
                   controller: _nameController,
+                  textInputAction: TextInputAction.next,
                   decoration: InputDecoration(
                     labelText: 'Full Name',
                     hintText: 'Enter your name',
@@ -95,7 +112,7 @@ class _FormValidationExampleState extends State<FormValidationExample> {
                     focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(14),
                       borderSide: BorderSide(
-                        color: Colors.green.shade400,
+                        color: Colors.indigo.shade400,
                         width: 2,
                       ),
                     ),
@@ -109,33 +126,114 @@ class _FormValidationExampleState extends State<FormValidationExample> {
                 ),
                 const SizedBox(height: 20),
 
-                // Skills dropdown with validation
+                // Email field
+                TextFormField(
+                  controller: _emailController,
+                  textInputAction: TextInputAction.next,
+                  keyboardType: TextInputType.emailAddress,
+                  decoration: InputDecoration(
+                    labelText: 'Email',
+                    hintText: 'you@example.com',
+                    prefixIcon: const Icon(Icons.email_outlined),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(14),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(14),
+                      borderSide: BorderSide(
+                        color: Colors.indigo.shade400,
+                        width: 2,
+                      ),
+                    ),
+                  ),
+                  validator: (value) {
+                    if (value == null || value.trim().isEmpty) {
+                      return 'Email is required';
+                    }
+                    if (!value.contains('@')) {
+                      return 'Enter a valid email';
+                    }
+                    return null;
+                  },
+                ),
+                const SizedBox(height: 20),
+
+                // Role dropdown (single-select)
+                MultiDropdown<String>(
+                  items: _roleItems,
+                  singleSelect: true,
+                  autovalidateMode: AutovalidateMode.onUserInteraction,
+                  fieldDecoration: FieldDecoration(
+                    labelText: 'Desired Role',
+                    hintText: 'Select a role',
+                    prefixIcon: Icon(
+                      Icons.badge_outlined,
+                      color: Colors.indigo.shade400,
+                    ),
+                    showClearIcon: false,
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(14),
+                      borderSide: BorderSide(color: colorScheme.outline),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(14),
+                      borderSide: BorderSide(
+                        color: Colors.indigo.shade400,
+                        width: 2,
+                      ),
+                    ),
+                    errorBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(14),
+                      borderSide: BorderSide(
+                        color: colorScheme.error,
+                        width: 1.5,
+                      ),
+                    ),
+                    suffixIcon: const Icon(Icons.keyboard_arrow_down_rounded),
+                  ),
+                  dropdownDecoration: DropdownDecoration(
+                    backgroundColor: colorScheme.surfaceContainerLow,
+                    maxHeight: 300,
+                  ),
+                  validator: (items) {
+                    if (items == null || items.isEmpty) {
+                      return 'Please select a role';
+                    }
+                    return null;
+                  },
+                  onSelectionChange: (values) {
+                    _selectedRole = values.firstOrNull;
+                  },
+                ),
+                const SizedBox(height: 20),
+
+                // Skills dropdown (multi-select with max)
                 MultiDropdown<String>(
                   items: _skillItems,
-                  maxSelections: 4,
+                  maxSelections: 5,
                   autovalidateMode: AutovalidateMode.onUserInteraction,
                   chipDecoration: ChipDecoration(
-                    backgroundColor: Colors.green.shade50,
+                    backgroundColor: Colors.indigo.shade50,
                     labelStyle: TextStyle(
-                      color: Colors.green.shade800,
+                      color: Colors.indigo.shade800,
                       fontSize: 13,
                     ),
                     borderRadius: BorderRadius.circular(20),
                     deleteIcon: Icon(
                       Icons.close_rounded,
                       size: 14,
-                      color: Colors.green.shade400,
+                      color: Colors.indigo.shade400,
                     ),
                     wrap: true,
                     spacing: 8,
                     runSpacing: 8,
                   ),
                   fieldDecoration: FieldDecoration(
-                    labelText: 'Skills (max 4)',
+                    labelText: 'Skills (max 5)',
                     hintText: 'Select your skills',
                     prefixIcon: Icon(
                       Icons.psychology_outlined,
-                      color: Colors.green.shade400,
+                      color: Colors.indigo.shade400,
                     ),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(14),
@@ -144,7 +242,7 @@ class _FormValidationExampleState extends State<FormValidationExample> {
                     focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(14),
                       borderSide: BorderSide(
-                        color: Colors.green.shade400,
+                        color: Colors.indigo.shade400,
                         width: 2,
                       ),
                     ),
@@ -162,7 +260,7 @@ class _FormValidationExampleState extends State<FormValidationExample> {
                     header: Padding(
                       padding: const EdgeInsets.fromLTRB(16, 12, 16, 4),
                       child: Text(
-                        'Choose up to 4 skills',
+                        'Choose up to 5 skills',
                         style: theme.textTheme.labelLarge?.copyWith(
                           color: colorScheme.onSurfaceVariant,
                           fontWeight: FontWeight.w600,
@@ -174,8 +272,8 @@ class _FormValidationExampleState extends State<FormValidationExample> {
                     if (items == null || items.isEmpty) {
                       return 'Please select at least one skill';
                     }
-                    if (items.length > 4) {
-                      return 'Maximum 4 skills allowed';
+                    if (items.length > 5) {
+                      return 'Maximum 5 skills allowed';
                     }
                     return null;
                   },
@@ -193,9 +291,9 @@ class _FormValidationExampleState extends State<FormValidationExample> {
                     }
                   },
                   icon: const Icon(Icons.send_rounded, size: 18),
-                  label: const Text('Submit'),
+                  label: const Text('Submit Application'),
                   style: FilledButton.styleFrom(
-                    backgroundColor: Colors.green.shade600,
+                    backgroundColor: Colors.indigo.shade600,
                     foregroundColor: Colors.white,
                     padding: const EdgeInsets.symmetric(vertical: 16),
                     shape: RoundedRectangleBorder(
@@ -237,7 +335,7 @@ class _FormValidationExampleState extends State<FormValidationExample> {
                               ),
                               const SizedBox(width: 8),
                               Text(
-                                'Form Submitted!',
+                                'Application Submitted!',
                                 style: theme.textTheme.titleMedium?.copyWith(
                                   color: Colors.green.shade700,
                                   fontWeight: FontWeight.w700,
@@ -249,6 +347,22 @@ class _FormValidationExampleState extends State<FormValidationExample> {
                           _ResultRow(
                             label: 'Name',
                             value: _nameController.text,
+                          ),
+                          const SizedBox(height: 8),
+                          _ResultRow(
+                            label: 'Email',
+                            value: _emailController.text,
+                          ),
+                          const SizedBox(height: 8),
+                          _ResultRow(
+                            label: 'Role',
+                            value: _selectedRole != null
+                                ? _roleItems
+                                    .firstWhere(
+                                      (i) => i.value == _selectedRole,
+                                    )
+                                    .label
+                                : '—',
                           ),
                           const SizedBox(height: 8),
                           _ResultRow(

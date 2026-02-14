@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:multi_dropdown/multi_dropdown.dart';
 
-/// Single-select dropdown that acts as a modern replacement for
-/// [DropdownButton]. Only one item can be selected at a time.
+/// Task priority selector demonstrating single-select mode.
+///
+/// A project management scenario where the user sets a task priority.
+/// The result card changes color to match the chosen priority level.
 class SingleSelectExample extends StatefulWidget {
   const SingleSelectExample({super.key});
 
@@ -11,13 +13,28 @@ class SingleSelectExample extends StatefulWidget {
 }
 
 class _SingleSelectExampleState extends State<SingleSelectExample> {
+  static const _priorityColors = <String, Color>{
+    'critical': Color(0xFFD32F2F),
+    'high': Color(0xFFE65100),
+    'medium': Color(0xFFF9A825),
+    'low': Color(0xFF1565C0),
+    'none': Color(0xFF757575),
+  };
+
+  static const _priorityIcons = <String, IconData>{
+    'critical': Icons.error_rounded,
+    'high': Icons.arrow_upward_rounded,
+    'medium': Icons.remove_rounded,
+    'low': Icons.arrow_downward_rounded,
+    'none': Icons.horizontal_rule_rounded,
+  };
+
   final _items = [
-    DropdownItem(label: 'Software Engineer', value: 'swe'),
-    DropdownItem(label: 'Product Manager', value: 'pm'),
-    DropdownItem(label: 'Designer', value: 'design'),
-    DropdownItem(label: 'Data Scientist', value: 'ds'),
-    DropdownItem(label: 'DevOps Engineer', value: 'devops'),
-    DropdownItem(label: 'QA Engineer', value: 'qa'),
+    DropdownItem(label: '🔴 Critical', value: 'critical'),
+    DropdownItem(label: '🟠 High', value: 'high'),
+    DropdownItem(label: '🟡 Medium', value: 'medium'),
+    DropdownItem(label: '🔵 Low', value: 'low'),
+    DropdownItem(label: '⚪ None', value: 'none'),
   ];
 
   String? _selected;
@@ -26,10 +43,12 @@ class _SingleSelectExampleState extends State<SingleSelectExample> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
+    final selectedColor =
+        _selected != null ? _priorityColors[_selected]! : colorScheme.outline;
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Single Select'),
+        title: const Text('Task Priority'),
       ),
       body: ListView(
         padding: const EdgeInsets.all(20),
@@ -49,12 +68,15 @@ class _SingleSelectExampleState extends State<SingleSelectExample> {
             ),
             child: Row(
               children: [
-                Icon(Icons.touch_app_outlined, color: colorScheme.tertiary),
+                Icon(
+                  Icons.flag_rounded,
+                  color: colorScheme.tertiary,
+                ),
                 const SizedBox(width: 12),
                 Expanded(
                   child: Text(
-                    'Only one item can be selected at a time. '
-                    'The dropdown closes automatically after selection.',
+                    'Set the priority for your task. Only one level '
+                    'can be selected at a time.',
                     style: theme.textTheme.bodyMedium?.copyWith(
                       color: colorScheme.onSurface,
                     ),
@@ -70,8 +92,8 @@ class _SingleSelectExampleState extends State<SingleSelectExample> {
             items: _items,
             singleSelect: true,
             fieldDecoration: FieldDecoration(
-              hintText: 'Choose a role',
-              prefixIcon: const Icon(Icons.work_outline_rounded),
+              hintText: 'Set priority',
+              prefixIcon: const Icon(Icons.flag_outlined),
               showClearIcon: false,
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(14),
@@ -101,7 +123,7 @@ class _SingleSelectExampleState extends State<SingleSelectExample> {
           ),
           const SizedBox(height: 32),
 
-          // Selection display
+          // Color-coded result card
           AnimatedSwitcher(
             duration: const Duration(milliseconds: 300),
             child: _selected != null
@@ -110,8 +132,11 @@ class _SingleSelectExampleState extends State<SingleSelectExample> {
                     elevation: 0,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(16),
-                      side: BorderSide(color: colorScheme.outlineVariant),
+                      side: BorderSide(
+                        color: selectedColor.withAlpha(100),
+                      ),
                     ),
+                    color: selectedColor.withAlpha(20),
                     child: Padding(
                       padding: const EdgeInsets.all(20),
                       child: Row(
@@ -119,34 +144,39 @@ class _SingleSelectExampleState extends State<SingleSelectExample> {
                           Container(
                             padding: const EdgeInsets.all(12),
                             decoration: BoxDecoration(
-                              color: colorScheme.tertiaryContainer,
+                              color: selectedColor.withAlpha(40),
                               borderRadius: BorderRadius.circular(12),
                             ),
                             child: Icon(
-                              Icons.badge_outlined,
-                              color: colorScheme.onTertiaryContainer,
+                              _priorityIcons[_selected] ?? Icons.flag_rounded,
+                              color: selectedColor,
                             ),
                           ),
                           const SizedBox(width: 16),
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                'Selected Role',
-                                style: theme.textTheme.labelMedium?.copyWith(
-                                  color: colorScheme.onSurfaceVariant,
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  'Priority Level',
+                                  style: theme.textTheme.labelMedium?.copyWith(
+                                    color: colorScheme.onSurfaceVariant,
+                                  ),
                                 ),
-                              ),
-                              const SizedBox(height: 4),
-                              Text(
-                                _items
-                                    .firstWhere((i) => i.value == _selected)
-                                    .label,
-                                style: theme.textTheme.titleMedium?.copyWith(
-                                  fontWeight: FontWeight.w600,
+                                const SizedBox(height: 4),
+                                Text(
+                                  _items
+                                      .firstWhere(
+                                        (i) => i.value == _selected,
+                                      )
+                                      .label,
+                                  style: theme.textTheme.titleMedium?.copyWith(
+                                    fontWeight: FontWeight.w600,
+                                    color: selectedColor,
+                                  ),
                                 ),
-                              ),
-                            ],
+                              ],
+                            ),
                           ),
                         ],
                       ),

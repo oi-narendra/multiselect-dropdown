@@ -215,10 +215,28 @@ class _SearchField extends StatefulWidget {
 
 class _SearchFieldState extends State<_SearchField> {
   late final TextEditingController _controller = TextEditingController();
+  bool _hasText = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller.addListener(_onTextChanged);
+  }
+
+  void _onTextChanged() {
+    final currentHasText = _controller.text.isNotEmpty;
+    if (currentHasText != _hasText) {
+      setState(() {
+        _hasText = currentHasText;
+      });
+    }
+  }
 
   @override
   void dispose() {
-    _controller.dispose();
+    _controller
+      ..removeListener(_onTextChanged)
+      ..dispose();
     super.dispose();
   }
 
@@ -239,19 +257,13 @@ class _SearchFieldState extends State<_SearchField> {
           focusedBorder: widget.decoration.focusedBorder,
           filled: widget.decoration.filled,
           fillColor: widget.decoration.fillColor,
-          suffixIcon: widget.decoration.searchIcon,
-          prefixIcon: widget.decoration.showClearIcon
-              ? ValueListenableBuilder<TextEditingValue>(
-                  valueListenable: _controller,
-                  builder: (_, value, __) {
-                    if (value.text.isEmpty) return const SizedBox.shrink();
-                    return IconButton(
-                      icon: const Icon(Icons.clear, size: 18),
-                      onPressed: () {
-                        _controller.clear();
-                        widget.onChanged('');
-                      },
-                    );
+          prefixIcon: widget.decoration.searchIcon,
+          suffixIcon: widget.decoration.showClearIcon && _hasText
+              ? IconButton(
+                  icon: const Icon(Icons.clear, size: 18),
+                  onPressed: () {
+                    _controller.clear();
+                    widget.onChanged('');
                   },
                 )
               : null,

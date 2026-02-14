@@ -725,7 +725,7 @@ class _MultiDropdownState<T extends Object> extends State<MultiDropdown<T>> {
             InkWell(
               onTap: () {
                 _dropdownController
-                    .unselectWhere((element) => element.label == option.label);
+                    .unselectWhere((element) => element.value == option.value);
               },
               child: SizedBox(
                 width: 16,

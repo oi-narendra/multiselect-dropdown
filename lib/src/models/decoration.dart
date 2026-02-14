@@ -190,6 +190,7 @@ class FieldDecoration {
     this.padding = const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
     this.backgroundColor,
     this.showClearIcon = true,
+    this.selectedItemTextStyle,
   });
 
   /// The label text to display above the dropdown field.
@@ -236,6 +237,13 @@ class FieldDecoration {
 
   /// show clear icon or not in the dropdown field
   final bool showClearIcon;
+
+  /// The text style of the selected item in single-select mode.
+  ///
+  /// This style is applied to the selected item text displayed in the field
+  /// when [MultiDropdown.singleSelect] is true. If not provided, the default
+  /// text style is used.
+  final TextStyle? selectedItemTextStyle;
 }
 
 /// Configuration class for customizing the appearance of chips in the multi-select dropdown.

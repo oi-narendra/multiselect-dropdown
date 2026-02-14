@@ -150,16 +150,18 @@ controller.isOpen;                // Dropdown open state
 
 ## Examples
 
-The [example app](example/) contains **6 dedicated examples**, each in its own file for easy reference:
+The [example app](example/) contains **8 dedicated examples**, each in its own file:
 
-| Example                | File                                                                                | Description                                              |
-| ---------------------- | ----------------------------------------------------------------------------------- | -------------------------------------------------------- |
-| **Basic Multi-Select** | [`basic_example.dart`](example/lib/examples/basic_example.dart)                     | Simple multi-select with chips and live output           |
-| **Single Select**      | [`single_select_example.dart`](example/lib/examples/single_select_example.dart)     | Pick exactly one item with auto-close                    |
-| **Searchable**         | [`searchable_example.dart`](example/lib/examples/searchable_example.dart)           | Search through a large list of items                     |
-| **Custom Styling**     | [`custom_style_example.dart`](example/lib/examples/custom_style_example.dart)       | Pill chips, dark tags, disabled items, `maxDisplayCount` |
-| **Controller Actions** | [`controller_example.dart`](example/lib/examples/controller_example.dart)           | All controller methods with interactive buttons          |
-| **Form Validation**    | [`form_validation_example.dart`](example/lib/examples/form_validation_example.dart) | Form integration with validator and submit flow          |
+| Example                   | File                                                                                | Description                                          |
+| ------------------------- | ----------------------------------------------------------------------------------- | ---------------------------------------------------- |
+| 🌍 **Country Picker**     | [`basic_example.dart`](example/lib/examples/basic_example.dart)                     | Multi-select with flag emojis and chip wrapping      |
+| 🎯 **Task Priority**      | [`single_select_example.dart`](example/lib/examples/single_select_example.dart)     | Single-select with color-coded result card           |
+| 👥 **Team Members**       | [`searchable_example.dart`](example/lib/examples/searchable_example.dart)           | Search with custom `itemBuilder` (avatars)           |
+| 🏷️ **Issue Labels**       | [`custom_style_example.dart`](example/lib/examples/custom_style_example.dart)       | Color-coded chips, `maxDisplayCount`, disabled items |
+| 🍳 **Recipe Ingredients** | [`controller_example.dart`](example/lib/examples/controller_example.dart)           | All `MultiSelectController` methods                  |
+| 💼 **Job Application**    | [`form_validation_example.dart`](example/lib/examples/form_validation_example.dart) | Form validation, `maxSelections`, submit flow        |
+| 🌐 **Async Loading**      | [`future_example.dart`](example/lib/examples/future_example.dart)                   | `MultiDropdown.future()` with loading spinner        |
+| ♿ **Accessibility**      | [`accessibility_example.dart`](example/lib/examples/accessibility_example.dart)     | Font scaling slider, high contrast, `Semantics`      |
 
 Run the example:
 

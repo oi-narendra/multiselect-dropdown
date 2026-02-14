@@ -166,9 +166,9 @@ class CustomStyleExample extends StatelessWidget {
               DropdownItem(label: 'API', value: 'api'),
             ],
             chipDecoration: ChipDecoration(
-              backgroundColor: colorScheme.inverseSurface,
+              backgroundColor: colorScheme.surfaceContainerHighest,
               labelStyle: TextStyle(
-                color: colorScheme.onInverseSurface,
+                color: colorScheme.onSurface,
                 fontWeight: FontWeight.w500,
                 fontSize: 12,
               ),
@@ -177,12 +177,13 @@ class CustomStyleExample extends StatelessWidget {
                 vertical: 4,
               ),
               borderRadius: BorderRadius.circular(6),
+              border: Border.all(color: colorScheme.outlineVariant),
               deleteIcon: Icon(
                 Icons.close,
                 size: 14,
-                color: colorScheme.onInverseSurface,
+                color: colorScheme.onSurfaceVariant,
               ),
-              wrap: false,
+              wrap: true,
               spacing: 6,
               maxDisplayCount: 3,
             ),

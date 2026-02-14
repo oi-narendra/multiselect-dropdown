@@ -1,16 +1,23 @@
-# example
+# MultiDropdown — Example App
 
-A new Flutter project.
+Interactive examples demonstrating every feature of the [`multi_dropdown`](https://pub.dev/packages/multi_dropdown) package.
 
-## Getting Started
+## Examples
 
-This project is a starting point for a Flutter application.
+| #   | Example               | File                                                                        | Features                                               |
+| --- | --------------------- | --------------------------------------------------------------------------- | ------------------------------------------------------ |
+| 1   | 🌍 Country Picker     | [`basic_example.dart`](lib/examples/basic_example.dart)                     | Multi-select, flag emojis, chip wrapping, live output  |
+| 2   | 🎯 Task Priority      | [`single_select_example.dart`](lib/examples/single_select_example.dart)     | Single-select, color-coded result card, `suffixIcon`   |
+| 3   | 👥 Team Members       | [`searchable_example.dart`](lib/examples/searchable_example.dart)           | Search, custom `itemBuilder` with avatar initials      |
+| 4   | 🏷️ Issue Labels       | [`custom_style_example.dart`](lib/examples/custom_style_example.dart)       | Color-coded chips, `maxDisplayCount`, disabled items   |
+| 5   | 🍳 Recipe Ingredients | [`controller_example.dart`](lib/examples/controller_example.dart)           | `MultiSelectController` actions, `addItem`             |
+| 6   | 💼 Job Application    | [`form_validation_example.dart`](lib/examples/form_validation_example.dart) | Form validation, `maxSelections`, submit flow          |
+| 7   | 🌐 Async Loading      | [`future_example.dart`](lib/examples/future_example.dart)                   | `MultiDropdown.future()`, loading spinner              |
+| 8   | ♿ Accessibility      | [`accessibility_example.dart`](lib/examples/accessibility_example.dart)     | Font scaling slider, high contrast toggle, `Semantics` |
 
-A few resources to get you started if this is your first Flutter project:
+## Running
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+```bash
+cd example
+flutter run
+```

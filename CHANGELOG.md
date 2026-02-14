@@ -13,7 +13,7 @@
 - **Controller**: Keep filtered items in sync after `selectWhere`/`unselectWhere` (#145)
 - **Selected items**: Respect `chipDecoration.wrap` when using `selectedItemBuilder` (#170)
 - **Positioning**: Improved auto-positioning to compare space above vs below (#147)
-- **Scroll**: Allow page scrolling when dropdown overlay is open (#180)
+- **Scroll**: Allow page scrolling when dropdown overlay is open (#209)
 
 ### Features
 

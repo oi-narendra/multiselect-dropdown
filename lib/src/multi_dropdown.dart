@@ -634,14 +634,11 @@ class _MultiDropdownState<T extends Object> extends State<MultiDropdown<T>> {
         );
       }
 
-      return ConstrainedBox(
-        constraints: BoxConstraints.loose(const Size(double.infinity, 32)),
-        child: ListView.separated(
-          separatorBuilder: (context, index) => const SizedBox(width: 8),
-          scrollDirection: Axis.horizontal,
-          itemCount: children.length,
-          itemBuilder: (context, index) => children[index],
-        ),
+      return ListView.separated(
+        separatorBuilder: (context, index) => const SizedBox(width: 8),
+        scrollDirection: Axis.horizontal,
+        itemCount: children.length,
+        itemBuilder: (context, index) => children[index],
       );
     }
 
@@ -725,7 +722,7 @@ class _MultiDropdownState<T extends Object> extends State<MultiDropdown<T>> {
             InkWell(
               onTap: () {
                 _dropdownController
-                    .unselectWhere((element) => element.label == option.label);
+                    .unselectWhere((element) => element.value == option.value);
               },
               child: SizedBox(
                 width: 16,

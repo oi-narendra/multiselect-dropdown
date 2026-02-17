@@ -67,7 +67,7 @@ Follow this workflow when publishing a new version.
 1. **Dry run first**
 
    ```bash
-   dart pub publish --dry-run
+   flutter pub publish --dry-run
    ```
 
    Review the output:
@@ -78,7 +78,7 @@ Follow this workflow when publishing a new version.
 2. **Publish** (requires user confirmation)
 
    ```bash
-   dart pub publish
+   flutter pub publish
    ```
 
 3. **Tag the release**

@@ -1,5 +1,15 @@
 # ChangeLOG
 
+## 3.1.1
+
+### Bug Fixes
+
+- **Dropdown list padding**: Remove default `MediaQuery` padding from dropdown `ListView` that caused blank space at top/bottom of items on real devices (#120, #172)
+
+### Features
+
+- **List padding**: Added `listPadding` to `DropdownDecoration` for custom padding around the items list (#120, #172)
+
 ## 3.1.0
 
 ### Bug Fixes

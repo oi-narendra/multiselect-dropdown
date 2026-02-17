@@ -454,4 +454,58 @@ void main() {
       controller.dispose();
     });
   });
+
+  // ===========================================================================
+  // Widget: dropdown list padding (#120, #172)
+  // ===========================================================================
+
+  group('Widget: dropdown list padding', () {
+    testWidgets(
+        'ListView has zero padding by default (fixes #120, #172)',
+        (tester) async {
+      final controller = MultiSelectController<int>();
+      await tester.pumpWidget(
+        buildTestApp(
+          MultiDropdown<int>(items: createItems(), controller: controller),
+        ),
+      );
+
+      await tester.tap(find.byType(InkWell));
+      await tester.pumpAndSettle();
+
+      final listView =
+          tester.widget<ListView>(find.byType(ListView));
+      expect(listView.padding, EdgeInsets.zero);
+      controller.dispose();
+    });
+
+    testWidgets('custom listPadding is applied to ListView', (tester) async {
+      final controller = MultiSelectController<int>();
+      const customPadding = EdgeInsets.symmetric(vertical: 16);
+      await tester.pumpWidget(
+        buildTestApp(
+          MultiDropdown<int>(
+            items: createItems(),
+            controller: controller,
+            dropdownDecoration: const DropdownDecoration(
+              listPadding: customPadding,
+            ),
+          ),
+        ),
+      );
+
+      await tester.tap(find.byType(InkWell));
+      await tester.pumpAndSettle();
+
+      final listView =
+          tester.widget<ListView>(find.byType(ListView));
+      expect(listView.padding, customPadding);
+      controller.dispose();
+    });
+
+    test('DropdownDecoration listPadding defaults to null', () {
+      const d = DropdownDecoration();
+      expect(d.listPadding, isNull);
+    });
+  });
 }

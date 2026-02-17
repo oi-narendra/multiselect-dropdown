@@ -176,6 +176,7 @@ class DropdownDecoration {
     this.elevation = 1,
     this.maxHeight = 400,
     this.marginTop = 0,
+    this.listPadding,
     this.borderRadius = const BorderRadius.all(Radius.circular(12)),
     this.footer,
     this.header,
@@ -201,6 +202,12 @@ class DropdownDecoration {
 
   /// the margin top of the dropdown
   final double marginTop;
+
+  /// Padding around the dropdown items list.
+  ///
+  /// Defaults to [EdgeInsets.zero]. Set this to add custom spacing
+  /// around the items list inside the dropdown.
+  final EdgeInsets? listPadding;
 
   /// The custom footer widget to display at the bottom of the dropdown.
   final Widget? footer;

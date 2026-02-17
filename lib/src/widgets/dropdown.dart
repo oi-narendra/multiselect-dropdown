@@ -152,8 +152,8 @@ class _DropdownState<T> extends State<_Dropdown<T>>
                         separatorBuilder: (_, __) =>
                             widget.itemSeparator ?? const SizedBox.shrink(),
                         shrinkWrap: true,
-                        padding: widget.decoration.listPadding ??
-                            EdgeInsets.zero,
+                        padding:
+                            widget.decoration.listPadding ?? EdgeInsets.zero,
                         itemCount: widget.items.length,
                         itemBuilder: (_, index) => _buildOption(index, theme),
                       ),

@@ -460,8 +460,7 @@ void main() {
   // ===========================================================================
 
   group('Widget: dropdown list padding', () {
-    testWidgets(
-        'ListView has zero padding by default (fixes #120, #172)',
+    testWidgets('ListView has zero padding by default (fixes #120, #172)',
         (tester) async {
       final controller = MultiSelectController<int>();
       await tester.pumpWidget(
@@ -473,8 +472,7 @@ void main() {
       await tester.tap(find.byType(InkWell));
       await tester.pumpAndSettle();
 
-      final listView =
-          tester.widget<ListView>(find.byType(ListView));
+      final listView = tester.widget<ListView>(find.byType(ListView));
       expect(listView.padding, EdgeInsets.zero);
       controller.dispose();
     });
@@ -497,8 +495,7 @@ void main() {
       await tester.tap(find.byType(InkWell));
       await tester.pumpAndSettle();
 
-      final listView =
-          tester.widget<ListView>(find.byType(ListView));
+      final listView = tester.widget<ListView>(find.byType(ListView));
       expect(listView.padding, customPadding);
       controller.dispose();
     });

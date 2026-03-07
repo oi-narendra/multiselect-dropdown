@@ -177,7 +177,7 @@ class _DropdownState<T> extends State<_Dropdown<T>>
       ),
     );
 
-    if (kIsWeb || Platform.isMacOS || Platform.isLinux || Platform.isWindows) {
+    if (operatingSystemShortcutAvailable) {
       return Shortcuts(shortcuts: _webShortcuts, child: child);
     }
 

@@ -9,6 +9,8 @@
 - **Select All / Deselect All**: Added `showSelectAll` parameter to `MultiDropdown` for toggling all items at once with a checkbox row
 - **Custom toggle labels**: Added `selectAllText` and `deselectAllText` to `DropdownDecoration` for customizing toggle text
 - **Custom search filter**: Added `SearchFilter<T>` typedef and `searchFilter` parameter to `MultiDropdown` for custom search logic (fuzzy matching, multi-field search, etc.)
+- **Bottom sheet mode**: Added `DropdownMode` enum and `dropdownMode` parameter to `MultiDropdown` for mobile-friendly modal bottom sheet presentation
+- **Draggable bottom sheet**: Bottom sheet mode features a drag handle, optional title, search field, and a `DraggableScrollableSheet` for flexible sizing
 
 ## 3.1.1
 

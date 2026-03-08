@@ -119,6 +119,7 @@ class MultiDropdown<T extends Object> extends StatefulWidget {
     this.autovalidateMode = AutovalidateMode.disabled,
     this.singleSelect = false,
     this.showSelectAll = false,
+    this.dropdownMode = DropdownMode.overlay,
     this.itemSeparator,
     this.controller,
     this.validator,
@@ -171,6 +172,7 @@ class MultiDropdown<T extends Object> extends StatefulWidget {
     this.autovalidateMode = AutovalidateMode.disabled,
     this.singleSelect = false,
     this.showSelectAll = false,
+    this.dropdownMode = DropdownMode.overlay,
     this.itemSeparator,
     this.controller,
     this.validator,
@@ -194,7 +196,6 @@ class MultiDropdown<T extends Object> extends StatefulWidget {
   /// When [groups] is provided, items from the groups are used instead.
   final List<DropdownItem<T>> items;
 
-<<<<<<< HEAD
   /// Optional grouped items with section headers.
   ///
   /// When provided, the dropdown renders items organized under
@@ -239,6 +240,12 @@ class MultiDropdown<T extends Object> extends StatefulWidget {
   ///
   /// Useful for fuzzy matching, multi-field search, or any custom logic.
   final SearchFilter<T>? searchFilter;
+
+  /// Controls how the dropdown items are presented.
+  ///
+  /// Use [DropdownMode.overlay] (default) for a classic inline dropdown.
+  /// Use [DropdownMode.bottomSheet] for a mobile-friendly modal bottom sheet.
+  final DropdownMode dropdownMode;
 
   /// The selection type of the dropdown.
   final bool singleSelect;
@@ -419,11 +426,15 @@ class _MultiDropdownState<T extends Object> extends State<MultiDropdown<T>> {
     // update the form field state when the controller changes
     _formFieldKey.currentState?.didChange(_dropdownController.selectedItems);
 
-    if (_dropdownController.isOpen) {
-      _portalController.show();
-    } else {
-      _dropdownController._clearSearchQuery();
-      _portalController.hide();
+    // Only manage the overlay portal in overlay mode.
+    // Bottom sheet mode manages its own presentation.
+    if (widget.dropdownMode == DropdownMode.overlay) {
+      if (_dropdownController.isOpen) {
+        _portalController.show();
+      } else {
+        _dropdownController._clearSearchQuery();
+        _portalController.hide();
+      }
     }
   }
 
@@ -905,7 +916,135 @@ class _MultiDropdownState<T extends Object> extends State<MultiDropdown<T>> {
     // (e.g., TextFormField) before opening the dropdown.
     FocusManager.instance.primaryFocus?.unfocus();
 
+    if (widget.dropdownMode == DropdownMode.bottomSheet) {
+      _showBottomSheet();
+    } else {
+      _dropdownController.openDropdown();
+    }
+  }
+
+  void _showBottomSheet() {
     _dropdownController.openDropdown();
+
+    showModalBottomSheet<void>(
+      context: context,
+      isScrollControlled: true,
+      useSafeArea: true,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+      ),
+      builder: (sheetContext) {
+        return DraggableScrollableSheet(
+          initialChildSize: 0.5,
+          minChildSize: 0.25,
+          maxChildSize: 0.85,
+          expand: false,
+          builder: (_, scrollController) {
+            return ListenableBuilder(
+              listenable: _dropdownController,
+              builder: (ctx, __) {
+                final theme = Theme.of(ctx);
+                return Column(
+                  children: [
+                    // Drag handle
+                    Container(
+                      width: 40,
+                      height: 4,
+                      margin: const EdgeInsets.symmetric(vertical: 12),
+                      decoration: BoxDecoration(
+                        color: theme.colorScheme.onSurfaceVariant
+                            .withOpacity(0.4),
+                        borderRadius: BorderRadius.circular(2),
+                      ),
+                    ),
+                    // Title
+                    if (widget.fieldDecoration.labelText != null)
+                      Padding(
+                        padding: const EdgeInsets.only(
+                          left: 16, right: 16, bottom: 8,
+                        ),
+                        child: Align(
+                          alignment: Alignment.centerLeft,
+                          child: Text(
+                            widget.fieldDecoration.labelText!,
+                            style: theme.textTheme.titleMedium,
+                          ),
+                        ),
+                      ),
+                    // Search
+                    if (widget.searchEnabled)
+                      Padding(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 16, vertical: 4,
+                        ),
+                        child: _SearchField(
+                          decoration: widget.searchDecoration,
+                          onChanged: _dropdownController._setSearchQuery,
+                        ),
+                      ),
+                    // Items list
+                    Expanded(
+                      child: _dropdownController.items.isEmpty
+                          ? Center(
+                              child: Text(
+                                widget.dropdownDecoration.noItemsFoundText,
+                                style: theme.textTheme.bodyMedium,
+                              ),
+                            )
+                          : ListView.separated(
+                              controller: scrollController,
+                              padding: widget.dropdownDecoration.listPadding ??
+                                  EdgeInsets.zero,
+                              itemCount: _dropdownController.items.length,
+                              separatorBuilder: (_, __) =>
+                                  widget.itemSeparator ??
+                                  const SizedBox.shrink(),
+                              itemBuilder: (_, index) {
+                                final item =
+                                    _dropdownController.items[index];
+                                if (widget.itemBuilder != null) {
+                                  return widget.itemBuilder!(
+                                    item,
+                                    index,
+                                    () => _handleDropdownItemTap(item),
+                                  );
+                                }
+                                return _buildBottomSheetItem(
+                                  item, theme,
+                                );
+                              },
+                            ),
+                    ),
+                  ],
+                );
+              },
+            );
+          },
+        );
+      },
+    ).whenComplete(() {
+      _dropdownController._clearSearchQuery(notify: true);
+      _dropdownController.closeDropdown();
+    });
+  }
+
+  Widget _buildBottomSheetItem(DropdownItem<T> item, ThemeData theme) {
+    final selected = item.selected;
+    final disabled = item.disabled;
+
+    return ListTile(
+      title: Text(
+        item.label,
+        style: TextStyle(
+          color: disabled ? theme.disabledColor : null,
+        ),
+      ),
+      trailing: selected
+          ? Icon(Icons.check_circle, color: theme.colorScheme.primary)
+          : null,
+      enabled: !disabled,
+      onTap: () => _handleDropdownItemTap(item),
+    );
   }
 
   void _handleOutsideTap(PointerDownEvent event) {

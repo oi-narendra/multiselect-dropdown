@@ -16,3 +16,17 @@ enum ExpandDirection {
   /// Force the dropdown to expand upward.
   up,
 }
+
+/// Controls how the dropdown items are presented to the user.
+///
+/// * [DropdownMode.overlay]: The default mode, shows items in an overlay
+///   positioned relative to the field (classic dropdown).
+/// * [DropdownMode.bottomSheet]: Shows items in a modal bottom sheet,
+///   better suited for mobile experiences with many items.
+enum DropdownMode {
+  /// Show items in an overlay dropdown (default).
+  overlay,
+
+  /// Show items in a modal bottom sheet.
+  bottomSheet,
+}

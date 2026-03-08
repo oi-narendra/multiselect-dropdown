@@ -35,6 +35,7 @@ A powerful and highly customizable multi-select dropdown widget for Flutter. Sup
 - ✅ Grouped items with customizable section headers
 - ✅ Select All / Deselect All toggle with customizable labels
 - ✅ Custom search filter for fuzzy matching and multi-field search
+- ✅ Bottom sheet mode for mobile-friendly item selection
 
 ## Installation
 

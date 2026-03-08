@@ -65,6 +65,9 @@ class MultiSelectController<T> extends ChangeNotifier {
   /// on search changed callback invoker.
   OnSearchChanged? _onSearchChanged;
 
+  /// Optional custom search filter.
+  SearchFilter<T>? _searchFilter;
+
   @override
   void notifyListeners() {
     _cachedSelectedItems = null;
@@ -75,6 +78,8 @@ class MultiSelectController<T> extends ChangeNotifier {
   void _reapplySearchFilter() {
     if (_searchQuery.isEmpty) {
       _filteredItems = List.from(_items);
+    } else if (_searchFilter != null) {
+      _filteredItems = _searchFilter!(_searchQuery, List.from(_items));
     } else {
       final query = _searchQuery.toLowerCase();
       _filteredItems = _items
@@ -251,6 +256,12 @@ class MultiSelectController<T> extends ChangeNotifier {
   // ignore: use_setters_to_change_properties
   void _setOnSearchChange(OnSearchChanged? onSearchChanged) {
     _onSearchChanged = onSearchChanged;
+  }
+
+  // Sets the custom search filter.
+  // ignore: use_setters_to_change_properties
+  void _setSearchFilter(SearchFilter<T>? filter) {
+    _searchFilter = filter;
   }
 
   // sets the search query.

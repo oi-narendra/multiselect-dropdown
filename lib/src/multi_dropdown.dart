@@ -27,6 +27,24 @@ typedef OnSelectionChanged<T> = void Function(List<T> selectedItems);
 /// typedef for the callback when the search field value changes.
 typedef OnSearchChanged = ValueChanged<String>;
 
+/// Typedef for a custom search filter function.
+///
+/// Takes the search [query] and the full list of [items], and returns
+/// the filtered list that should be displayed.
+///
+/// ```dart
+/// MultiDropdown<String>(
+///   searchEnabled: true,
+///   searchFilter: (query, items) {
+///     return items.where((i) => i.label.toLowerCase().startsWith(query)).toList();
+///   },
+/// )
+/// ```
+typedef SearchFilter<T> = List<DropdownItem<T>> Function(
+  String query,
+  List<DropdownItem<T>> items,
+);
+
 /// typedef for the selected item builder.
 typedef SelectedItemBuilder<T> = Widget Function(DropdownItem<T> item);
 
@@ -108,6 +126,7 @@ class MultiDropdown<T extends Object> extends StatefulWidget {
     this.enabled = true,
     this.chipDecoration = const ChipDecoration(),
     this.searchEnabled = false,
+    this.searchFilter,
     this.maxSelections = 0,
     this.selectedItemBuilder,
     this.focusNode,
@@ -159,6 +178,7 @@ class MultiDropdown<T extends Object> extends StatefulWidget {
     this.enabled = true,
     this.chipDecoration = const ChipDecoration(),
     this.searchEnabled = false,
+    this.searchFilter,
     this.maxSelections = 0,
     this.selectedItemBuilder,
     this.focusNode,
@@ -174,6 +194,7 @@ class MultiDropdown<T extends Object> extends StatefulWidget {
   /// When [groups] is provided, items from the groups are used instead.
   final List<DropdownItem<T>> items;
 
+<<<<<<< HEAD
   /// Optional grouped items with section headers.
   ///
   /// When provided, the dropdown renders items organized under
@@ -209,6 +230,15 @@ class MultiDropdown<T extends Object> extends StatefulWidget {
   ///
   /// Defaults to false.
   final bool showSelectAll;
+
+  /// An optional custom search filter function.
+  ///
+  /// When provided, this function is used instead of the default
+  /// label-contains-query filter. Receives the search query and the
+  /// full list of items, and must return the filtered subset.
+  ///
+  /// Useful for fuzzy matching, multi-field search, or any custom logic.
+  final SearchFilter<T>? searchFilter;
 
   /// The selection type of the dropdown.
   final bool singleSelect;
@@ -332,7 +362,8 @@ class _MultiDropdownState<T extends Object> extends State<MultiDropdown<T>> {
       _dropdownController
         ..addListener(_controllerListener)
         .._setOnSelectionChange(widget.onSelectionChange)
-        .._setOnSearchChange(widget.onSearchChange);
+        .._setOnSearchChange(widget.onSearchChange)
+        .._setSearchFilter(widget.searchFilter);
 
       // if close on back button is enabled, then add the listener
       _listenBackButton();

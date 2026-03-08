@@ -8,6 +8,7 @@
 - **Group header styling**: Added `GroupHeaderDecoration` class and `groupHeaderDecoration` parameter for customizing section header appearance (text style, padding, background color, dividers)
 - **Select All / Deselect All**: Added `showSelectAll` parameter to `MultiDropdown` for toggling all items at once with a checkbox row
 - **Custom toggle labels**: Added `selectAllText` and `deselectAllText` to `DropdownDecoration` for customizing toggle text
+- **Custom search filter**: Added `SearchFilter<T>` typedef and `searchFilter` parameter to `MultiDropdown` for custom search logic (fuzzy matching, multi-field search, etc.)
 
 ## 3.1.1
 

@@ -181,6 +181,8 @@ class DropdownDecoration {
     this.footer,
     this.header,
     this.noItemsFoundText = 'No items found',
+    this.selectAllText = 'Select All',
+    this.deselectAllText = 'Deselect All',
     this.expandDirection = ExpandDirection.auto,
     this.animationDuration = const Duration(milliseconds: 200),
     this.animationCurve = Curves.easeOutCubic,
@@ -234,6 +236,18 @@ class DropdownDecoration {
   ///
   /// Defaults to [Curves.easeOutCubic].
   final Curve animationCurve;
+
+  /// The text label for the "Select All" action.
+  ///
+  /// Shown in the select all toggle when not all items are selected.
+  /// Defaults to `'Select All'`.
+  final String selectAllText;
+
+  /// The text label for the "Deselect All" action.
+  ///
+  /// Shown in the select all toggle when all items are selected.
+  /// Defaults to `'Deselect All'`.
+  final String deselectAllText;
 }
 
 /// Represents the decoration for the dropdown field.

@@ -6,6 +6,8 @@
 
 - **Grouped items**: Added `DropdownGroup<T>` model and `groups` parameter to `MultiDropdown` for rendering items under labeled section headers with optional dividers
 - **Group header styling**: Added `GroupHeaderDecoration` class and `groupHeaderDecoration` parameter for customizing section header appearance (text style, padding, background color, dividers)
+- **Select All / Deselect All**: Added `showSelectAll` parameter to `MultiDropdown` for toggling all items at once with a checkbox row
+- **Custom toggle labels**: Added `selectAllText` and `deselectAllText` to `DropdownDecoration` for customizing toggle text
 
 ## 3.1.1
 

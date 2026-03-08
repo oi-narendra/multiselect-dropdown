@@ -100,6 +100,7 @@ class MultiDropdown<T extends Object> extends StatefulWidget {
     this.dropdownItemDecoration = const DropdownItemDecoration(),
     this.autovalidateMode = AutovalidateMode.disabled,
     this.singleSelect = false,
+    this.showSelectAll = false,
     this.itemSeparator,
     this.controller,
     this.validator,
@@ -150,6 +151,7 @@ class MultiDropdown<T extends Object> extends StatefulWidget {
     this.dropdownItemDecoration = const DropdownItemDecoration(),
     this.autovalidateMode = AutovalidateMode.disabled,
     this.singleSelect = false,
+    this.showSelectAll = false,
     this.itemSeparator,
     this.controller,
     this.validator,
@@ -193,6 +195,20 @@ class MultiDropdown<T extends Object> extends StatefulWidget {
   ///
   /// Only used when [groups] is provided.
   final GroupHeaderDecoration groupHeaderDecoration;
+
+  /// Whether to show a "Select All / Deselect All" toggle at the top
+  /// of the dropdown items list.
+  ///
+  /// When true, a checkbox row appears above the items that allows
+  /// selecting or deselecting all visible items at once.
+  ///
+  /// Ignored when [singleSelect] is true.
+  ///
+  /// The labels can be customized via [DropdownDecoration.selectAllText]
+  /// and [DropdownDecoration.deselectAllText].
+  ///
+  /// Defaults to false.
+  final bool showSelectAll;
 
   /// The selection type of the dropdown.
   final bool singleSelect;
@@ -499,9 +515,12 @@ class _MultiDropdownState<T extends Object> extends State<MultiDropdown<T>> {
                       searchDecoration: widget.searchDecoration,
                       maxSelections: widget.maxSelections,
                       singleSelect: widget.singleSelect,
+                      showSelectAll: widget.showSelectAll,
                       onSearchChange: _dropdownController._setSearchQuery,
                       groups: widget.groups,
                       groupHeaderDecoration: widget.groupHeaderDecoration,
+                      onSelectAll: _dropdownController.selectAll,
+                      onDeselectAll: _dropdownController.clearAll,
                     ),
                   ),
                 ),

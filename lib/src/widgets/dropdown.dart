@@ -20,6 +20,9 @@ class _Dropdown<T> extends StatefulWidget {
     this.singleSelect = false,
     this.groups,
     this.groupHeaderDecoration = const GroupHeaderDecoration(),
+    this.showSelectAll = false,
+    this.onSelectAll,
+    this.onDeselectAll,
   }) : super(key: key);
 
   /// The decoration of the dropdown.
@@ -63,6 +66,15 @@ class _Dropdown<T> extends StatefulWidget {
 
   /// The decoration for group headers.
   final GroupHeaderDecoration groupHeaderDecoration;
+
+  /// Whether to show the select all / deselect all toggle.
+  final bool showSelectAll;
+
+  /// Callback invoked when "Select All" is tapped.
+  final VoidCallback? onSelectAll;
+
+  /// Callback invoked when "Deselect All" is tapped.
+  final VoidCallback? onDeselectAll;
 
   @override
   State<_Dropdown<T>> createState() => _DropdownState<T>();
@@ -197,6 +209,10 @@ class _DropdownState<T> extends State<_Dropdown<T>>
                     ),
                   if (widget.decoration.header != null)
                     Flexible(child: widget.decoration.header!),
+                  if (widget.showSelectAll &&
+                      !widget.singleSelect &&
+                      widget.items.isNotEmpty)
+                    _buildSelectAllToggle(theme),
                   if (widget.items.isNotEmpty)
                     Flexible(child: _buildItemsList(theme)),
                   if (widget.items.isEmpty)
@@ -231,6 +247,64 @@ class _DropdownState<T> extends State<_Dropdown<T>>
       return _buildGroupedList(theme);
     }
     return _buildFlatList(theme);
+  }
+
+  /// Builds the Select All / Deselect All toggle row.
+  Widget _buildSelectAllToggle(ThemeData theme) {
+    final allSelected = widget.items.every((item) => item.selected);
+    final label = allSelected
+        ? widget.decoration.deselectAllText
+        : widget.decoration.selectAllText;
+
+    // Disable select all if maxSelections would be exceeded
+    final enabled = allSelected ||
+        widget.maxSelections == 0 ||
+        widget.items.length <= widget.maxSelections;
+
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        InkWell(
+          onTap: enabled
+              ? () {
+                  if (allSelected) {
+                    widget.onDeselectAll?.call();
+                  } else {
+                    widget.onSelectAll?.call();
+                  }
+                }
+              : null,
+          child: Padding(
+            padding:
+                const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            child: Row(
+              children: [
+                IgnorePointer(
+                  child: Checkbox(
+                    value: allSelected,
+                    tristate: true,
+                    onChanged: enabled ? (_) {} : null,
+                  ),
+                ),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: Text(
+                    label,
+                    style: theme.textTheme.bodyMedium?.copyWith(
+                      color: enabled
+                          ? theme.colorScheme.onSurface
+                          : theme.disabledColor,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+        const Divider(height: 1),
+      ],
+    );
   }
 
   /// Builds the original flat list of items (no groups).

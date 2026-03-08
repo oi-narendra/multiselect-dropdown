@@ -33,6 +33,7 @@ A powerful and highly customizable multi-select dropdown widget for Flutter. Sup
 - ✅ Close on back button support
 - ✅ Full `InputDecoration` override for form consistency
 - ✅ Grouped items with customizable section headers
+- ✅ Select All / Deselect All toggle with customizable labels
 
 ## Installation
 

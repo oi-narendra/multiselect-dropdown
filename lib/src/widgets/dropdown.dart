@@ -18,6 +18,8 @@ class _Dropdown<T> extends StatefulWidget {
     this.itemBuilder,
     this.itemSeparator,
     this.singleSelect = false,
+    this.groups,
+    this.groupHeaderDecoration = const GroupHeaderDecoration(),
   }) : super(key: key);
 
   /// The decoration of the dropdown.
@@ -56,8 +58,30 @@ class _Dropdown<T> extends StatefulWidget {
   /// Whether the selection is single.
   final bool singleSelect;
 
+  /// Optional grouped items with section headers.
+  final List<DropdownGroup<T>>? groups;
+
+  /// The decoration for group headers.
+  final GroupHeaderDecoration groupHeaderDecoration;
+
   @override
   State<_Dropdown<T>> createState() => _DropdownState<T>();
+}
+
+/// Represents either a group header or a dropdown item in the
+/// flattened list used for rendering grouped dropdowns.
+class _GroupEntry<T> {
+  _GroupEntry.header(this.groupLabel)
+      : item = null,
+        isHeader = true;
+
+  _GroupEntry.item(this.item)
+      : groupLabel = null,
+        isHeader = false;
+
+  final String? groupLabel;
+  final DropdownItem<T>? item;
+  final bool isHeader;
 }
 
 class _DropdownState<T> extends State<_Dropdown<T>>
@@ -76,6 +100,33 @@ class _DropdownState<T> extends State<_Dropdown<T>>
     SingleActivator(LogicalKeyboardKey.arrowUp):
         DirectionalFocusIntent(TraversalDirection.up),
   };
+
+  /// Whether this dropdown is using grouped mode.
+  bool get _isGrouped =>
+      widget.groups != null && widget.groups!.isNotEmpty;
+
+  /// Builds a flattened list of [_GroupEntry] from the groups,
+  /// filtering out groups that have no visible items (e.g., after search).
+  List<_GroupEntry<T>> _buildGroupEntries() {
+    if (!_isGrouped) return [];
+
+    final visibleItemSet = widget.items.toSet();
+    final entries = <_GroupEntry<T>>[];
+
+    for (final group in widget.groups!) {
+      final visibleItems = group.items
+          .where((item) => visibleItemSet.contains(item))
+          .toList();
+      if (visibleItems.isEmpty) continue;
+
+      entries.add(_GroupEntry<T>.header(group.label));
+      for (final item in visibleItems) {
+        entries.add(_GroupEntry<T>.item(item));
+      }
+    }
+
+    return entries;
+  }
 
   @override
   void initState() {
@@ -147,17 +198,7 @@ class _DropdownState<T> extends State<_Dropdown<T>>
                   if (widget.decoration.header != null)
                     Flexible(child: widget.decoration.header!),
                   if (widget.items.isNotEmpty)
-                    Flexible(
-                      child: ListView.separated(
-                        separatorBuilder: (_, __) =>
-                            widget.itemSeparator ?? const SizedBox.shrink(),
-                        shrinkWrap: true,
-                        padding:
-                            widget.decoration.listPadding ?? EdgeInsets.zero,
-                        itemCount: widget.items.length,
-                        itemBuilder: (_, index) => _buildOption(index, theme),
-                      ),
-                    ),
+                    Flexible(child: _buildItemsList(theme)),
                   if (widget.items.isEmpty)
                     Padding(
                       padding: const EdgeInsets.all(12),
@@ -184,11 +225,94 @@ class _DropdownState<T> extends State<_Dropdown<T>>
     return child;
   }
 
-  Widget _buildOption(int index, ThemeData theme) {
-    final option = widget.items[index];
+  /// Builds the items list — either grouped (with headers) or flat.
+  Widget _buildItemsList(ThemeData theme) {
+    if (_isGrouped) {
+      return _buildGroupedList(theme);
+    }
+    return _buildFlatList(theme);
+  }
 
+  /// Builds the original flat list of items (no groups).
+  Widget _buildFlatList(ThemeData theme) {
+    return ListView.separated(
+      separatorBuilder: (_, __) =>
+          widget.itemSeparator ?? const SizedBox.shrink(),
+      shrinkWrap: true,
+      padding: widget.decoration.listPadding ?? EdgeInsets.zero,
+      itemCount: widget.items.length,
+      itemBuilder: (_, index) => _buildOption(widget.items[index], theme),
+    );
+  }
+
+  /// Builds a grouped list with interleaved section headers and items.
+  Widget _buildGroupedList(ThemeData theme) {
+    final entries = _buildGroupEntries();
+
+    return ListView.builder(
+      shrinkWrap: true,
+      padding: widget.decoration.listPadding ?? EdgeInsets.zero,
+      itemCount: entries.length,
+      itemBuilder: (_, index) {
+        final entry = entries[index];
+
+        if (entry.isHeader) {
+          return _buildGroupHeader(
+            entry.groupLabel!,
+            theme,
+            isFirst: index == 0,
+          );
+        }
+
+        return Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            _buildOption(entry.item!, theme),
+            if (widget.itemSeparator != null &&
+                index < entries.length - 1 &&
+                !entries[index + 1].isHeader)
+              widget.itemSeparator!,
+          ],
+        );
+      },
+    );
+  }
+
+  /// Builds a group section header row.
+  Widget _buildGroupHeader(
+    String label,
+    ThemeData theme, {
+    required bool isFirst,
+  }) {
+    final decoration = widget.groupHeaderDecoration;
+    final textStyle = decoration.textStyle ??
+        theme.textTheme.labelLarge?.copyWith(
+          color: theme.colorScheme.onSurfaceVariant,
+          fontWeight: FontWeight.w600,
+        );
+
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        if (!isFirst && decoration.showDivider)
+          const Divider(height: 1),
+        Container(
+          color: decoration.backgroundColor,
+          padding: decoration.padding,
+          child: Text(label, style: textStyle),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildOption(DropdownItem<T> option, ThemeData theme) {
     if (widget.itemBuilder != null) {
-      return widget.itemBuilder!(option, index, () => widget.onItemTap(option));
+      return widget.itemBuilder!(
+        option,
+        widget.items.indexOf(option),
+        () => widget.onItemTap(option),
+      );
     }
 
     final disabledColor =

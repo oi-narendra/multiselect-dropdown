@@ -1,5 +1,12 @@
 # ChangeLOG
 
+## [Unreleased]
+
+### Added
+
+- **Grouped items**: Added `DropdownGroup<T>` model and `groups` parameter to `MultiDropdown` for rendering items under labeled section headers with optional dividers
+- **Group header styling**: Added `GroupHeaderDecoration` class and `groupHeaderDecoration` parameter for customizing section header appearance (text style, padding, background color, dividers)
+
 ## 3.1.1
 
 ### Bug Fixes

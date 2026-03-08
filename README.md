@@ -32,6 +32,7 @@ A powerful and highly customizable multi-select dropdown widget for Flutter. Sup
 - ✅ Expand direction control (`auto`, `up`, `down`)
 - ✅ Close on back button support
 - ✅ Full `InputDecoration` override for form consistency
+- ✅ Grouped items with customizable section headers
 
 ## Installation
 

@@ -10,6 +10,7 @@ part 'controllers/future_controller.dart';
 part 'controllers/multiselect_controller.dart';
 part 'enum/enums.dart';
 part 'models/decoration.dart';
+part 'models/dropdown_group.dart';
 part 'models/dropdown_item.dart';
 part 'widgets/dropdown.dart';
 
@@ -91,6 +92,8 @@ class MultiDropdown<T extends Object> extends StatefulWidget {
   ///
   const MultiDropdown({
     required this.items,
+    this.groups,
+    this.groupHeaderDecoration = const GroupHeaderDecoration(),
     this.fieldDecoration = const FieldDecoration(),
     this.dropdownDecoration = const DropdownDecoration(),
     this.searchDecoration = const SearchFieldDecoration(),
@@ -139,6 +142,8 @@ class MultiDropdown<T extends Object> extends StatefulWidget {
   /// ```
   const MultiDropdown.future({
     required this.future,
+    this.groups,
+    this.groupHeaderDecoration = const GroupHeaderDecoration(),
     this.fieldDecoration = const FieldDecoration(),
     this.dropdownDecoration = const DropdownDecoration(),
     this.searchDecoration = const SearchFieldDecoration(),
@@ -163,7 +168,31 @@ class MultiDropdown<T extends Object> extends StatefulWidget {
         super(key: key);
 
   /// The list of dropdown items.
+  ///
+  /// When [groups] is provided, items from the groups are used instead.
   final List<DropdownItem<T>> items;
+
+  /// Optional grouped items with section headers.
+  ///
+  /// When provided, the dropdown renders items organized under
+  /// labeled section headers. The [items] parameter is ignored when
+  /// groups are provided.
+  ///
+  /// ```dart
+  /// MultiDropdown<String>(
+  ///   items: [], // ignored when groups is set
+  ///   groups: [
+  ///     DropdownGroup(label: 'Fruits', items: [apple, banana]),
+  ///     DropdownGroup(label: 'Vegetables', items: [carrot]),
+  ///   ],
+  /// )
+  /// ```
+  final List<DropdownGroup<T>>? groups;
+
+  /// The decoration for the group section headers.
+  ///
+  /// Only used when [groups] is provided.
+  final GroupHeaderDecoration groupHeaderDecoration;
 
   /// The selection type of the dropdown.
   final bool singleSelect;
@@ -238,6 +267,15 @@ class _MultiDropdownState<T extends Object> extends State<MultiDropdown<T>> {
 
   final OverlayPortalController _portalController = OverlayPortalController();
 
+  /// Returns the flat list of items — either from [groups] (flattened)
+  /// or from [items] directly.
+  List<DropdownItem<T>> get _effectiveItems {
+    if (widget.groups != null && widget.groups!.isNotEmpty) {
+      return widget.groups!.expand((g) => g.items).toList();
+    }
+    return widget.items;
+  }
+
   late MultiSelectController<T> _dropdownController =
       widget.controller ?? MultiSelectController<T>();
   final _FutureController _loadingController = _FutureController();
@@ -271,7 +309,7 @@ class _MultiDropdownState<T extends Object> extends State<MultiDropdown<T>> {
     if (!_dropdownController._initialized) {
       _dropdownController
         .._initialize()
-        ..setItems(widget.items);
+        ..setItems(_effectiveItems);
     }
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -462,6 +500,8 @@ class _MultiDropdownState<T extends Object> extends State<MultiDropdown<T>> {
                       maxSelections: widget.maxSelections,
                       singleSelect: widget.singleSelect,
                       onSearchChange: _dropdownController._setSearchQuery,
+                      groups: widget.groups,
+                      groupHeaderDecoration: widget.groupHeaderDecoration,
                     ),
                   ),
                 ),

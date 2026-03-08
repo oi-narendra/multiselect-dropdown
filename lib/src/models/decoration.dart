@@ -428,3 +428,53 @@ class ChipDecoration {
   /// If null, all chips are displayed.
   final int? maxDisplayCount;
 }
+
+/// Configuration class for customizing the appearance of group headers
+/// in the dropdown when using [MultiDropdown] with grouped items.
+///
+/// ```dart
+/// MultiDropdown<String>(
+///   groups: myGroups,
+///   groupHeaderDecoration: GroupHeaderDecoration(
+///     textStyle: TextStyle(fontWeight: FontWeight.bold),
+///     padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+///   ),
+/// )
+/// ```
+class GroupHeaderDecoration {
+  /// Creates a new instance of [GroupHeaderDecoration].
+  ///
+  /// [textStyle] is the text style of the group header label.
+  ///
+  /// [padding] is the padding around the group header.
+  ///
+  /// [backgroundColor] is the background color of the group header.
+  ///
+  /// [showDivider] controls whether a divider is shown above
+  /// each group header (except the first).
+  const GroupHeaderDecoration({
+    this.textStyle,
+    this.padding = const EdgeInsets.fromLTRB(16, 12, 16, 4),
+    this.backgroundColor,
+    this.showDivider = true,
+  });
+
+  /// The text style of the group header label.
+  ///
+  /// When null, defaults to [TextTheme.labelLarge] with
+  /// [ColorScheme.onSurfaceVariant] color.
+  final TextStyle? textStyle;
+
+  /// The padding around the group header content.
+  final EdgeInsets padding;
+
+  /// The background color of the group header.
+  ///
+  /// When null, uses the dropdown background color.
+  final Color? backgroundColor;
+
+  /// Whether to show a divider above each group header (except the first).
+  ///
+  /// Defaults to true.
+  final bool showDivider;
+}

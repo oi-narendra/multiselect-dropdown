@@ -2,11 +2,15 @@ import 'package:flutter/material.dart';
 
 import 'examples/accessibility_example.dart';
 import 'examples/basic_example.dart';
+import 'examples/bottom_sheet_example.dart';
 import 'examples/controller_example.dart';
+import 'examples/custom_search_example.dart';
 import 'examples/custom_style_example.dart';
 import 'examples/form_validation_example.dart';
 import 'examples/future_example.dart';
+import 'examples/grouped_items_example.dart';
 import 'examples/searchable_example.dart';
+import 'examples/select_all_example.dart';
 import 'examples/single_select_example.dart';
 
 void main() {
@@ -48,6 +52,34 @@ class _HomePage extends StatelessWidget {
       icon: Icons.public_rounded,
       color: Color(0xFF6366F1),
       builder: BasicExample.new,
+    ),
+    _ExampleEntry(
+      title: 'Grocery List',
+      subtitle: 'Grouped items with section headers',
+      icon: Icons.category_rounded,
+      color: Color(0xFF059669),
+      builder: GroupedItemsExample.new,
+    ),
+    _ExampleEntry(
+      title: 'Working Days',
+      subtitle: 'Select All / Deselect All toggle',
+      icon: Icons.check_box_rounded,
+      color: Color(0xFFD97706),
+      builder: SelectAllExample.new,
+    ),
+    _ExampleEntry(
+      title: 'Contact Picker',
+      subtitle: 'Custom multi-field search filter',
+      icon: Icons.search_rounded,
+      color: Color(0xFF7C3AED),
+      builder: CustomSearchExample.new,
+    ),
+    _ExampleEntry(
+      title: 'Languages',
+      subtitle: 'Bottom sheet presentation mode',
+      icon: Icons.swipe_up_rounded,
+      color: Color(0xFFDB2777),
+      builder: BottomSheetExample.new,
     ),
     _ExampleEntry(
       title: 'Task Priority',

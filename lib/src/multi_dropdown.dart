@@ -782,11 +782,14 @@ class _MultiDropdownState<T extends Object> extends State<MultiDropdown<T>> {
         .toList();
 
     if (remainingCount > 0) {
+      final overflowLabel = chipDecoration.overflowLabelBuilder != null
+          ? chipDecoration.overflowLabelBuilder!(remainingCount)
+          : '+$remainingCount more';
       chips.add(
         Container(
           padding: chipDecoration.padding,
           child: Text(
-            '+$remainingCount more',
+            overflowLabel,
             style: chipDecoration.labelStyle ??
                 TextStyle(
                   fontSize: 12,
@@ -849,16 +852,20 @@ class _MultiDropdownState<T extends Object> extends State<MultiDropdown<T>> {
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Text(
-            option.label,
-            style: chipDecoration.labelStyle?.copyWith(
-                  color: widget.enabled
-                      ? chipDecoration.labelStyle?.color
-                      : theme.disabledColor,
-                ) ??
-                TextStyle(
-                  color: widget.enabled ? null : theme.disabledColor,
-                ),
+          Flexible(
+            child: Text(
+              option.label,
+              overflow: TextOverflow.ellipsis,
+              maxLines: 1,
+              style: chipDecoration.labelStyle?.copyWith(
+                    color: widget.enabled
+                        ? chipDecoration.labelStyle?.color
+                        : theme.disabledColor,
+                  ) ??
+                  TextStyle(
+                    color: widget.enabled ? null : theme.disabledColor,
+                  ),
+            ),
           ),
           if (widget.enabled) ...[
             const SizedBox(width: 4),

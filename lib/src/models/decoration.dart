@@ -401,6 +401,7 @@ class ChipDecoration {
     this.borderRadius = const BorderRadius.all(Radius.circular(12)),
     this.wrap = true,
     this.maxDisplayCount,
+    this.overflowLabelBuilder,
   });
 
   /// The icon to display for deleting a chip.
@@ -441,6 +442,15 @@ class ChipDecoration {
   /// shown after the visible chips indicating the remaining count.
   /// If null, all chips are displayed.
   final int? maxDisplayCount;
+
+  /// A builder to customize the overflow label shown when [maxDisplayCount]
+  /// is exceeded.
+  ///
+  /// Receives the number of additional selected items not shown as chips.
+  /// Return a localized string, e.g. `(n) => '+$n más'`.
+  ///
+  /// When null, defaults to `'+N more'`.
+  final String Function(int remaining)? overflowLabelBuilder;
 }
 
 /// Configuration class for customizing the appearance of group headers

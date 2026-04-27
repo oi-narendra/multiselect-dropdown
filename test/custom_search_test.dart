@@ -15,7 +15,7 @@ void main() {
       await tester.pumpWidget(
         buildTestApp(
           MultiDropdown<int>(
-            items: createItems(5),
+            items: createItems(),
             searchEnabled: true,
             controller: controller,
           ),
@@ -53,7 +53,8 @@ void main() {
             searchFilter: (query, items) {
               return items
                   .where(
-                    (i) => i.label.toLowerCase().startsWith(query.toLowerCase()),
+                    (i) =>
+                        i.label.toLowerCase().startsWith(query.toLowerCase()),
                   )
                   .toList();
             },
@@ -146,7 +147,7 @@ void main() {
       await tester.pumpWidget(
         buildTestApp(
           MultiDropdown<int>(
-            items: createItems(5),
+            items: createItems(),
             searchEnabled: true,
             searchFilter: (query, items) {
               capturedQuery = query;

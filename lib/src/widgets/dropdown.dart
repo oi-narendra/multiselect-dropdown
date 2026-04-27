@@ -114,8 +114,7 @@ class _DropdownState<T> extends State<_Dropdown<T>>
   };
 
   /// Whether this dropdown is using grouped mode.
-  bool get _isGrouped =>
-      widget.groups != null && widget.groups!.isNotEmpty;
+  bool get _isGrouped => widget.groups != null && widget.groups!.isNotEmpty;
 
   /// Builds a flattened list of [_GroupEntry] from the groups,
   /// filtering out groups that have no visible items (e.g., after search).
@@ -126,9 +125,8 @@ class _DropdownState<T> extends State<_Dropdown<T>>
     final entries = <_GroupEntry<T>>[];
 
     for (final group in widget.groups!) {
-      final visibleItems = group.items
-          .where((item) => visibleItemSet.contains(item))
-          .toList();
+      final visibleItems =
+          group.items.where(visibleItemSet.contains).toList();
       if (visibleItems.isEmpty) continue;
 
       entries.add(_GroupEntry<T>.header(group.label));
@@ -275,8 +273,7 @@ class _DropdownState<T> extends State<_Dropdown<T>>
                 }
               : null,
           child: Padding(
-            padding:
-                const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
             child: Row(
               children: [
                 IgnorePointer(
@@ -369,8 +366,7 @@ class _DropdownState<T> extends State<_Dropdown<T>>
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        if (!isFirst && decoration.showDivider)
-          const Divider(height: 1),
+        if (!isFirst && decoration.showDivider) const Divider(height: 1),
         Container(
           color: decoration.backgroundColor,
           padding: decoration.padding,

@@ -320,8 +320,8 @@ class _MultiDropdownState<T extends Object> extends State<MultiDropdown<T>> {
 
   final OverlayPortalController _portalController = OverlayPortalController();
 
-  /// Returns the flat list of items — either from [groups] (flattened)
-  /// or from [items] directly.
+  /// Returns the flat list of items — either from groups (flattened)
+  /// or from `widget.items` directly.
   List<DropdownItem<T>> get _effectiveItems {
     if (widget.groups != null && widget.groups!.isNotEmpty) {
       return widget.groups!.expand((g) => g.items).toList();
@@ -926,7 +926,7 @@ class _MultiDropdownState<T extends Object> extends State<MultiDropdown<T>> {
   void _showBottomSheet() {
     _dropdownController.openDropdown();
 
-    showModalBottomSheet<void>(
+    unawaited(showModalBottomSheet<void>(
       context: context,
       isScrollControlled: true,
       useSafeArea: true,
@@ -935,8 +935,6 @@ class _MultiDropdownState<T extends Object> extends State<MultiDropdown<T>> {
       ),
       builder: (sheetContext) {
         return DraggableScrollableSheet(
-          initialChildSize: 0.5,
-          minChildSize: 0.25,
           maxChildSize: 0.85,
           expand: false,
           builder: (_, scrollController) {
@@ -953,7 +951,7 @@ class _MultiDropdownState<T extends Object> extends State<MultiDropdown<T>> {
                       margin: const EdgeInsets.symmetric(vertical: 12),
                       decoration: BoxDecoration(
                         color: theme.colorScheme.onSurfaceVariant
-                            .withOpacity(0.4),
+                            .withValues(alpha: 0.4),
                         borderRadius: BorderRadius.circular(2),
                       ),
                     ),
@@ -961,7 +959,9 @@ class _MultiDropdownState<T extends Object> extends State<MultiDropdown<T>> {
                     if (widget.fieldDecoration.labelText != null)
                       Padding(
                         padding: const EdgeInsets.only(
-                          left: 16, right: 16, bottom: 8,
+                          left: 16,
+                          right: 16,
+                          bottom: 8,
                         ),
                         child: Align(
                           alignment: Alignment.centerLeft,
@@ -975,7 +975,8 @@ class _MultiDropdownState<T extends Object> extends State<MultiDropdown<T>> {
                     if (widget.searchEnabled)
                       Padding(
                         padding: const EdgeInsets.symmetric(
-                          horizontal: 16, vertical: 4,
+                          horizontal: 16,
+                          vertical: 4,
                         ),
                         child: _SearchField(
                           decoration: widget.searchDecoration,
@@ -1000,8 +1001,7 @@ class _MultiDropdownState<T extends Object> extends State<MultiDropdown<T>> {
                                   widget.itemSeparator ??
                                   const SizedBox.shrink(),
                               itemBuilder: (_, index) {
-                                final item =
-                                    _dropdownController.items[index];
+                                final item = _dropdownController.items[index];
                                 if (widget.itemBuilder != null) {
                                   return widget.itemBuilder!(
                                     item,
@@ -1010,7 +1010,8 @@ class _MultiDropdownState<T extends Object> extends State<MultiDropdown<T>> {
                                   );
                                 }
                                 return _buildBottomSheetItem(
-                                  item, theme,
+                                  item,
+                                  theme,
                                 );
                               },
                             ),
@@ -1025,7 +1026,7 @@ class _MultiDropdownState<T extends Object> extends State<MultiDropdown<T>> {
     ).whenComplete(() {
       _dropdownController._clearSearchQuery(notify: true);
       _dropdownController.closeDropdown();
-    });
+    }),);
   }
 
   Widget _buildBottomSheetItem(DropdownItem<T> item, ThemeData theme) {

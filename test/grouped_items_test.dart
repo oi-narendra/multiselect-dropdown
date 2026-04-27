@@ -33,7 +33,7 @@ void main() {
     });
 
     test('DropdownGroup toString contains label', () {
-      final g = DropdownGroup<int>(label: 'Fruits', items: const []);
+      const g = DropdownGroup<int>(label: 'Fruits', items: []);
       expect(g.toString(), contains('Fruits'));
     });
 

@@ -1,9 +1,15 @@
 # ChangeLOG
 
-## [Unreleased]
+## 3.2.0
 
-### Added
+### Bug Fixes
 
+- **Chip text overflow**: Long chip labels now truncate with ellipsis instead of overflowing (#218)
+- **README license**: Fixed license reference from MIT to GPL-3.0 to match the actual LICENSE file (#219)
+
+### Features
+
+- **Custom overflow label**: Added `overflowLabelBuilder` to `ChipDecoration` for localizing the "+N more" chip label (#217)
 - **Grouped items**: Added `DropdownGroup<T>` model and `groups` parameter to `MultiDropdown` for rendering items under labeled section headers with optional dividers
 - **Group header styling**: Added `GroupHeaderDecoration` class and `groupHeaderDecoration` parameter for customizing section header appearance (text style, padding, background color, dividers)
 - **Select All / Deselect All**: Added `showSelectAll` parameter to `MultiDropdown` for toggling all items at once with a checkbox row

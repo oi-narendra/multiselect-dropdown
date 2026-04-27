@@ -43,7 +43,7 @@ Add to your `pubspec.yaml`:
 
 ```yaml
 dependencies:
-  multi_dropdown: ^3.1.0
+  multi_dropdown: ^3.2.0
 ```
 
 ## Quick Start

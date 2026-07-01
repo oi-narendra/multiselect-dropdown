@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io' if (dart.library.io) 'dart:io';
+import 'dart:math' as math;
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -528,6 +529,20 @@ class _MultiDropdownState<T extends Object> extends State<MultiDropdown<T>> {
                         : widget.dropdownDecoration.marginTop,
                   );
 
+            final mediaQuery = MediaQuery.of(context);
+            final viewPadding = mediaQuery.viewPadding;
+            final availableSpace = (showOnTop ? spaceAbove : spaceBelow) -
+                viewPadding.top -
+                viewPadding.bottom -
+                widget.dropdownDecoration.marginTop.abs() -
+                8;
+            final effectiveMaxHeight = math
+                .min(
+                  widget.dropdownDecoration.maxHeight,
+                  math.max(availableSpace, 0),
+                )
+                .toDouble();
+
             final stack = Stack(
               children: [
                 Positioned.fill(
@@ -547,6 +562,7 @@ class _MultiDropdownState<T extends Object> extends State<MultiDropdown<T>> {
                   child: RepaintBoundary(
                     child: _Dropdown<T>(
                       decoration: widget.dropdownDecoration,
+                      maxHeight: effectiveMaxHeight,
                       onItemTap: _handleDropdownItemTap,
                       width: renderBoxSize.width,
                       items: _dropdownController.items,
@@ -933,107 +949,110 @@ class _MultiDropdownState<T extends Object> extends State<MultiDropdown<T>> {
   void _showBottomSheet() {
     _dropdownController.openDropdown();
 
-    unawaited(showModalBottomSheet<void>(
-      context: context,
-      isScrollControlled: true,
-      useSafeArea: true,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
-      ),
-      builder: (sheetContext) {
-        return DraggableScrollableSheet(
-          maxChildSize: 0.85,
-          expand: false,
-          builder: (_, scrollController) {
-            return ListenableBuilder(
-              listenable: _dropdownController,
-              builder: (ctx, __) {
-                final theme = Theme.of(ctx);
-                return Column(
-                  children: [
-                    // Drag handle
-                    Container(
-                      width: 40,
-                      height: 4,
-                      margin: const EdgeInsets.symmetric(vertical: 12),
-                      decoration: BoxDecoration(
-                        color: theme.colorScheme.onSurfaceVariant
-                            .withValues(alpha: 0.4),
-                        borderRadius: BorderRadius.circular(2),
-                      ),
-                    ),
-                    // Title
-                    if (widget.fieldDecoration.labelText != null)
-                      Padding(
-                        padding: const EdgeInsets.only(
-                          left: 16,
-                          right: 16,
-                          bottom: 8,
+    unawaited(
+      showModalBottomSheet<void>(
+        context: context,
+        isScrollControlled: true,
+        useSafeArea: true,
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+        ),
+        builder: (sheetContext) {
+          return DraggableScrollableSheet(
+            maxChildSize: 0.85,
+            expand: false,
+            builder: (_, scrollController) {
+              return ListenableBuilder(
+                listenable: _dropdownController,
+                builder: (ctx, __) {
+                  final theme = Theme.of(ctx);
+                  return Column(
+                    children: [
+                      // Drag handle
+                      Container(
+                        width: 40,
+                        height: 4,
+                        margin: const EdgeInsets.symmetric(vertical: 12),
+                        decoration: BoxDecoration(
+                          color: theme.colorScheme.onSurfaceVariant
+                              .withValues(alpha: 0.4),
+                          borderRadius: BorderRadius.circular(2),
                         ),
-                        child: Align(
-                          alignment: Alignment.centerLeft,
-                          child: Text(
-                            widget.fieldDecoration.labelText!,
-                            style: theme.textTheme.titleMedium,
+                      ),
+                      // Title
+                      if (widget.fieldDecoration.labelText != null)
+                        Padding(
+                          padding: const EdgeInsets.only(
+                            left: 16,
+                            right: 16,
+                            bottom: 8,
+                          ),
+                          child: Align(
+                            alignment: Alignment.centerLeft,
+                            child: Text(
+                              widget.fieldDecoration.labelText!,
+                              style: theme.textTheme.titleMedium,
+                            ),
                           ),
                         ),
-                      ),
-                    // Search
-                    if (widget.searchEnabled)
-                      Padding(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 16,
-                          vertical: 4,
+                      // Search
+                      if (widget.searchEnabled)
+                        Padding(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 16,
+                            vertical: 4,
+                          ),
+                          child: _SearchField(
+                            decoration: widget.searchDecoration,
+                            onChanged: _dropdownController._setSearchQuery,
+                          ),
                         ),
-                        child: _SearchField(
-                          decoration: widget.searchDecoration,
-                          onChanged: _dropdownController._setSearchQuery,
-                        ),
-                      ),
-                    // Items list
-                    Expanded(
-                      child: _dropdownController.items.isEmpty
-                          ? Center(
-                              child: Text(
-                                widget.dropdownDecoration.noItemsFoundText,
-                                style: theme.textTheme.bodyMedium,
-                              ),
-                            )
-                          : ListView.separated(
-                              controller: scrollController,
-                              padding: widget.dropdownDecoration.listPadding ??
-                                  EdgeInsets.zero,
-                              itemCount: _dropdownController.items.length,
-                              separatorBuilder: (_, __) =>
-                                  widget.itemSeparator ??
-                                  const SizedBox.shrink(),
-                              itemBuilder: (_, index) {
-                                final item = _dropdownController.items[index];
-                                if (widget.itemBuilder != null) {
-                                  return widget.itemBuilder!(
+                      // Items list
+                      Expanded(
+                        child: _dropdownController.items.isEmpty
+                            ? Center(
+                                child: Text(
+                                  widget.dropdownDecoration.noItemsFoundText,
+                                  style: theme.textTheme.bodyMedium,
+                                ),
+                              )
+                            : ListView.separated(
+                                controller: scrollController,
+                                padding:
+                                    widget.dropdownDecoration.listPadding ??
+                                        EdgeInsets.zero,
+                                itemCount: _dropdownController.items.length,
+                                separatorBuilder: (_, __) =>
+                                    widget.itemSeparator ??
+                                    const SizedBox.shrink(),
+                                itemBuilder: (_, index) {
+                                  final item = _dropdownController.items[index];
+                                  if (widget.itemBuilder != null) {
+                                    return widget.itemBuilder!(
+                                      item,
+                                      index,
+                                      () => _handleDropdownItemTap(item),
+                                    );
+                                  }
+                                  return _buildBottomSheetItem(
                                     item,
-                                    index,
-                                    () => _handleDropdownItemTap(item),
+                                    theme,
                                   );
-                                }
-                                return _buildBottomSheetItem(
-                                  item,
-                                  theme,
-                                );
-                              },
-                            ),
-                    ),
-                  ],
-                );
-              },
-            );
-          },
-        );
-      },
-    ).whenComplete(() {
-      _dropdownController._clearSearchQuery(notify: true);
-      _dropdownController.closeDropdown();
-    }),);
+                                },
+                              ),
+                      ),
+                    ],
+                  );
+                },
+              );
+            },
+          );
+        },
+      ).whenComplete(() {
+        _dropdownController._clearSearchQuery(notify: true);
+        _dropdownController.closeDropdown();
+      }),
+    );
   }
 
   Widget _buildBottomSheetItem(DropdownItem<T> item, ThemeData theme) {

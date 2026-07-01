@@ -13,6 +13,7 @@ class _Dropdown<T> extends StatefulWidget {
     required this.maxSelections,
     required this.items,
     required this.onItemTap,
+    this.maxHeight,
     Key? key,
     this.onSearchChange,
     this.itemBuilder,
@@ -27,6 +28,9 @@ class _Dropdown<T> extends StatefulWidget {
 
   /// The decoration of the dropdown.
   final DropdownDecoration decoration;
+
+  /// Viewport-aware max height override. Falls back to [maxHeight].
+  final double? maxHeight;
 
   /// Whether the search field is enabled.
   final bool searchEnabled;
@@ -125,8 +129,7 @@ class _DropdownState<T> extends State<_Dropdown<T>>
     final entries = <_GroupEntry<T>>[];
 
     for (final group in widget.groups!) {
-      final visibleItems =
-          group.items.where(visibleItemSet.contains).toList();
+      final visibleItems = group.items.where(visibleItemSet.contains).toList();
       if (visibleItems.isEmpty) continue;
 
       entries.add(_GroupEntry<T>.header(group.label));
@@ -194,7 +197,7 @@ class _DropdownState<T> extends State<_Dropdown<T>>
               ),
               constraints: BoxConstraints(
                 maxWidth: widget.width,
-                maxHeight: widget.decoration.maxHeight,
+                maxHeight: widget.maxHeight ?? widget.decoration.maxHeight,
               ),
               child: Column(
                 mainAxisSize: MainAxisSize.min,
@@ -409,38 +412,41 @@ class _DropdownState<T> extends State<_Dropdown<T>>
     return AnimatedContainer(
       duration: const Duration(milliseconds: 200),
       color: tileColor ?? Colors.transparent,
-      child: ListTile(
-        title: Text(
-          option.label,
-          style: option.selected
-              ? widget.dropdownItemDecoration.selectedTextStyle
-              : widget.dropdownItemDecoration.textStyle,
-        ),
-        trailing: trailing,
-        dense: true,
-        autofocus: true,
-        enabled: !option.disabled,
-        selected: option.selected,
-        visualDensity: VisualDensity.adaptivePlatformDensity,
-        focusColor:
-            widget.dropdownItemDecoration.backgroundColor?.withAlpha(100),
-        selectedColor: widget.dropdownItemDecoration.selectedTextColor ??
-            theme.colorScheme.onSurface,
-        textColor: option.disabled
-            ? widget.dropdownItemDecoration.disabledTextColor ??
-                theme.disabledColor
-            : widget.dropdownItemDecoration.textColor ??
-                theme.colorScheme.onSurface,
-        tileColor: Colors.transparent,
-        selectedTileColor: Colors.transparent,
-        onTap: () {
-          if (option.disabled) return;
+      child: Material(
+        type: MaterialType.transparency,
+        child: ListTile(
+          title: Text(
+            option.label,
+            style: option.selected
+                ? widget.dropdownItemDecoration.selectedTextStyle
+                : widget.dropdownItemDecoration.textStyle,
+          ),
+          trailing: trailing,
+          dense: true,
+          autofocus: true,
+          enabled: !option.disabled,
+          selected: option.selected,
+          visualDensity: VisualDensity.adaptivePlatformDensity,
+          focusColor:
+              widget.dropdownItemDecoration.backgroundColor?.withAlpha(100),
+          selectedColor: widget.dropdownItemDecoration.selectedTextColor ??
+              theme.colorScheme.onSurface,
+          textColor: option.disabled
+              ? widget.dropdownItemDecoration.disabledTextColor ??
+                  theme.disabledColor
+              : widget.dropdownItemDecoration.textColor ??
+                  theme.colorScheme.onSurface,
+          tileColor: Colors.transparent,
+          selectedTileColor: Colors.transparent,
+          onTap: () {
+            if (option.disabled) return;
 
-          if (widget.singleSelect || !_reachedMaxSelection(option)) {
-            widget.onItemTap(option);
-            return;
-          }
-        },
+            if (widget.singleSelect || !_reachedMaxSelection(option)) {
+              widget.onItemTap(option);
+              return;
+            }
+          },
+        ),
       ),
     );
   }

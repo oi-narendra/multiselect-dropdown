@@ -933,6 +933,53 @@ void main() {
       expect(find.byType(MultiDropdown<int>), findsOneWidget);
     });
 
+    testWidgets('clamps dropdown maxHeight to available viewport space (#221)',
+        (tester) async {
+      const configuredMaxHeight = 400.0;
+
+      tester.view.physicalSize = const Size(400, 400);
+      tester.view.devicePixelRatio = 1.0;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: Column(
+              children: [
+                const Spacer(),
+                MultiDropdown<int>(
+                  items: createItems(10),
+                  searchEnabled: true,
+                  dropdownDecoration: const DropdownDecoration(
+                    expandDirection: ExpandDirection.down,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      );
+
+      await tester.tap(find.byType(InkWell));
+      await tester.pumpAndSettle();
+
+      final constrainedDropdown = tester.widgetList<Container>(
+        find.byWidgetPredicate(
+          (widget) =>
+              widget is Container &&
+              widget.constraints != null &&
+              widget.constraints!.maxHeight < configuredMaxHeight,
+        ),
+      );
+
+      expect(constrainedDropdown, isNotEmpty);
+      expect(
+        constrainedDropdown.first.constraints!.maxHeight,
+        lessThan(configuredMaxHeight),
+      );
+    });
+
     // =========================================================================
     // Icon Types (#199, #200)
     // =========================================================================

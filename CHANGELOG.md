@@ -1,5 +1,12 @@
 # ChangeLOG
 
+## 3.2.1
+
+### Bug Fixes
+
+- **ListTile on Flutter 3.44+**: Wrap dropdown item `ListTile` in `Material(type: MaterialType.transparency)` to fix debug assertion when items have a background color (#220)
+- **Viewport overflow**: Clamp overlay dropdown height to available screen space so items remain reachable via scroll on small viewports (#221)
+
 ## 3.2.0
 
 ### Bug Fixes

@@ -1,5 +1,11 @@
 # ChangeLOG
 
+## 3.2.2
+
+### Changed
+
+- **License**: Switched from GPL-3.0 to MIT for broader adoption in commercial Flutter apps
+
 ## 3.2.1
 
 ### Bug Fixes

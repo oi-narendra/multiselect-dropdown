@@ -599,21 +599,24 @@ class _MultiDropdownState<T extends Object> extends State<MultiDropdown<T>> {
                     label: widget.fieldDecoration.labelText ?? 'Dropdown field',
                     button: true,
                     enabled: widget.enabled,
-                    child: InkWell(
-                      mouseCursor: widget.enabled
-                          ? SystemMouseCursors.click
-                          : SystemMouseCursors.forbidden,
-                      onTap: widget.enabled ? _handleTap : null,
-                      focusNode: _focusNode,
-                      canRequestFocus: widget.enabled,
-                      borderRadius: _getFieldBorderRadius(),
-                      child: InputDecorator(
-                        isEmpty: _dropdownController.selectedItems.isEmpty,
-                        isFocused: _dropdownController.isOpen,
-                        decoration: _buildDecoration(),
-                        textAlign: TextAlign.start,
-                        textAlignVertical: TextAlignVertical.center,
-                        child: _buildField(),
+                    child: Material(
+                      type: MaterialType.transparency,
+                      child: InkWell(
+                        mouseCursor: widget.enabled
+                            ? SystemMouseCursors.click
+                            : SystemMouseCursors.forbidden,
+                        onTap: widget.enabled ? _handleTap : null,
+                        focusNode: _focusNode,
+                        canRequestFocus: widget.enabled,
+                        borderRadius: _getFieldBorderRadius(),
+                        child: InputDecorator(
+                          isEmpty: _dropdownController.selectedItems.isEmpty,
+                          isFocused: _dropdownController.isOpen,
+                          decoration: _buildDecoration(),
+                          textAlign: TextAlign.start,
+                          textAlignVertical: TextAlignVertical.center,
+                          child: _buildField(),
+                        ),
                       ),
                     ),
                   );

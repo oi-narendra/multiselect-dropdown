@@ -306,4 +306,4 @@ Key changes:
 
 ## License
 
-[GPL-3.0 License](LICENSE)
+[MIT License](LICENSE)

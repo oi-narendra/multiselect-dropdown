@@ -1,5 +1,15 @@
 # ChangeLOG
 
+## 3.2.2
+
+### Changed
+
+- **License**: Switched from GPL-3.0 to MIT for broader adoption in commercial Flutter apps
+
+### Bug Fixes
+
+- **Field InkWell Material ancestor**: Wrap the field `InkWell` in `Material(type: MaterialType.transparency)` so the dropdown no longer crashes with "No Material widget found" on Flutter 3.47+ (#223, #224)
+
 ## 3.2.1
 
 ### Bug Fixes

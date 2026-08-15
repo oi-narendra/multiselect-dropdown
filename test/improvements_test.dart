@@ -193,6 +193,21 @@ void main() {
   // ===========================================================================
 
   group('Widget: field tap toggle', () {
+    testWidgets('builds without a Material ancestor', (tester) async {
+      await tester.pumpWidget(
+        WidgetsApp(
+          color: Colors.white,
+          builder: (context, _) {
+            return Center(
+              child: MultiDropdown<int>(items: createItems()),
+            );
+          },
+        ),
+      );
+
+      expect(tester.takeException(), isNull);
+    });
+
     testWidgets('tapping field opens dropdown', (tester) async {
       final controller = MultiSelectController<int>();
       await tester.pumpWidget(

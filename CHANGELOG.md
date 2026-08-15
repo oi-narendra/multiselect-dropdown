@@ -9,6 +9,7 @@
 ### Bug Fixes
 
 - **Field InkWell Material ancestor**: Wrap the field `InkWell` in `Material(type: MaterialType.transparency)` so the dropdown no longer crashes with "No Material widget found" on Flutter 3.47+ (#223, #224)
+- **CI publish dry-run**: Commit Flutter 3.47 `analysis_options.yaml` excludes so `flutter pub get` no longer dirties the tree and fails dry-run validation
 
 ## 3.2.1
 

@@ -22,6 +22,18 @@ void main() {
       expect(decoration.fillColor, Colors.white);
     });
 
+    test('SearchFieldDecoration accepts loosely typed borders', () {
+      final border = Object();
+      final focusedBorder = Object();
+      final decoration = SearchFieldDecoration(
+        border: border,
+        focusedBorder: focusedBorder,
+      );
+
+      expect(decoration.border, same(border));
+      expect(decoration.focusedBorder, same(focusedBorder));
+    });
+
     test('DropdownItemDecoration accepts Widget? for icons', () {
       const decoration = DropdownItemDecoration(
         disabledIcon: Icon(Icons.block),

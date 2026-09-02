@@ -52,10 +52,16 @@ class SearchFieldDecoration {
   final String hintText;
 
   /// The border of the search field.
-  final InputBorder? border;
+  ///
+  /// Kept loosely typed to support Flutter 3.47+ standalone `material_ui`
+  /// border objects in addition to legacy Material types.
+  final Object? border;
 
   /// The border of the search field when it is focused.
-  final InputBorder? focusedBorder;
+  ///
+  /// Kept loosely typed to support Flutter 3.47+ standalone `material_ui`
+  /// border objects in addition to legacy Material types.
+  final Object? focusedBorder;
 
   /// The icon to display in the search field.
   final Icon searchIcon;

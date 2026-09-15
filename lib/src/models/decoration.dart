@@ -167,6 +167,9 @@ class DropdownDecoration {
   ///
   /// [borderRadius] is the border radius of the dropdown. The default value is 12.
   ///
+  /// [border] is the outline drawn around the dropdown panel. Defaults to
+  /// null, which draws no outline.
+  ///
   /// [animationDuration] is the duration of the open/close animation. Defaults to 200ms.
   ///
   /// [animationCurve] is the curve of the open/close animation. Defaults to [Curves.easeOutCubic].
@@ -178,6 +181,7 @@ class DropdownDecoration {
     this.marginTop = 0,
     this.listPadding,
     this.borderRadius = const BorderRadius.all(Radius.circular(12)),
+    this.border,
     this.footer,
     this.header,
     this.noItemsFoundText = 'No items found',
@@ -187,6 +191,14 @@ class DropdownDecoration {
     this.animationDuration = const Duration(milliseconds: 200),
     this.animationCurve = Curves.easeOutCubic,
   });
+
+  /// The outline drawn around the dropdown panel.
+  ///
+  /// When null, no outline is drawn and the panel is separated from the
+  /// content behind it only by [elevation]. That is not always enough: when
+  /// the panel and the surface behind it share a background colour, the
+  /// shadow alone can leave the two visually merged.
+  final BorderSide? border;
 
   /// The background color of the dropdown.
   ///

@@ -45,6 +45,20 @@ void main() {
       expect(decoration.expandDirection, ExpandDirection.down);
     });
 
+    test('DropdownDecoration carries an optional panel border', () {
+      const decoration = DropdownDecoration(
+        border: BorderSide(color: Colors.grey, width: 2),
+      );
+
+      expect(decoration.border?.color, Colors.grey);
+      expect(decoration.border?.width, 2);
+    });
+
+    test('DropdownDecoration has no panel border by default', () {
+      const decoration = DropdownDecoration();
+      expect(decoration.border, isNull);
+    });
+
     test('DropdownDecoration defaults to auto expandDirection', () {
       const decoration = DropdownDecoration();
       expect(decoration.expandDirection, ExpandDirection.auto);

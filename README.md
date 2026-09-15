@@ -256,6 +256,7 @@ flutter run
 | elevation        | `double`          | Dropdown elevation              | `1.0`                       |
 | maxHeight        | `double`          | Maximum dropdown height         | `400.0`                     |
 | borderRadius     | `BorderRadius`    | Dropdown border radius          | `BorderRadius.circular(12)` |
+| border           | `BorderSide?`     | Outline around the panel        | `null`                      |
 | marginTop        | `double`          | Gap between field and dropdown  | `0.0`                       |
 | header           | `Widget?`         | Header widget inside dropdown   | `null`                      |
 | footer           | `Widget?`         | Footer widget inside dropdown   | `null`                      |

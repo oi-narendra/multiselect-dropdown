@@ -1,5 +1,13 @@
 # ChangeLOG
 
+## Unreleased
+
+### Added
+
+- **`DropdownDecoration.border`**: optional outline around the dropdown panel.
+  Elevation alone does not separate the panel from content that shares its
+  background colour. Defaults to `null`, so existing panels are unchanged.
+
 ## 3.2.2
 
 ### Changed

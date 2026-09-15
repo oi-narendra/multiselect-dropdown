@@ -182,7 +182,17 @@ class _DropdownState<T> extends State<_Dropdown<T>>
         opacity: _fadeAnimation,
         child: Material(
           elevation: widget.decoration.elevation,
-          borderRadius: widget.decoration.borderRadius,
+          // Material asserts that shape and borderRadius are not both set, so
+          // the radius travels inside the shape whenever a border is given.
+          borderRadius: widget.decoration.border == null
+              ? widget.decoration.borderRadius
+              : null,
+          shape: widget.decoration.border == null
+              ? null
+              : RoundedRectangleBorder(
+                  borderRadius: widget.decoration.borderRadius,
+                  side: widget.decoration.border!,
+                ),
           clipBehavior: Clip.antiAlias,
           color: resolvedBg,
           surfaceTintColor: resolvedBg,

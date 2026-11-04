@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:multi_dropdown/multi_dropdown.dart';
 
 /// Accessibility showcase demonstrating a11y best practices.
@@ -50,13 +50,10 @@ class _AccessibilityExampleState extends State<AccessibilityExample> {
           );
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Accessibility'),
-      ),
+      appBar: AppBar(title: const Text('Accessibility')),
       body: MediaQuery(
-        data: MediaQuery.of(context).copyWith(
-          textScaler: TextScaler.linear(_textScale),
-        ),
+        data: MediaQuery.of(context)
+            .copyWith(textScaler: TextScaler.linear(_textScale)),
         child: ListView(
           padding: const EdgeInsets.all(20),
           children: [
@@ -98,96 +95,98 @@ class _AccessibilityExampleState extends State<AccessibilityExample> {
             const SizedBox(height: 24),
 
             // Accessibility controls
-            Container(
-              padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                color: colorScheme.surfaceContainerHighest.withAlpha(80),
+            Material(
+              color: colorScheme.surfaceContainerHighest.withAlpha(80),
+              shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: colorScheme.outlineVariant),
+                side: BorderSide(color: colorScheme.outlineVariant),
               ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'Live Controls',
-                    style: theme.textTheme.titleSmall?.copyWith(
-                      fontWeight: FontWeight.w600,
+              child: Padding(
+                padding: const EdgeInsets.all(16),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Live Controls',
+                      style: theme.textTheme.titleSmall?.copyWith(
+                        fontWeight: FontWeight.w600,
+                      ),
                     ),
-                  ),
-                  const SizedBox(height: 16),
+                    const SizedBox(height: 16),
 
-                  // Font scale slider
-                  Semantics(
-                    label: 'Font size scale slider',
-                    value: '${(_textScale * 100).round()}%',
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          children: [
-                            const Icon(Icons.text_fields, size: 18),
-                            const SizedBox(width: 8),
-                            Text(
-                              'Font Scale: ${_textScale.toStringAsFixed(1)}x',
-                              style: theme.textTheme.bodyMedium,
-                            ),
-                          ],
-                        ),
-                        Slider(
-                          value: _textScale,
-                          min: 0.8,
-                          max: 2.0,
-                          divisions: 12,
-                          label: '${_textScale.toStringAsFixed(1)}x',
-                          onChanged: (value) {
-                            setState(() => _textScale = value);
-                          },
-                        ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text(
-                              '0.8x',
-                              style: theme.textTheme.bodySmall?.copyWith(
-                                color: colorScheme.onSurfaceVariant,
-                              ),
-                            ),
-                            Text(
-                              '2.0x',
-                              style: theme.textTheme.bodySmall?.copyWith(
-                                color: colorScheme.onSurfaceVariant,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(height: 12),
-
-                  // High contrast toggle
-                  Semantics(
-                    toggled: _highContrast,
-                    label: 'High contrast mode',
-                    child: SwitchListTile(
-                      contentPadding: EdgeInsets.zero,
-                      value: _highContrast,
-                      onChanged: (v) {
-                        setState(() => _highContrast = v);
-                      },
-                      title: Row(
+                    // Font scale slider
+                    Semantics(
+                      label: 'Font size scale slider',
+                      value: '${(_textScale * 100).round()}%',
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          const Icon(Icons.contrast, size: 18),
-                          const SizedBox(width: 8),
-                          Text(
-                            'High Contrast',
-                            style: theme.textTheme.bodyMedium,
+                          Row(
+                            children: [
+                              const Icon(Icons.text_fields, size: 18),
+                              const SizedBox(width: 8),
+                              Text(
+                                'Font Scale: ${_textScale.toStringAsFixed(1)}x',
+                                style: theme.textTheme.bodyMedium,
+                              ),
+                            ],
+                          ),
+                          Slider(
+                            value: _textScale,
+                            min: 0.8,
+                            max: 2.0,
+                            divisions: 12,
+                            label: '${_textScale.toStringAsFixed(1)}x',
+                            onChanged: (value) {
+                              setState(() => _textScale = value);
+                            },
+                          ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                '0.8x',
+                                style: theme.textTheme.bodySmall?.copyWith(
+                                  color: colorScheme.onSurfaceVariant,
+                                ),
+                              ),
+                              Text(
+                                '2.0x',
+                                style: theme.textTheme.bodySmall?.copyWith(
+                                  color: colorScheme.onSurfaceVariant,
+                                ),
+                              ),
+                            ],
                           ),
                         ],
                       ),
                     ),
-                  ),
-                ],
+                    const SizedBox(height: 12),
+
+                    // High contrast toggle
+                    Semantics(
+                      toggled: _highContrast,
+                      label: 'High contrast mode',
+                      child: SwitchListTile(
+                        contentPadding: EdgeInsets.zero,
+                        value: _highContrast,
+                        onChanged: (v) {
+                          setState(() => _highContrast = v);
+                        },
+                        title: Row(
+                          children: [
+                            const Icon(Icons.contrast, size: 18),
+                            const SizedBox(width: 8),
+                            Text(
+                              'High Contrast',
+                              style: theme.textTheme.bodyMedium,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
             const SizedBox(height: 24),
@@ -201,8 +200,9 @@ class _AccessibilityExampleState extends State<AccessibilityExample> {
                   backgroundColor: highContrastColors.chip,
                   labelStyle: TextStyle(
                     color: highContrastColors.chipText,
-                    fontWeight:
-                        _highContrast ? FontWeight.w700 : FontWeight.w400,
+                    fontWeight: _highContrast
+                        ? FontWeight.w700
+                        : FontWeight.w400,
                     fontSize: 13,
                   ),
                   borderRadius: BorderRadius.circular(_highContrast ? 4 : 20),
@@ -264,9 +264,7 @@ class _AccessibilityExampleState extends State<AccessibilityExample> {
                       decoration: BoxDecoration(
                         color: Colors.purple.shade50.withAlpha(60),
                         borderRadius: BorderRadius.circular(12),
-                        border: Border.all(
-                          color: Colors.purple.shade200,
-                        ),
+                        border: Border.all(color: Colors.purple.shade200),
                       ),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,

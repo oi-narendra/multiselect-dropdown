@@ -283,21 +283,23 @@ void main() {
       expect(notifyCount, 1);
     });
 
-    test('closeDropdown is idempotent (does not notify when already closed)',
-        () {
-      var notifyCount = 0;
-      controller
-        ..addListener(() => notifyCount++)
-        ..setItems(createItems())
-        ..openDropdown();
-      notifyCount = 0;
+    test(
+      'closeDropdown is idempotent (does not notify when already closed)',
+      () {
+        var notifyCount = 0;
+        controller
+          ..addListener(() => notifyCount++)
+          ..setItems(createItems())
+          ..openDropdown();
+        notifyCount = 0;
 
-      controller.closeDropdown();
-      expect(notifyCount, 1);
+        controller.closeDropdown();
+        expect(notifyCount, 1);
 
-      controller.closeDropdown(); // already closed
-      expect(notifyCount, 1);
-    });
+        controller.closeDropdown(); // already closed
+        expect(notifyCount, 1);
+      },
+    );
 
     // =========================================================================
     // setItems resets search

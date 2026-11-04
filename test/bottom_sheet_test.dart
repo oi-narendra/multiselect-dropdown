@@ -1,5 +1,5 @@
-import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:multi_dropdown/multi_dropdown.dart';
 
 import 'test_helpers.dart';
@@ -87,8 +87,9 @@ void main() {
     // Title shown from labelText
     // =========================================================================
 
-    testWidgets('bottom sheet shows title from fieldDecoration.labelText',
-        (tester) async {
+    testWidgets('bottom sheet shows title from fieldDecoration.labelText', (
+      tester,
+    ) async {
       final controller = MultiSelectController<int>();
       await tester.pumpWidget(
         buildTestApp(

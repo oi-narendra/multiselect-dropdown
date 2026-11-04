@@ -1,7 +1,7 @@
 import 'dart:async';
 
-import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:multi_dropdown/multi_dropdown.dart';
 
 import 'test_helpers.dart';
@@ -263,7 +263,9 @@ void main() {
       // Pump once to trigger the future and show the loading indicator
       await tester.pump();
 
-      final sizedBox = tester.widgetList<SizedBox>(find.byType(SizedBox)).where(
+      final sizedBox = tester
+          .widgetList<SizedBox>(find.byType(SizedBox))
+          .where(
             (box) => box.width == 24 && box.height == 24,
           );
       expect(sizedBox.isNotEmpty, isTrue);
@@ -447,8 +449,9 @@ void main() {
   // ===========================================================================
 
   group('Widget: empty state', () {
-    testWidgets('shows noItemsFoundText when items list is empty',
-        (tester) async {
+    testWidgets('shows noItemsFoundText when items list is empty', (
+      tester,
+    ) async {
       final controller = MultiSelectController<int>();
       await tester.pumpWidget(
         buildTestApp(
@@ -475,8 +478,9 @@ void main() {
   // ===========================================================================
 
   group('Widget: dropdown list padding', () {
-    testWidgets('ListView has zero padding by default (fixes #120, #172)',
-        (tester) async {
+    testWidgets('ListView has zero padding by default (fixes #120, #172)', (
+      tester,
+    ) async {
       final controller = MultiSelectController<int>();
       await tester.pumpWidget(
         buildTestApp(

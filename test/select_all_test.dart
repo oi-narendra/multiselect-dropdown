@@ -1,5 +1,5 @@
-import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:multi_dropdown/multi_dropdown.dart';
 
 import 'test_helpers.dart';
@@ -25,8 +25,9 @@ void main() {
       controller.dispose();
     });
 
-    testWidgets('select all toggle appears when showSelectAll is true',
-        (tester) async {
+    testWidgets('select all toggle appears when showSelectAll is true', (
+      tester,
+    ) async {
       final controller = MultiSelectController<int>();
       await tester.pumpWidget(
         buildTestApp(
@@ -45,8 +46,9 @@ void main() {
       controller.dispose();
     });
 
-    testWidgets('select all toggle is hidden in single-select mode',
-        (tester) async {
+    testWidgets('select all toggle is hidden in single-select mode', (
+      tester,
+    ) async {
       final controller = MultiSelectController<int>();
       await tester.pumpWidget(
         buildTestApp(
@@ -131,8 +133,9 @@ void main() {
     // Custom labels
     // =========================================================================
 
-    testWidgets('custom labels from DropdownDecoration are used',
-        (tester) async {
+    testWidgets('custom labels from DropdownDecoration are used', (
+      tester,
+    ) async {
       final controller = MultiSelectController<int>();
       await tester.pumpWidget(
         buildTestApp(

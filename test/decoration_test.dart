@@ -1,5 +1,5 @@
-import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:multi_dropdown/multi_dropdown.dart';
 
 void main() {
@@ -20,6 +20,18 @@ void main() {
       expect(decoration.autofocus, true);
       expect(decoration.cursorColor, Colors.blue);
       expect(decoration.fillColor, Colors.white);
+    });
+
+    test('SearchFieldDecoration accepts material_ui borders', () {
+      const border = UnderlineInputBorder();
+      const focusedBorder = OutlineInputBorder();
+      const decoration = SearchFieldDecoration(
+        border: border,
+        focusedBorder: focusedBorder,
+      );
+
+      expect(decoration.border, same(border));
+      expect(decoration.focusedBorder, same(focusedBorder));
     });
 
     test('DropdownItemDecoration accepts Widget? for icons', () {
@@ -43,6 +55,20 @@ void main() {
 
       expect(decoration.noItemsFoundText, 'Custom empty text');
       expect(decoration.expandDirection, ExpandDirection.down);
+    });
+
+    test('DropdownDecoration carries an optional panel border', () {
+      const decoration = DropdownDecoration(
+        border: BorderSide(color: Colors.grey, width: 2),
+      );
+
+      expect(decoration.border?.color, Colors.grey);
+      expect(decoration.border?.width, 2);
+    });
+
+    test('DropdownDecoration has no panel border by default', () {
+      const decoration = DropdownDecoration();
+      expect(decoration.border, isNull);
     });
 
     test('DropdownDecoration defaults to auto expandDirection', () {

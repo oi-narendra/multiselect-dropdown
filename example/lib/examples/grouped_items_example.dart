@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:multi_dropdown/multi_dropdown.dart';
 
 /// Demonstrates grouped / sectioned dropdown items.
@@ -90,10 +90,7 @@ class _GroupedItemsExampleState extends State<GroupedItemsExample> {
                 color: colorScheme.primary,
                 fontSize: 14,
               ),
-              padding: const EdgeInsets.symmetric(
-                horizontal: 16,
-                vertical: 10,
-              ),
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
             ),
             fieldDecoration: FieldDecoration(
               hintText: 'Build your grocery list',
@@ -104,10 +101,7 @@ class _GroupedItemsExampleState extends State<GroupedItemsExample> {
               ),
               focusedBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(14),
-                borderSide: BorderSide(
-                  color: colorScheme.primary,
-                  width: 2,
-                ),
+                borderSide: BorderSide(color: colorScheme.primary, width: 2),
               ),
             ),
             onSelectionChange: (values) {

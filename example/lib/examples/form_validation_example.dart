@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:multi_dropdown/multi_dropdown.dart';
 
 /// Job application form with validation, max selections, and submit flow.
@@ -56,9 +56,7 @@ class _FormValidationExampleState extends State<FormValidationExample> {
     final colorScheme = theme.colorScheme;
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Job Application'),
-      ),
+      appBar: AppBar(title: const Text('Job Application')),
       body: ListView(
         padding: const EdgeInsets.all(20),
         children: [
@@ -358,10 +356,10 @@ class _FormValidationExampleState extends State<FormValidationExample> {
                             label: 'Role',
                             value: _selectedRole != null
                                 ? _roleItems
-                                    .firstWhere(
-                                      (i) => i.value == _selectedRole,
-                                    )
-                                    .label
+                                      .firstWhere(
+                                        (i) => i.value == _selectedRole,
+                                      )
+                                      .label
                                 : '—',
                           ),
                           const SizedBox(height: 8),
@@ -403,12 +401,7 @@ class _ResultRow extends StatelessWidget {
             ),
           ),
         ),
-        Expanded(
-          child: Text(
-            value,
-            style: const TextStyle(fontSize: 13),
-          ),
-        ),
+        Expanded(child: Text(value, style: const TextStyle(fontSize: 13))),
       ],
     );
   }

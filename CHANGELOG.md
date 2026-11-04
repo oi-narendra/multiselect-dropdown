@@ -1,5 +1,25 @@
 # ChangeLOG
 
+## 4.0.0
+
+### Breaking Changes
+
+- Migrated Material widgets and public decoration types to `package:material_ui/material_ui.dart`. Consumers must migrate their Material imports and app theme; see the README migration guide.
+- Requires Flutter 3.47+ and Dart 3.13+, with a direct dependency on `material_ui` ^1.4.0.
+
+### Bug Fixes
+
+- Bottom-sheet search expands on focus and keeps results above the keyboard.
+- Grouped items stay visible after selection or changes to their disabled state.
+- Fixed custom `ListTile` items reporting hidden backgrounds and ink splashes.
+- Removed the `dart:io` import used for desktop keyboard shortcuts (#130).
+- Fixed standalone Material input borders in search fields (#226, #227). Borders remain strongly typed as `InputBorder?` and render correctly in overlay and bottom-sheet modes, without dynamic casts.
+
+### Added
+
+- Optional dropdown panel border (`DropdownDecoration.border`, #228).
+- Scroll wrapped chips within `ChipDecoration.wrapMaxHeight` (#229).
+
 ## 3.2.2
 
 ### Changed

@@ -1,5 +1,5 @@
-import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:multi_dropdown/multi_dropdown.dart';
 
 import 'test_helpers.dart';
@@ -77,8 +77,9 @@ void main() {
       controller.dispose();
     });
 
-    testWidgets('custom filter returns empty shows no items found',
-        (tester) async {
+    testWidgets('custom filter returns empty shows no items found', (
+      tester,
+    ) async {
       final controller = MultiSelectController<int>();
       await tester.pumpWidget(
         buildTestApp(
@@ -104,8 +105,9 @@ void main() {
       controller.dispose();
     });
 
-    testWidgets('null searchFilter uses default contains logic',
-        (tester) async {
+    testWidgets('null searchFilter uses default contains logic', (
+      tester,
+    ) async {
       final controller = MultiSelectController<int>();
       await tester.pumpWidget(
         buildTestApp(
@@ -138,8 +140,9 @@ void main() {
     // Custom filter receives correct arguments
     // =========================================================================
 
-    testWidgets('custom filter receives full items list and query',
-        (tester) async {
+    testWidgets('custom filter receives full items list and query', (
+      tester,
+    ) async {
       final controller = MultiSelectController<int>();
       String? capturedQuery;
       int? capturedItemCount;

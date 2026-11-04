@@ -6,7 +6,7 @@
 ///
 /// See the [example app](https://github.com/oi-narendra/multiselect-dropdown/tree/main/example)
 /// for real-world usage demonstrations.
-library multi_dropdown;
+library;
 
 import 'package:multi_dropdown/multi_dropdown.dart'
     show DropdownItem, MultiDropdown, MultiSelectController;

@@ -43,8 +43,34 @@ Add to your `pubspec.yaml`:
 
 ```yaml
 dependencies:
-  multi_dropdown: ^3.2.1
+  multi_dropdown: ^4.0.0
+  material_ui: ^1.4.0
 ```
+
+Requires Flutter 3.47+ and Dart 3.13+.
+
+## Migrating from 3.x
+
+Version 4 uses the standalone `material_ui` library throughout. Replace
+`import 'package:flutter/material.dart';` with
+`import 'package:material_ui/material_ui.dart';` in code that builds your
+Material app or supplies decorations to `MultiDropdown`.
+
+```dart
+import 'package:material_ui/material_ui.dart';
+import 'package:multi_dropdown/multi_dropdown.dart';
+```
+
+Use `material_ui`'s `MaterialApp`, `ThemeData`, `InputDecoration`, and input
+borders together. This includes both `SearchFieldDecoration` and
+`FieldDecoration`. Their borders remain strongly typed as `InputBorder?`;
+legacy Flutter Material borders are not interchangeable with them.
+`MaterialUiCompatibilityBridge` can bridge inherited theme/localization data,
+but does not convert border objects between libraries.
+
+Apps that still use `package:flutter/material.dart` should stay on
+`multi_dropdown: ^3.2.2` until they migrate. See the
+[official material_ui migration instructions](https://pub.dev/packages/material_ui#migrating-existing-code-to-this-package).
 
 ## Quick Start
 
@@ -225,6 +251,7 @@ flutter run
 | borderRadius    | `BorderRadiusGeometry` | Chip border radius                  | `BorderRadius.circular(12)`                         |
 | wrap            | `bool`                 | Wrap chips or scroll horizontally   | `true`                                              |
 | maxDisplayCount | `int?`                 | Max visible chips (shows "+N more") | `null`                                              |
+| wrapMaxHeight | `double?` | Max height before wrapped chips scroll vertically | `null` |
 
 ### FieldDecoration
 
@@ -256,6 +283,7 @@ flutter run
 | elevation        | `double`          | Dropdown elevation              | `1.0`                       |
 | maxHeight        | `double`          | Maximum dropdown height         | `400.0`                     |
 | borderRadius     | `BorderRadius`    | Dropdown border radius          | `BorderRadius.circular(12)` |
+| border           | `BorderSide?`     | Outline around the overlay panel | `null`                      |
 | marginTop        | `double`          | Gap between field and dropdown  | `0.0`                       |
 | header           | `Widget?`         | Header widget inside dropdown   | `null`                      |
 | footer           | `Widget?`         | Footer widget inside dropdown   | `null`                      |

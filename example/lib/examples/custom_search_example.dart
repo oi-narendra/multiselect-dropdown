@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:multi_dropdown/multi_dropdown.dart';
 
 /// Demonstrates custom search filter functionality.
@@ -90,10 +90,7 @@ class _CustomSearchExampleState extends State<CustomSearchExample> {
               ),
               focusedBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(14),
-                borderSide: BorderSide(
-                  color: colorScheme.primary,
-                  width: 2,
-                ),
+                borderSide: BorderSide(color: colorScheme.primary, width: 2),
               ),
             ),
             onSelectionChange: (values) {

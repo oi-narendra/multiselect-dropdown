@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:multi_dropdown/multi_dropdown.dart';
 
 /// Demonstrates the bottom sheet presentation mode.
@@ -81,10 +81,7 @@ class _BottomSheetExampleState extends State<BottomSheetExample> {
               ),
               focusedBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(14),
-                borderSide: BorderSide(
-                  color: colorScheme.primary,
-                  width: 2,
-                ),
+                borderSide: BorderSide(color: colorScheme.primary, width: 2),
               ),
             ),
             onSelectionChange: (values) {

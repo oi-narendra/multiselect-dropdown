@@ -395,10 +395,13 @@ class _DropdownState<T> extends State<_Dropdown<T>>
 
   Widget _buildOption(DropdownItem<T> option, ThemeData theme) {
     if (widget.itemBuilder != null) {
-      return widget.itemBuilder!(
-        option,
-        widget.items.indexOf(option),
-        () => widget.onItemTap(option),
+      return Material(
+        type: MaterialType.transparency,
+        child: widget.itemBuilder!(
+          option,
+          widget.items.indexOf(option),
+          () => widget.onItemTap(option),
+        ),
       );
     }
 

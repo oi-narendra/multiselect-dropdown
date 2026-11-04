@@ -9,6 +9,7 @@
 
 ### Bug Fixes
 
+- Fixed custom `ListTile` items reporting hidden backgrounds and ink splashes.
 - Removed the `dart:io` import used for desktop keyboard shortcuts (#130).
 - Fixed standalone Material input borders in search fields (#226, #227). Borders remain strongly typed as `InputBorder?` and render correctly in overlay and bottom-sheet modes, without dynamic casts.
 

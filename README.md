@@ -149,6 +149,40 @@ MultiDropdown<int>.future(
 );
 ```
 
+### Remote Search and Pagination
+
+Use `MultiDropdown.remote` when your API searches and returns one page at a time:
+
+```dart
+MultiDropdown<int>.remote(
+  request: (query, cursor) async {
+    final page = await api.searchUsers(query: query, cursor: cursor);
+    return DropdownPage(
+      items: [
+        for (final user in page.users)
+          DropdownItem(label: user.name, value: user.id),
+      ],
+      nextCursor: page.nextCursor,
+    );
+  },
+)
+```
+
+The first request has a null cursor. Return a null `nextCursor` for the last
+page. Scrolling loads more results; the Load more button also works for short
+pages. Failed requests show Retry. Search is debounced by 300 ms by default
+(`searchDecoration.searchDebounceMs`), and stale responses are ignored.
+
+Selections survive searches. Item values must have stable equality; duplicate
+values are merged. Use `initialItems` for preselected values; selection flags
+in fetched pages are ignored. Closing and reopening keeps the query and pages;
+`controller.clearSearch()` resets the search. Both overlay and bottom-sheet
+modes support `loadingBuilder` and `errorBuilder` for custom status widgets.
+Keep the request callback stable across rebuilds; changing it reloads the query.
+
+See [the remote example](example/lib/examples/remote_example.dart) for pagination
+and retry without a network connection.
+
 ## Controller
 
 Use `MultiSelectController` to programmatically control the dropdown:

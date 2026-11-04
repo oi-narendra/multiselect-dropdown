@@ -7,6 +7,9 @@ import 'package:flutter/services.dart';
 import 'package:material_ui/material_ui.dart';
 
 part 'controllers/future_controller.dart';
+part 'controllers/remote_controller.dart';
+part 'models/dropdown_page.dart';
+part 'widgets/remote_status.dart';
 part 'controllers/multiselect_controller.dart';
 part 'enum/enums.dart';
 part 'models/decoration.dart';
@@ -135,7 +138,10 @@ class MultiDropdown<T extends Object> extends StatefulWidget {
     this.onSearchChange,
     this.closeOnBackButton = false,
     super.key,
-  }) : future = null;
+  }) : future = null,
+       remoteRequest = null,
+       loadingBuilder = null,
+       errorBuilder = null;
 
   /// Creates a multiselect dropdown widget with future request.
   ///
@@ -187,7 +193,59 @@ class MultiDropdown<T extends Object> extends StatefulWidget {
     this.onSearchChange,
     this.closeOnBackButton = false,
     super.key,
-  }) : items = const [];
+  }) : items = const [],
+       remoteRequest = null,
+       loadingBuilder = null,
+       errorBuilder = null;
+
+  /// Search and paginate a remote data source.
+  ///
+  /// [request] receives the query and an opaque cursor (null for the first page).
+  /// Selected values survive searches. Values must have stable equality and
+  /// hash codes. [initialItems] can supply initially selected items.
+  /// Closing the dropdown preserves its query and loaded pages.
+  const MultiDropdown.remote({
+    required RemoteRequest<T> request,
+    List<DropdownItem<T>> initialItems = const [],
+    this.fieldDecoration = const FieldDecoration(),
+    this.dropdownDecoration = const DropdownDecoration(),
+    this.searchDecoration = const SearchFieldDecoration(searchDebounceMs: 300),
+    this.dropdownItemDecoration = const DropdownItemDecoration(),
+    this.autovalidateMode = AutovalidateMode.disabled,
+    this.singleSelect = false,
+    this.dropdownMode = DropdownMode.overlay,
+    this.itemSeparator,
+    this.controller,
+    this.validator,
+    this.itemBuilder,
+    this.enabled = true,
+    this.chipDecoration = const ChipDecoration(),
+    this.maxSelections = 0,
+    this.selectedItemBuilder,
+    this.focusNode,
+    this.onSelectionChange,
+    this.onSearchChange,
+    this.closeOnBackButton = false,
+    this.loadingBuilder,
+    this.errorBuilder,
+    super.key,
+  }) : items = initialItems,
+       remoteRequest = request,
+       future = null,
+       groups = null,
+       groupHeaderDecoration = const GroupHeaderDecoration(),
+       searchFilter = null,
+       searchEnabled = true,
+       showSelectAll = false;
+
+  /// Remote page loader used by [MultiDropdown.remote].
+  final RemoteRequest<T>? remoteRequest;
+
+  /// Optional loading indicator for remote requests.
+  final WidgetBuilder? loadingBuilder;
+
+  /// Optional remote error UI. Use the supplied callback to retry the page.
+  final RemoteErrorBuilder? errorBuilder;
 
   /// The list of dropdown items.
   ///
@@ -330,10 +388,13 @@ class _MultiDropdownState<T extends Object> extends State<MultiDropdown<T>> {
   late MultiSelectController<T> _dropdownController =
       widget.controller ?? MultiSelectController<T>();
   final _FutureController _loadingController = _FutureController();
+  final ValueNotifier<int> _panelChanges = ValueNotifier(0);
 
   late FocusNode _focusNode = widget.focusNode ?? FocusNode();
 
-  late final Listenable _listenable = Listenable.merge([
+  _RemoteController<T>? _remote;
+
+  Listenable get _listenable => Listenable.merge([
     _dropdownController,
     _loadingController,
   ]);
@@ -353,6 +414,17 @@ class _MultiDropdownState<T extends Object> extends State<MultiDropdown<T>> {
       throw StateError('DropdownController is disposed');
     }
 
+    if (widget.remoteRequest != null) {
+      _remote = _RemoteController<T>(
+        widget.remoteRequest!,
+        debounce: Duration(
+          milliseconds: widget.searchDecoration.searchDebounceMs,
+        ),
+      );
+      _remote!.addListener(_remoteChanged);
+      _dropdownController._remoteSearch = _remote!.search;
+    }
+
     if (widget.future != null) {
       unawaited(_handleFuture());
     }
@@ -363,16 +435,47 @@ class _MultiDropdownState<T extends Object> extends State<MultiDropdown<T>> {
         ..setItems(_effectiveItems);
     }
 
+    final controller = _dropdownController;
     WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted || !identical(controller, _dropdownController)) return;
       _dropdownController
         ..addListener(_controllerListener)
         .._setOnSelectionChange(widget.onSelectionChange)
         .._setOnSearchChange(widget.onSearchChange)
         .._setSearchFilter(widget.searchFilter);
 
+      _remote?.start(_dropdownController._searchQuery);
+
       // if close on back button is enabled, then add the listener
       _listenBackButton();
     });
+  }
+
+  void _remoteChanged() {
+    if (!mounted || _dropdownController.isDisposed) return;
+    _dropdownController._setRemoteItems(_remote!.items);
+  }
+
+  Widget? get _remoteStatus => _remote == null
+      ? null
+      : _RemoteStatus(
+          loading: _remote!.loading,
+          error: _remote!.error,
+          hasMore: _remote!.nextCursor != null,
+          onLoadMore: _remote!.loadMore,
+          onRetry: _remote!.retry,
+          loadingBuilder: widget.loadingBuilder,
+          errorBuilder: widget.errorBuilder,
+        );
+
+  bool get _showEmpty =>
+      _remote == null || (!_remote!.loading && _remote!.error == null);
+
+  void _detachRemote() {
+    _remote?.dispose();
+    _remote = null;
+    _dropdownController._remoteSearch = null;
+    _dropdownController._remoteValues = null;
   }
 
   void _listenBackButton() {
@@ -421,6 +524,8 @@ class _MultiDropdownState<T extends Object> extends State<MultiDropdown<T>> {
   }
 
   void _controllerListener() {
+    if (!mounted) return;
+    _panelChanges.value++;
     // update the form field state when the controller changes
     _formFieldKey.currentState?.didChange(_dropdownController.selectedItems);
 
@@ -430,7 +535,7 @@ class _MultiDropdownState<T extends Object> extends State<MultiDropdown<T>> {
       if (_dropdownController.isOpen) {
         _portalController.show();
       } else {
-        _dropdownController._clearSearchQuery();
+        if (_remote == null) _dropdownController._clearSearchQuery();
         _portalController.hide();
       }
     }
@@ -438,22 +543,41 @@ class _MultiDropdownState<T extends Object> extends State<MultiDropdown<T>> {
 
   @override
   void didUpdateWidget(covariant MultiDropdown<T> oldWidget) {
-    // if the controller is changed, then dispose the old controller
-    // and initialize the new controller.
-    if (oldWidget.controller != widget.controller) {
-      _dropdownController
-        ..removeListener(_controllerListener)
-        ..dispose();
-
+    if (!identical(oldWidget.controller, widget.controller)) {
+      _detachRemote();
+      _dropdownController.removeListener(_controllerListener);
+      _dropdownController._setOnSelectionChange(null);
+      _dropdownController._setOnSearchChange(null);
+      if (oldWidget.controller == null) _dropdownController.dispose();
       _dropdownController = widget.controller ?? MultiSelectController<T>();
-
       unawaited(_initializeController());
+    } else if (oldWidget.remoteRequest != widget.remoteRequest ||
+        oldWidget.searchDecoration.searchDebounceMs !=
+            widget.searchDecoration.searchDebounceMs) {
+      final query = _dropdownController._searchQuery;
+      _detachRemote();
+      if (widget.remoteRequest != null) {
+        _remote = _RemoteController<T>(
+          widget.remoteRequest!,
+          debounce: Duration(
+            milliseconds: widget.searchDecoration.searchDebounceMs,
+          ),
+        );
+        _remote!.addListener(_remoteChanged);
+        _dropdownController._remoteSearch = _remote!.search;
+        final remote = _remote;
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          if (mounted && identical(remote, _remote)) remote!.start(query);
+        });
+      }
     }
+    _dropdownController._setOnSelectionChange(widget.onSelectionChange);
+    _dropdownController._setOnSearchChange(widget.onSearchChange);
 
     // if the focus node is changed, then dispose the old focus node
     // and initialize the new focus node.
     if (oldWidget.focusNode != widget.focusNode) {
-      _focusNode.dispose();
+      if (oldWidget.focusNode == null) _focusNode.dispose();
       _focusNode = widget.focusNode ?? FocusNode();
     }
 
@@ -462,6 +586,9 @@ class _MultiDropdownState<T extends Object> extends State<MultiDropdown<T>> {
 
   @override
   void dispose() {
+    _detachRemote();
+    _dropdownController._setOnSelectionChange(null);
+    _dropdownController._setOnSearchChange(null);
     _dropdownController.removeListener(_controllerListener);
 
     if (widget.controller == null) {
@@ -469,6 +596,7 @@ class _MultiDropdownState<T extends Object> extends State<MultiDropdown<T>> {
     }
 
     _loadingController.dispose();
+    _panelChanges.dispose();
     if (widget.focusNode == null) {
       _focusNode.dispose();
     }
@@ -577,6 +705,13 @@ class _MultiDropdownState<T extends Object> extends State<MultiDropdown<T>> {
                       groupHeaderDecoration: widget.groupHeaderDecoration,
                       onSelectAll: _dropdownController.selectAll,
                       onDeselectAll: _dropdownController.clearAll,
+                      remoteStatus: _remoteStatus,
+                      onLoadMore: _remote?.loadMore,
+                      showEmpty: _showEmpty,
+                      searchQuery: _remote == null
+                          ? null
+                          : _dropdownController._searchQuery,
+                      selectedCount: _dropdownController.selectedItems.length,
                     ),
                   ),
                 ),
@@ -627,7 +762,17 @@ class _MultiDropdownState<T extends Object> extends State<MultiDropdown<T>> {
     );
   }
 
-  void _handleDropdownItemTap(DropdownItem<T> item) {
+  void _handleDropdownItemTap(
+    DropdownItem<T> item, {
+    BuildContext? sheetContext,
+  }) {
+    if (item.disabled ||
+        (!widget.singleSelect &&
+            !item.selected &&
+            widget.maxSelections > 0 &&
+            _dropdownController.selectedItems.length >= widget.maxSelections)) {
+      return;
+    }
     if (widget.singleSelect) {
       _dropdownController._toggleOnly(item);
     } else {
@@ -636,7 +781,9 @@ class _MultiDropdownState<T extends Object> extends State<MultiDropdown<T>> {
     _formFieldKey.currentState?.didChange(_dropdownController.selectedItems);
 
     if (widget.singleSelect) {
+      if (sheetContext != null) Navigator.of(sheetContext).pop();
       WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (!mounted || _dropdownController.isDisposed) return;
         _dropdownController.closeDropdown();
       });
     }
@@ -983,7 +1130,7 @@ class _MultiDropdownState<T extends Object> extends State<MultiDropdown<T>> {
           return _DropdownBottomSheet(
             builder: (_, scrollController, searchFocusNode) {
               return ListenableBuilder(
-                listenable: _dropdownController,
+                listenable: _panelChanges,
                 builder: (ctx, _) {
                   final theme = Theme.of(ctx);
                   final keyboardOpen = MediaQuery.viewInsetsOf(ctx).bottom > 0;
@@ -1035,53 +1182,78 @@ class _MultiDropdownState<T extends Object> extends State<MultiDropdown<T>> {
                                 decoration: widget.searchDecoration,
                                 focusNode: searchFocusNode,
                                 onChanged: _dropdownController._setSearchQuery,
+                                debounce: _remote == null,
+                                query: _remote == null
+                                    ? null
+                                    : _dropdownController._searchQuery,
                               ),
                             ),
                           // Items list
                           Expanded(
-                            child: _dropdownController.items.isEmpty
-                                ? CustomScrollView(
-                                    controller: scrollController,
-                                    slivers: [
-                                      SliverFillRemaining(
-                                        hasScrollBody: false,
-                                        child: Center(
-                                          child: Text(
-                                            widget
-                                                .dropdownDecoration
-                                                .noItemsFoundText,
-                                            style: theme.textTheme.bodyMedium,
+                            child: NotificationListener<ScrollNotification>(
+                              onNotification: (notification) {
+                                if (notification.depth == 0 &&
+                                    notification.metrics.extentAfter < 80) {
+                                  _remote?.loadMore();
+                                }
+                                return false;
+                              },
+                              child: _dropdownController.items.isEmpty
+                                  ? CustomScrollView(
+                                      controller: scrollController,
+                                      slivers: [
+                                        SliverFillRemaining(
+                                          hasScrollBody: false,
+                                          child: Center(
+                                            child: !_showEmpty
+                                                ? const SizedBox.shrink()
+                                                : Text(
+                                                    widget
+                                                        .dropdownDecoration
+                                                        .noItemsFoundText,
+                                                    style: theme
+                                                        .textTheme
+                                                        .bodyMedium,
+                                                  ),
                                           ),
                                         ),
-                                      ),
-                                    ],
-                                  )
-                                : ListView.separated(
-                                    controller: scrollController,
-                                    padding:
-                                        widget.dropdownDecoration.listPadding ??
-                                        EdgeInsets.zero,
-                                    itemCount: _dropdownController.items.length,
-                                    separatorBuilder: (_, _) =>
-                                        widget.itemSeparator ??
-                                        const SizedBox.shrink(),
-                                    itemBuilder: (_, index) {
-                                      final item =
-                                          _dropdownController.items[index];
-                                      if (widget.itemBuilder != null) {
-                                        return widget.itemBuilder!(
+                                      ],
+                                    )
+                                  : ListView.separated(
+                                      controller: scrollController,
+                                      padding:
+                                          widget
+                                              .dropdownDecoration
+                                              .listPadding ??
+                                          EdgeInsets.zero,
+                                      itemCount:
+                                          _dropdownController.items.length,
+                                      separatorBuilder: (_, _) =>
+                                          widget.itemSeparator ??
+                                          const SizedBox.shrink(),
+                                      itemBuilder: (_, index) {
+                                        final item =
+                                            _dropdownController.items[index];
+                                        if (widget.itemBuilder != null) {
+                                          return widget.itemBuilder!(
+                                            item,
+                                            index,
+                                            () => _handleDropdownItemTap(
+                                              item,
+                                              sheetContext: sheetContext,
+                                            ),
+                                          );
+                                        }
+                                        return _buildBottomSheetItem(
                                           item,
-                                          index,
-                                          () => _handleDropdownItemTap(item),
+                                          theme,
+                                          sheetContext,
                                         );
-                                      }
-                                      return _buildBottomSheetItem(
-                                        item,
-                                        theme,
-                                      );
-                                    },
-                                  ),
+                                      },
+                                    ),
+                            ),
                           ),
+                          ?_remoteStatus,
                         ],
                       );
                     },
@@ -1092,13 +1264,20 @@ class _MultiDropdownState<T extends Object> extends State<MultiDropdown<T>> {
           );
         },
       ).whenComplete(() {
-        _dropdownController._clearSearchQuery(notify: true);
+        if (!mounted || _dropdownController.isDisposed) return;
+        if (_remote == null) {
+          _dropdownController._clearSearchQuery(notify: true);
+        }
         _dropdownController.closeDropdown();
       }),
     );
   }
 
-  Widget _buildBottomSheetItem(DropdownItem<T> item, ThemeData theme) {
+  Widget _buildBottomSheetItem(
+    DropdownItem<T> item,
+    ThemeData theme,
+    BuildContext sheetContext,
+  ) {
     final selected = item.selected;
     final disabled = item.disabled;
 
@@ -1113,7 +1292,7 @@ class _MultiDropdownState<T extends Object> extends State<MultiDropdown<T>> {
           ? Icon(Icons.check_circle, color: theme.colorScheme.primary)
           : null,
       enabled: !disabled,
-      onTap: () => _handleDropdownItemTap(item),
+      onTap: () => _handleDropdownItemTap(item, sheetContext: sheetContext),
     );
   }
 

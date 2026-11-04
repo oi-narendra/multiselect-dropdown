@@ -24,7 +24,18 @@ class _Dropdown<T> extends StatefulWidget {
     this.showSelectAll = false,
     this.onSelectAll,
     this.onDeselectAll,
+    this.remoteStatus,
+    this.onLoadMore,
+    this.showEmpty = true,
+    this.searchQuery,
+    this.selectedCount,
   });
+
+  final Widget? remoteStatus;
+  final VoidCallback? onLoadMore;
+  final bool showEmpty;
+  final String? searchQuery;
+  final int? selectedCount;
 
   /// The decoration of the dropdown.
   final DropdownDecoration decoration;
@@ -103,6 +114,7 @@ class _DropdownState<T> extends State<_Dropdown<T>>
   late final Animation<Offset> _slideAnimation;
 
   int get _selectedCount =>
+      widget.selectedCount ??
       widget.items.where((element) => element.selected).length;
 
   static const Map<ShortcutActivator, Intent> _webShortcuts =
@@ -221,6 +233,8 @@ class _DropdownState<T> extends State<_Dropdown<T>>
                     _SearchField(
                       decoration: widget.searchDecoration,
                       onChanged: _onSearchChange,
+                      debounce: widget.remoteStatus == null,
+                      query: widget.searchQuery,
                     ),
                   if (widget.decoration.header != null)
                     Flexible(child: widget.decoration.header!),
@@ -230,7 +244,7 @@ class _DropdownState<T> extends State<_Dropdown<T>>
                     _buildSelectAllToggle(theme),
                   if (widget.items.isNotEmpty)
                     Flexible(child: _buildItemsList(theme)),
-                  if (widget.items.isEmpty)
+                  if (widget.items.isEmpty && widget.showEmpty)
                     Padding(
                       padding: const EdgeInsets.all(12),
                       child: Text(
@@ -239,6 +253,7 @@ class _DropdownState<T> extends State<_Dropdown<T>>
                         style: theme.textTheme.bodyMedium,
                       ),
                     ),
+                  if (widget.remoteStatus != null) widget.remoteStatus!,
                   if (widget.decoration.footer != null)
                     Flexible(child: widget.decoration.footer!),
                 ],
@@ -264,7 +279,15 @@ class _DropdownState<T> extends State<_Dropdown<T>>
     if (_isGrouped) {
       return _buildGroupedList(theme);
     }
-    return _buildFlatList(theme);
+    return NotificationListener<ScrollNotification>(
+      onNotification: (notification) {
+        if (notification.depth == 0 && notification.metrics.extentAfter < 80) {
+          widget.onLoadMore?.call();
+        }
+        return false;
+      },
+      child: _buildFlatList(theme),
+    );
   }
 
   /// Builds the Select All / Deselect All toggle row.
@@ -489,6 +512,8 @@ class _SearchField extends StatefulWidget {
     required this.decoration,
     required this.onChanged,
     this.focusNode,
+    this.debounce = true,
+    this.query,
   });
 
   final SearchFieldDecoration decoration;
@@ -496,20 +521,33 @@ class _SearchField extends StatefulWidget {
   final ValueChanged<String> onChanged;
 
   final FocusNode? focusNode;
+  final bool debounce;
+  final String? query;
 
   @override
   State<_SearchField> createState() => _SearchFieldState();
 }
 
 class _SearchFieldState extends State<_SearchField> {
-  late final TextEditingController _controller = TextEditingController();
+  late final TextEditingController _controller = TextEditingController(
+    text: widget.query,
+  );
   bool _hasText = false;
   Timer? _debounce;
 
   @override
   void initState() {
     super.initState();
+    _hasText = _controller.text.isNotEmpty;
     _controller.addListener(_onTextChanged);
+  }
+
+  @override
+  void didUpdateWidget(covariant _SearchField oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.query != null && widget.query != _controller.text) {
+      _controller.text = widget.query!;
+    }
   }
 
   void _onTextChanged() {
@@ -523,7 +561,7 @@ class _SearchFieldState extends State<_SearchField> {
 
   void _handleSearchChange(String value) {
     final debounceMs = widget.decoration.searchDebounceMs;
-    if (debounceMs <= 0) {
+    if (!widget.debounce || debounceMs <= 0) {
       widget.onChanged(value);
       return;
     }

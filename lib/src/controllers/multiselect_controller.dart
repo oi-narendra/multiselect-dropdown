@@ -28,13 +28,40 @@ class MultiSelectController<T> extends ChangeNotifier {
   List<DropdownItem<T>> _filteredItems = [];
 
   String _searchQuery = '';
+  Set<T>? _remoteValues;
+  List<DropdownItem<T>>? _cachedRemoteItems;
+  ValueChanged<String>? _remoteSearch;
 
   /// Cached selected items, invalidated on notify.
   List<DropdownItem<T>>? _cachedSelectedItems;
 
   /// Gets the list of dropdown items.
-  List<DropdownItem<T>> get items =>
-      _searchQuery.isEmpty ? _items : _filteredItems;
+  List<DropdownItem<T>> get items {
+    if (_remoteValues != null) {
+      if (_cachedRemoteItems != null) return _cachedRemoteItems!;
+      final byValue = {for (final item in _items) item.value: item};
+      return _cachedRemoteItems = [
+        for (final value in _remoteValues!)
+          if (byValue[value] != null) byValue[value]!,
+      ];
+    }
+    return _searchQuery.isEmpty ? _items : _filteredItems;
+  }
+
+  void _setRemoteItems(List<DropdownItem<T>> results) {
+    final selected = {for (final item in selectedItems) item.value: item};
+    final merged = <T, DropdownItem<T>>{...selected};
+    for (final item in results) {
+      merged[item.value] = item.copyWith(
+        selected: selected.containsKey(item.value),
+      );
+    }
+    _items
+      ..clear()
+      ..addAll(merged.values);
+    _remoteValues = {for (final item in results) item.value};
+    notifyListeners();
+  }
 
   /// Gets the list of selected dropdown items.
   List<DropdownItem<T>> get selectedItems {
@@ -71,6 +98,7 @@ class MultiSelectController<T> extends ChangeNotifier {
 
   @override
   void notifyListeners() {
+    _cachedRemoteItems = null;
     _cachedSelectedItems = null;
     super.notifyListeners();
   }
@@ -271,13 +299,16 @@ class MultiSelectController<T> extends ChangeNotifier {
   void _setSearchQuery(String query) {
     _searchQuery = query;
     _reapplySearchFilter();
+    _remoteSearch?.call(query);
     _onSearchChanged?.call(query);
     notifyListeners();
   }
 
   // clears the search query.
   void _clearSearchQuery({bool notify = false}) {
+    final changed = _searchQuery.isNotEmpty;
     _searchQuery = '';
+    if (changed) _remoteSearch?.call('');
     _filteredItems = List.from(_items);
     if (notify) notifyListeners();
   }

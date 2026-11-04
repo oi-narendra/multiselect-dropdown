@@ -1,5 +1,11 @@
 # ChangeLOG
 
+## Unreleased
+
+- Added `MultiDropdown.remote` with debounced search, cursor pagination, retry, and selection retention.
+- Added a remote-search example and tests for both dropdown modes.
+- Fixed single selection leaving a bottom sheet open.
+
 ## 4.0.0
 
 ### Breaking Changes

@@ -10,6 +10,7 @@ import 'examples/form_validation_example.dart';
 import 'examples/future_example.dart';
 import 'examples/grouped_items_example.dart';
 import 'examples/searchable_example.dart';
+import 'examples/remote_example.dart';
 import 'examples/select_all_example.dart';
 import 'examples/single_select_example.dart';
 
@@ -46,6 +47,13 @@ class _HomePage extends StatelessWidget {
   const _HomePage();
 
   static const _examples = <_ExampleEntry>[
+    _ExampleEntry(
+      title: 'Remote Search',
+      subtitle: 'Search, pagination and retry',
+      icon: Icons.manage_search_rounded,
+      color: Color(0xFF06B6D4),
+      builder: RemoteExample.new,
+    ),
     _ExampleEntry(
       title: 'Country Picker',
       subtitle: 'Basic multi-select with flag emojis',

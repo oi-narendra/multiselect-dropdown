@@ -123,11 +123,16 @@ class _DropdownState<T> extends State<_Dropdown<T>>
   List<_GroupEntry<T>> _buildGroupEntries() {
     if (!_isGrouped) return [];
 
-    final visibleItemSet = widget.items.toSet();
+    final visibleItemsByIdentity = {
+      for (final item in widget.items) (item.value, item.label): item,
+    };
     final entries = <_GroupEntry<T>>[];
 
     for (final group in widget.groups!) {
-      final visibleItems = group.items.where(visibleItemSet.contains).toList();
+      final visibleItems = [
+        for (final item in group.items)
+          ?visibleItemsByIdentity[(item.value, item.label)],
+      ];
       if (visibleItems.isEmpty) continue;
 
       entries.add(_GroupEntry<T>.header(group.label));
@@ -483,11 +488,14 @@ class _SearchField extends StatefulWidget {
   const _SearchField({
     required this.decoration,
     required this.onChanged,
+    this.focusNode,
   });
 
   final SearchFieldDecoration decoration;
 
   final ValueChanged<String> onChanged;
+
+  final FocusNode? focusNode;
 
   @override
   State<_SearchField> createState() => _SearchFieldState();
@@ -541,6 +549,7 @@ class _SearchFieldState extends State<_SearchField> {
       padding: const EdgeInsets.all(8),
       child: TextField(
         controller: _controller,
+        focusNode: widget.focusNode,
         autofocus: widget.decoration.autofocus,
         style: widget.decoration.textStyle,
         cursorColor: widget.decoration.cursorColor,
@@ -554,20 +563,91 @@ class _SearchFieldState extends State<_SearchField> {
           fillColor: widget.decoration.fillColor,
           prefixIcon: widget.decoration.searchIcon,
           suffixIcon: widget.decoration.showClearIcon && _hasText
-              ? Tooltip(
-                  message: 'Clear search',
-                  child: IconButton(
-                    icon: const Icon(Icons.clear, size: 18),
-                    onPressed: () {
-                      _controller.clear();
-                      _debounce?.cancel();
-                      widget.onChanged('');
-                    },
-                  ),
+              ? IconButton(
+                  tooltip: 'Clear search',
+                  icon: const Icon(Icons.clear, size: 18),
+                  onPressed: () {
+                    _controller.clear();
+                    _debounce?.cancel();
+                    widget.onChanged('');
+                  },
                 )
               : null,
         ),
         onChanged: _handleSearchChange,
+      ),
+    );
+  }
+}
+
+class _DropdownBottomSheet extends StatefulWidget {
+  const _DropdownBottomSheet({required this.builder});
+
+  final Widget Function(BuildContext, ScrollController, FocusNode) builder;
+
+  @override
+  State<_DropdownBottomSheet> createState() => _DropdownBottomSheetState();
+}
+
+class _DropdownBottomSheetState extends State<_DropdownBottomSheet> {
+  final _sheetController = DraggableScrollableController();
+  final _searchFocusNode = FocusNode();
+  double _keyboardInset = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    _searchFocusNode.addListener(_onSearchFocus);
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final inset = MediaQuery.viewInsetsOf(context).bottom;
+    if (inset != _keyboardInset) {
+      _keyboardInset = inset;
+      if (inset > 0) {
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          if (mounted) _expandForSearch();
+        });
+      }
+    }
+  }
+
+  void _onSearchFocus() {
+    if (_searchFocusNode.hasFocus) _expandForSearch();
+  }
+
+  void _expandForSearch() {
+    if (!_sheetController.isAttached) return;
+    _sheetController.animateTo(
+      _keyboardInset > 0 ? 1 : 0.85,
+      duration: const Duration(milliseconds: 200),
+      curve: Curves.easeOut,
+    );
+  }
+
+  @override
+  void dispose() {
+    _searchFocusNode.removeListener(_onSearchFocus);
+    _searchFocusNode.dispose();
+    _sheetController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: EdgeInsets.only(bottom: _keyboardInset),
+      child: DraggableScrollableSheet(
+        controller: _sheetController,
+        maxChildSize: _keyboardInset > 0 ? 1 : 0.85,
+        expand: false,
+        builder: (context, scrollController) => widget.builder(
+          context,
+          scrollController,
+          _searchFocusNode,
+        ),
       ),
     );
   }

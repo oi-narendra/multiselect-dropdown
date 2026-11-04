@@ -9,6 +9,8 @@
 
 ### Bug Fixes
 
+- Bottom-sheet search expands on focus and keeps results above the keyboard.
+- Grouped items stay visible after selection or changes to their disabled state.
 - Fixed custom `ListTile` items reporting hidden backgrounds and ink splashes.
 - Removed the `dart:io` import used for desktop keyboard shortcuts (#130).
 - Fixed standalone Material input borders in search fields (#226, #227). Borders remain strongly typed as `InputBorder?` and render correctly in overlay and bottom-sheet modes, without dynamic casts.

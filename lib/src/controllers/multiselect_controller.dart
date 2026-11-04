@@ -225,6 +225,7 @@ class MultiSelectController<T> extends ChangeNotifier {
         _items[i] = _items[i].copyWith(disabled: true);
       }
     }
+    _reapplySearchFilter();
     notifyListeners();
     _onSelectionChanged?.call(_selectedValues);
   }

@@ -980,91 +980,111 @@ class _MultiDropdownState<T extends Object> extends State<MultiDropdown<T>> {
           borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
         ),
         builder: (sheetContext) {
-          return DraggableScrollableSheet(
-            maxChildSize: 0.85,
-            expand: false,
-            builder: (_, scrollController) {
+          return _DropdownBottomSheet(
+            builder: (_, scrollController, searchFocusNode) {
               return ListenableBuilder(
                 listenable: _dropdownController,
                 builder: (ctx, _) {
                   final theme = Theme.of(ctx);
-                  return Column(
-                    children: [
-                      // Drag handle
-                      Container(
-                        width: 40,
-                        height: 4,
-                        margin: const EdgeInsets.symmetric(vertical: 12),
-                        decoration: BoxDecoration(
-                          color: theme.colorScheme.onSurfaceVariant.withValues(
-                            alpha: 0.4,
-                          ),
-                          borderRadius: BorderRadius.circular(2),
-                        ),
-                      ),
-                      // Title
-                      if (widget.fieldDecoration.labelText != null)
-                        Padding(
-                          padding: const EdgeInsets.only(
-                            left: 16,
-                            right: 16,
-                            bottom: 8,
-                          ),
-                          child: Align(
-                            alignment: Alignment.centerLeft,
-                            child: Text(
-                              widget.fieldDecoration.labelText!,
-                              style: theme.textTheme.titleMedium,
-                            ),
-                          ),
-                        ),
-                      // Search
-                      if (widget.searchEnabled)
-                        Padding(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 16,
-                            vertical: 4,
-                          ),
-                          child: _SearchField(
-                            decoration: widget.searchDecoration,
-                            onChanged: _dropdownController._setSearchQuery,
-                          ),
-                        ),
-                      // Items list
-                      Expanded(
-                        child: _dropdownController.items.isEmpty
-                            ? Center(
-                                child: Text(
-                                  widget.dropdownDecoration.noItemsFoundText,
-                                  style: theme.textTheme.bodyMedium,
-                                ),
-                              )
-                            : ListView.separated(
-                                controller: scrollController,
-                                padding:
-                                    widget.dropdownDecoration.listPadding ??
-                                    EdgeInsets.zero,
-                                itemCount: _dropdownController.items.length,
-                                separatorBuilder: (_, _) =>
-                                    widget.itemSeparator ??
-                                    const SizedBox.shrink(),
-                                itemBuilder: (_, index) {
-                                  final item = _dropdownController.items[index];
-                                  if (widget.itemBuilder != null) {
-                                    return widget.itemBuilder!(
-                                      item,
-                                      index,
-                                      () => _handleDropdownItemTap(item),
-                                    );
-                                  }
-                                  return _buildBottomSheetItem(
-                                    item,
-                                    theme,
-                                  );
-                                },
+                  final keyboardOpen = MediaQuery.viewInsetsOf(ctx).bottom > 0;
+                  return LayoutBuilder(
+                    builder: (context, constraints) {
+                      final compact =
+                          keyboardOpen || constraints.maxHeight < 220;
+                      return Column(
+                        children: [
+                          // Keep room for search results when the keyboard is open.
+                          if (!compact)
+                            Container(
+                              width: 40,
+                              height: 4,
+                              margin: const EdgeInsets.symmetric(vertical: 12),
+                              decoration: BoxDecoration(
+                                color: theme.colorScheme.onSurfaceVariant
+                                    .withValues(
+                                      alpha: 0.4,
+                                    ),
+                                borderRadius: BorderRadius.circular(2),
                               ),
-                      ),
-                    ],
+                            ),
+                          // Title
+                          if (!compact &&
+                              widget.fieldDecoration.labelText != null)
+                            Padding(
+                              padding: const EdgeInsets.only(
+                                left: 16,
+                                right: 16,
+                                bottom: 8,
+                              ),
+                              child: Align(
+                                alignment: Alignment.centerLeft,
+                                child: Text(
+                                  widget.fieldDecoration.labelText!,
+                                  style: theme.textTheme.titleMedium,
+                                ),
+                              ),
+                            ),
+                          // Search
+                          if (widget.searchEnabled)
+                            Padding(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 16,
+                                vertical: 4,
+                              ),
+                              child: _SearchField(
+                                decoration: widget.searchDecoration,
+                                focusNode: searchFocusNode,
+                                onChanged: _dropdownController._setSearchQuery,
+                              ),
+                            ),
+                          // Items list
+                          Expanded(
+                            child: _dropdownController.items.isEmpty
+                                ? CustomScrollView(
+                                    controller: scrollController,
+                                    slivers: [
+                                      SliverFillRemaining(
+                                        hasScrollBody: false,
+                                        child: Center(
+                                          child: Text(
+                                            widget
+                                                .dropdownDecoration
+                                                .noItemsFoundText,
+                                            style: theme.textTheme.bodyMedium,
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  )
+                                : ListView.separated(
+                                    controller: scrollController,
+                                    padding:
+                                        widget.dropdownDecoration.listPadding ??
+                                        EdgeInsets.zero,
+                                    itemCount: _dropdownController.items.length,
+                                    separatorBuilder: (_, _) =>
+                                        widget.itemSeparator ??
+                                        const SizedBox.shrink(),
+                                    itemBuilder: (_, index) {
+                                      final item =
+                                          _dropdownController.items[index];
+                                      if (widget.itemBuilder != null) {
+                                        return widget.itemBuilder!(
+                                          item,
+                                          index,
+                                          () => _handleDropdownItemTap(item),
+                                        );
+                                      }
+                                      return _buildBottomSheetItem(
+                                        item,
+                                        theme,
+                                      );
+                                    },
+                                  ),
+                          ),
+                        ],
+                      );
+                    },
                   );
                 },
               );

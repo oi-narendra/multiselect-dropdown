@@ -6,6 +6,46 @@ import 'test_helpers.dart';
 
 void main() {
   group('Grouped Items', () {
+    testWidgets(
+      'group rows retain updated selection and disabled state after search',
+      (tester) async {
+        final controller = MultiSelectController<int>();
+        await tester.pumpWidget(
+          buildTestApp(
+            MultiDropdown<int>(
+              items: const [],
+              groups: [DropdownGroup(label: 'Group', items: createItems(3))],
+              controller: controller,
+              searchEnabled: true,
+            ),
+          ),
+        );
+        controller.openDropdown();
+        await tester.pumpAndSettle();
+        await tester.enterText(find.byType(TextField), 'Item 2');
+        await tester.pumpAndSettle();
+        final row = find.widgetWithText(ListTile, 'Item 2');
+        await tester.tap(row);
+        await tester.pumpAndSettle();
+        expect(row, findsOneWidget);
+        expect(tester.widget<ListTile>(row).selected, isTrue);
+        expect(controller.selectedItems.single.value, 2);
+        await tester.tap(row);
+        await tester.pumpAndSettle();
+        expect(tester.widget<ListTile>(row).selected, isFalse);
+        expect(controller.selectedItems, isEmpty);
+        controller.disableWhere((item) => item.value == 2);
+        await tester.pumpAndSettle();
+        expect(tester.widget<ListTile>(row).enabled, isFalse);
+        await tester.tap(find.byTooltip('Clear search'));
+        await tester.pumpAndSettle();
+        expect(find.byType(ListTile), findsNWidgets(3));
+        expect(tester.takeException(), isNull);
+        await tester.pumpWidget(const SizedBox.shrink());
+        controller.dispose();
+      },
+    );
+
     // =========================================================================
     // DropdownGroup model
     // =========================================================================

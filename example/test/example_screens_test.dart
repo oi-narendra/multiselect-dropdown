@@ -32,7 +32,7 @@ void main() {
   for (final brightness in Brightness.values) {
     for (final screen in screens.entries) {
       testWidgets(
-        '${screen.key} opens its dropdown in ${brightness.name} mode',
+        '${screen.key} searches and selects in ${brightness.name} mode',
         (tester) async {
           await tester.binding.setSurfaceSize(const Size(390, 844));
           addTearDown(() => tester.binding.setSurfaceSize(null));
@@ -55,13 +55,75 @@ void main() {
             );
             expect(tester.takeException(), isNull);
           }
-          final dropdown = find
-              .byWidgetPredicate((widget) => widget is MultiDropdown)
-              .first;
-          await tester.ensureVisible(dropdown);
-          await tester.tap(dropdown);
-          await tester.pumpAndSettle();
-          expect(tester.takeException(), isNull);
+          final dropdowns = find.byWidgetPredicate(
+            (widget) => widget is MultiDropdown,
+          );
+          final count = dropdowns.evaluate().length;
+          for (var index = 0; index < count; index++) {
+            if (index > 0) {
+              await tester.pumpWidget(const SizedBox.shrink());
+              await tester.pumpAndSettle();
+              await tester.pumpWidget(
+                MaterialApp(
+                  theme: ThemeData(brightness: brightness),
+                  home: screen.value(),
+                ),
+              );
+              await tester.pump(const Duration(seconds: 3));
+              await tester.pumpAndSettle();
+            }
+            final dropdown = dropdowns.at(index);
+            final widget = tester.widget<MultiDropdown<String>>(dropdown);
+            await tester.ensureVisible(dropdown);
+            await tester.tap(dropdown);
+            await tester.pumpAndSettle();
+            expect(tester.takeException(), isNull);
+            final rows = find.byWidgetPredicate(
+              (widget) =>
+                  widget is ListTile &&
+                  widget.enabled &&
+                  widget.onTap != null &&
+                  widget.title is Text,
+            );
+            final firstRow = rows.hitTestable().first;
+            expect(firstRow, findsOneWidget);
+            final label =
+                (tester.widget<ListTile>(firstRow).title! as Text).data!;
+            if (widget.searchEnabled) {
+              final search = find.byType(TextField).last;
+              await tester.enterText(search, 'zzzz-no-match');
+              await tester.pumpAndSettle();
+              expect(
+                find.text(widget.dropdownDecoration.noItemsFoundText),
+                findsOneWidget,
+              );
+              await tester.tap(find.byTooltip('Clear search'));
+              await tester.pumpAndSettle();
+              await tester.enterText(search, label);
+              await tester.pumpAndSettle();
+              expect(find.widgetWithText(ListTile, label), findsOneWidget);
+            }
+            final selectedRow = find.widgetWithText(ListTile, label);
+            final wasSelected = tester.widget<ListTile>(selectedRow).selected;
+            await tester.tap(selectedRow);
+            await tester.pumpAndSettle();
+            expect(tester.takeException(), isNull);
+            if (widget.singleSelect) {
+              expect(find.widgetWithText(ListTile, label), findsNothing);
+              expect(
+                find.descendant(of: dropdown, matching: find.text(label)),
+                findsOneWidget,
+              );
+            } else if (widget.dropdownMode == DropdownMode.bottomSheet ||
+                widget.itemBuilder != null) {
+              expect(tester.widget<ListTile>(selectedRow).trailing, isNotNull);
+            } else {
+              expect(
+                tester.widget<ListTile>(selectedRow).selected,
+                !wasSelected,
+              );
+            }
+          }
           await tester.pumpWidget(const SizedBox.shrink());
           await tester.pumpAndSettle();
         },

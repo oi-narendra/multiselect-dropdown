@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 import 'examples/accessibility_example.dart';
 import 'examples/basic_example.dart';
@@ -141,10 +141,7 @@ class _HomePage extends StatelessWidget {
     final isWide = crossAxisCount == 2;
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('MultiDropdown'),
-        elevation: 0,
-      ),
+      appBar: AppBar(title: const Text('MultiDropdown'), elevation: 0),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
@@ -224,23 +221,16 @@ class _ExampleCard extends StatelessWidget {
         clipBehavior: Clip.hardEdge,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(16),
-          side: BorderSide(
-            color: colorScheme.outlineVariant.withAlpha(120),
-          ),
+          side: BorderSide(color: colorScheme.outlineVariant.withAlpha(120)),
         ),
         child: InkWell(
           onTap: () {
-            Navigator.of(context).push(
-              MaterialPageRoute<void>(
-                builder: (_) => example.builder(),
-              ),
-            );
+            Navigator.of(
+              context,
+            ).push(MaterialPageRoute<void>(builder: (_) => example.builder()));
           },
           child: Padding(
-            padding: const EdgeInsets.symmetric(
-              horizontal: 16,
-              vertical: 14,
-            ),
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
             child: Row(
               children: [
                 Container(
@@ -249,11 +239,7 @@ class _ExampleCard extends StatelessWidget {
                     color: example.color.withAlpha(25),
                     borderRadius: BorderRadius.circular(12),
                   ),
-                  child: Icon(
-                    example.icon,
-                    color: example.color,
-                    size: 24,
-                  ),
+                  child: Icon(example.icon, color: example.color, size: 24),
                 ),
                 const SizedBox(width: 14),
                 Expanded(

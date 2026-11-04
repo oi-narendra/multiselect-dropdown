@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:multi_dropdown/multi_dropdown.dart';
 
 /// Task priority selector demonstrating single-select mode.
@@ -43,13 +43,12 @@ class _SingleSelectExampleState extends State<SingleSelectExample> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
-    final selectedColor =
-        _selected != null ? _priorityColors[_selected]! : colorScheme.outline;
+    final selectedColor = _selected != null
+        ? _priorityColors[_selected]!
+        : colorScheme.outline;
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Task Priority'),
-      ),
+      appBar: AppBar(title: const Text('Task Priority')),
       body: ListView(
         padding: const EdgeInsets.all(20),
         children: [
@@ -68,10 +67,7 @@ class _SingleSelectExampleState extends State<SingleSelectExample> {
             ),
             child: Row(
               children: [
-                Icon(
-                  Icons.flag_rounded,
-                  color: colorScheme.tertiary,
-                ),
+                Icon(Icons.flag_rounded, color: colorScheme.tertiary),
                 const SizedBox(width: 12),
                 Expanded(
                   child: Text(
@@ -101,10 +97,7 @@ class _SingleSelectExampleState extends State<SingleSelectExample> {
               ),
               focusedBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(14),
-                borderSide: BorderSide(
-                  color: colorScheme.tertiary,
-                  width: 2,
-                ),
+                borderSide: BorderSide(color: colorScheme.tertiary, width: 2),
               ),
               suffixIcon: const Icon(Icons.keyboard_arrow_down_rounded),
             ),
@@ -114,8 +107,9 @@ class _SingleSelectExampleState extends State<SingleSelectExample> {
                 color: colorScheme.tertiary,
                 size: 20,
               ),
-              selectedBackgroundColor:
-                  colorScheme.tertiaryContainer.withAlpha(80),
+              selectedBackgroundColor: colorScheme.tertiaryContainer.withAlpha(
+                80,
+              ),
             ),
             onSelectionChange: (values) {
               setState(() => _selected = values.firstOrNull);
@@ -132,9 +126,7 @@ class _SingleSelectExampleState extends State<SingleSelectExample> {
                     elevation: 0,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(16),
-                      side: BorderSide(
-                        color: selectedColor.withAlpha(100),
-                      ),
+                      side: BorderSide(color: selectedColor.withAlpha(100)),
                     ),
                     color: selectedColor.withAlpha(20),
                     child: Padding(
@@ -166,9 +158,7 @@ class _SingleSelectExampleState extends State<SingleSelectExample> {
                                 const SizedBox(height: 4),
                                 Text(
                                   _items
-                                      .firstWhere(
-                                        (i) => i.value == _selected,
-                                      )
+                                      .firstWhere((i) => i.value == _selected)
                                       .label,
                                   style: theme.textTheme.titleMedium?.copyWith(
                                     fontWeight: FontWeight.w600,

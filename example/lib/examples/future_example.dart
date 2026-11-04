@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:multi_dropdown/multi_dropdown.dart';
 
 /// Async data loading using [MultiDropdown.future].
@@ -40,9 +40,7 @@ class _FutureExampleState extends State<FutureExample> {
     final colorScheme = theme.colorScheme;
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Async Loading'),
-      ),
+      appBar: AppBar(title: const Text('Async Loading')),
       body: ListView(
         padding: const EdgeInsets.all(20),
         children: [
@@ -50,10 +48,7 @@ class _FutureExampleState extends State<FutureExample> {
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
               gradient: LinearGradient(
-                colors: [
-                  Colors.cyan.withAlpha(40),
-                  Colors.blue.withAlpha(30),
-                ],
+                colors: [Colors.cyan.withAlpha(40), Colors.blue.withAlpha(30)],
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
               ),
@@ -83,10 +78,7 @@ class _FutureExampleState extends State<FutureExample> {
             future: _fetchUsers,
             chipDecoration: ChipDecoration(
               backgroundColor: Colors.cyan.shade50,
-              labelStyle: TextStyle(
-                color: Colors.cyan.shade800,
-                fontSize: 13,
-              ),
+              labelStyle: TextStyle(color: Colors.cyan.shade800, fontSize: 13),
               borderRadius: BorderRadius.circular(20),
               deleteIcon: Icon(
                 Icons.close_rounded,
@@ -109,10 +101,7 @@ class _FutureExampleState extends State<FutureExample> {
               ),
               focusedBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(14),
-                borderSide: BorderSide(
-                  color: Colors.cyan.shade400,
-                  width: 2,
-                ),
+                borderSide: BorderSide(color: Colors.cyan.shade400, width: 2),
               ),
             ),
             dropdownDecoration: DropdownDecoration(
@@ -174,9 +163,7 @@ class _FutureExampleState extends State<FutureExample> {
                     decoration: BoxDecoration(
                       color: Colors.cyan.shade50.withAlpha(60),
                       borderRadius: BorderRadius.circular(12),
-                      border: Border.all(
-                        color: Colors.cyan.shade200,
-                      ),
+                      border: Border.all(color: Colors.cyan.shade200),
                     ),
                     child: Row(
                       children: [
@@ -228,9 +215,8 @@ class _InfoRow extends StatelessWidget {
           Expanded(
             child: Text(
               label,
-              style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    color: colorScheme.onSurfaceVariant,
-                  ),
+              style: Theme.of(context).textTheme.bodySmall
+                  ?.copyWith(color: colorScheme.onSurfaceVariant),
             ),
           ),
         ],

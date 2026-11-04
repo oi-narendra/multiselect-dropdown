@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:multi_dropdown/multi_dropdown.dart';
 
 /// Country picker demonstrating basic multi-select.
@@ -42,9 +42,7 @@ class _BasicExampleState extends State<BasicExample> {
     final colorScheme = theme.colorScheme;
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Country Picker'),
-      ),
+      appBar: AppBar(title: const Text('Country Picker')),
       body: ListView(
         padding: const EdgeInsets.all(20),
         children: [
@@ -111,10 +109,7 @@ class _BasicExampleState extends State<BasicExample> {
               ),
               focusedBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(14),
-                borderSide: BorderSide(
-                  color: colorScheme.primary,
-                  width: 2,
-                ),
+                borderSide: BorderSide(color: colorScheme.primary, width: 2),
               ),
             ),
             onSelectionChange: (values) {
@@ -134,9 +129,7 @@ class _BasicExampleState extends State<BasicExample> {
                     decoration: BoxDecoration(
                       color: colorScheme.surfaceContainerHighest.withAlpha(100),
                       borderRadius: BorderRadius.circular(12),
-                      border: Border.all(
-                        color: colorScheme.outlineVariant,
-                      ),
+                      border: Border.all(color: colorScheme.outlineVariant),
                     ),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,

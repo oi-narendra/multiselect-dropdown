@@ -1,5 +1,5 @@
-import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:multi_dropdown/multi_dropdown.dart';
 
 import 'test_helpers.dart';
@@ -109,8 +109,9 @@ void main() {
       expect(find.byIcon(Icons.clear), findsNothing);
     });
 
-    testWidgets('clear icon appears when enabled with selections',
-        (tester) async {
+    testWidgets('clear icon appears when enabled with selections', (
+      tester,
+    ) async {
       final items = [
         DropdownItem(label: 'Item', value: 1, selected: true),
       ];
@@ -154,8 +155,9 @@ void main() {
     // Single-Select Mode (#137, #195, #139)
     // =========================================================================
 
-    testWidgets('shows selected item text in single-select mode',
-        (tester) async {
+    testWidgets('shows selected item text in single-select mode', (
+      tester,
+    ) async {
       await tester.pumpWidget(
         buildTestApp(
           MultiDropdown<int>(
@@ -170,8 +172,9 @@ void main() {
       expect(find.text('Selected Item'), findsOneWidget);
     });
 
-    testWidgets('applies selectedItemTextStyle in single-select mode',
-        (tester) async {
+    testWidgets('applies selectedItemTextStyle in single-select mode', (
+      tester,
+    ) async {
       const textStyle = TextStyle(
         fontSize: 20,
         color: Colors.red,
@@ -198,8 +201,9 @@ void main() {
       expect(textWidget.style?.fontWeight, FontWeight.bold);
     });
 
-    testWidgets('auto-closes dropdown after selection in single-select mode',
-        (tester) async {
+    testWidgets('auto-closes dropdown after selection in single-select mode', (
+      tester,
+    ) async {
       final controller = MultiSelectController<int>();
       await tester.pumpWidget(
         buildTestApp(
@@ -226,8 +230,9 @@ void main() {
       controller.dispose();
     });
 
-    testWidgets('replaces previous selection in single-select mode',
-        (tester) async {
+    testWidgets('replaces previous selection in single-select mode', (
+      tester,
+    ) async {
       final controller = MultiSelectController<int>();
       await tester.pumpWidget(
         buildTestApp(
@@ -411,8 +416,9 @@ void main() {
       expect(find.byIcon(Icons.close), findsOneWidget);
     });
 
-    testWidgets('tapping chip delete removes it from selection',
-        (tester) async {
+    testWidgets('tapping chip delete removes it from selection', (
+      tester,
+    ) async {
       final controller = MultiSelectController<int>();
       final items = [
         DropdownItem(label: 'To Remove', value: 1, selected: true),
@@ -514,8 +520,9 @@ void main() {
     // selectedItemBuilder & Wrap (#170)
     // =========================================================================
 
-    testWidgets('selectedItemBuilder with wrap=true uses Wrap layout',
-        (tester) async {
+    testWidgets('selectedItemBuilder with wrap=true uses Wrap layout', (
+      tester,
+    ) async {
       await tester.pumpWidget(
         buildTestApp(
           MultiDropdown<int>(
@@ -532,26 +539,29 @@ void main() {
       expect(find.byType(Chip), findsNWidgets(2));
     });
 
-    testWidgets('selectedItemBuilder with wrap=false uses horizontal ListView',
-        (tester) async {
-      await tester.pumpWidget(
-        buildTestApp(
-          MultiDropdown<int>(
-            items: [
-              DropdownItem(label: 'Item 1', value: 1, selected: true),
-              DropdownItem(label: 'Item 2', value: 2, selected: true),
-            ],
-            selectedItemBuilder: (item) => Chip(label: Text(item.label)),
-            chipDecoration: const ChipDecoration(wrap: false),
+    testWidgets(
+      'selectedItemBuilder with wrap=false uses horizontal ListView',
+      (tester) async {
+        await tester.pumpWidget(
+          buildTestApp(
+            MultiDropdown<int>(
+              items: [
+                DropdownItem(label: 'Item 1', value: 1, selected: true),
+                DropdownItem(label: 'Item 2', value: 2, selected: true),
+              ],
+              selectedItemBuilder: (item) => Chip(label: Text(item.label)),
+              chipDecoration: const ChipDecoration(wrap: false),
+            ),
           ),
-        ),
-      );
+        );
 
-      expect(find.byType(ListView), findsOneWidget);
-    });
+        expect(find.byType(ListView), findsOneWidget);
+      },
+    );
 
-    testWidgets('selectedItemBuilder renders custom widget per item',
-        (tester) async {
+    testWidgets('selectedItemBuilder renders custom widget per item', (
+      tester,
+    ) async {
       await tester.pumpWidget(
         buildTestApp(
           MultiDropdown<int>(
@@ -571,8 +581,9 @@ void main() {
       expect(find.text('Custom: Banana'), findsOneWidget);
     });
 
-    testWidgets('selectedItemBuilder in single-select shows custom widget',
-        (tester) async {
+    testWidgets('selectedItemBuilder in single-select shows custom widget', (
+      tester,
+    ) async {
       await tester.pumpWidget(
         buildTestApp(
           MultiDropdown<int>(
@@ -592,8 +603,9 @@ void main() {
     // No Items Found (#201)
     // =========================================================================
 
-    testWidgets('shows noItemsFoundText when search yields no results',
-        (tester) async {
+    testWidgets('shows noItemsFoundText when search yields no results', (
+      tester,
+    ) async {
       final controller = MultiSelectController<int>();
       await tester.pumpWidget(
         buildTestApp(
@@ -620,28 +632,29 @@ void main() {
     });
 
     testWidgets(
-        'shows noItemsFoundText when items list is empty and search enabled',
-        (tester) async {
-      final controller = MultiSelectController<int>();
-      await tester.pumpWidget(
-        buildTestApp(
-          MultiDropdown<int>(
-            items: const [],
-            controller: controller,
-            searchEnabled: true,
-            dropdownDecoration: const DropdownDecoration(
-              noItemsFoundText: 'Empty state text',
+      'shows noItemsFoundText when items list is empty and search enabled',
+      (tester) async {
+        final controller = MultiSelectController<int>();
+        await tester.pumpWidget(
+          buildTestApp(
+            MultiDropdown<int>(
+              items: const [],
+              controller: controller,
+              searchEnabled: true,
+              dropdownDecoration: const DropdownDecoration(
+                noItemsFoundText: 'Empty state text',
+              ),
             ),
           ),
-        ),
-      );
+        );
 
-      await tester.tap(find.byType(InkWell));
-      await tester.pumpAndSettle();
+        await tester.tap(find.byType(InkWell));
+        await tester.pumpAndSettle();
 
-      expect(find.text('Empty state text'), findsOneWidget);
-      controller.dispose();
-    });
+        expect(find.text('Empty state text'), findsOneWidget);
+        controller.dispose();
+      },
+    );
 
     // =========================================================================
     // InputDecoration Override (#141, #150)
@@ -794,8 +807,9 @@ void main() {
       controller.dispose();
     });
 
-    testWidgets('search field does not appear when searchEnabled is false',
-        (tester) async {
+    testWidgets('search field does not appear when searchEnabled is false', (
+      tester,
+    ) async {
       final controller = MultiSelectController<int>();
       await tester.pumpWidget(
         buildTestApp(
@@ -933,59 +947,62 @@ void main() {
       expect(find.byType(MultiDropdown<int>), findsOneWidget);
     });
 
-    testWidgets('clamps dropdown maxHeight to available viewport space (#221)',
-        (tester) async {
-      const configuredMaxHeight = 400.0;
+    testWidgets(
+      'clamps dropdown maxHeight to available viewport space (#221)',
+      (tester) async {
+        const configuredMaxHeight = 400.0;
 
-      tester.view.physicalSize = const Size(400, 400);
-      tester.view.devicePixelRatio = 1.0;
-      addTearDown(tester.view.resetPhysicalSize);
-      addTearDown(tester.view.resetDevicePixelRatio);
+        tester.view.physicalSize = const Size(400, 400);
+        tester.view.devicePixelRatio = 1.0;
+        addTearDown(tester.view.resetPhysicalSize);
+        addTearDown(tester.view.resetDevicePixelRatio);
 
-      await tester.pumpWidget(
-        MaterialApp(
-          home: Scaffold(
-            body: Column(
-              children: [
-                const Spacer(),
-                MultiDropdown<int>(
-                  items: createItems(10),
-                  searchEnabled: true,
-                  dropdownDecoration: const DropdownDecoration(
-                    expandDirection: ExpandDirection.down,
+        await tester.pumpWidget(
+          MaterialApp(
+            home: Scaffold(
+              body: Column(
+                children: [
+                  const Spacer(),
+                  MultiDropdown<int>(
+                    items: createItems(10),
+                    searchEnabled: true,
+                    dropdownDecoration: const DropdownDecoration(
+                      expandDirection: ExpandDirection.down,
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
-        ),
-      );
+        );
 
-      await tester.tap(find.byType(InkWell));
-      await tester.pumpAndSettle();
+        await tester.tap(find.byType(InkWell));
+        await tester.pumpAndSettle();
 
-      final constrainedDropdown = tester.widgetList<Container>(
-        find.byWidgetPredicate(
-          (widget) =>
-              widget is Container &&
-              widget.constraints != null &&
-              widget.constraints!.maxHeight < configuredMaxHeight,
-        ),
-      );
+        final constrainedDropdown = tester.widgetList<Container>(
+          find.byWidgetPredicate(
+            (widget) =>
+                widget is Container &&
+                widget.constraints != null &&
+                widget.constraints!.maxHeight < configuredMaxHeight,
+          ),
+        );
 
-      expect(constrainedDropdown, isNotEmpty);
-      expect(
-        constrainedDropdown.first.constraints!.maxHeight,
-        lessThan(configuredMaxHeight),
-      );
-    });
+        expect(constrainedDropdown, isNotEmpty);
+        expect(
+          constrainedDropdown.first.constraints!.maxHeight,
+          lessThan(configuredMaxHeight),
+        );
+      },
+    );
 
     // =========================================================================
     // Icon Types (#199, #200)
     // =========================================================================
 
-    testWidgets('accepts custom Widget for selectedIcon and disabledIcon',
-        (tester) async {
+    testWidgets('accepts custom Widget for selectedIcon and disabledIcon', (
+      tester,
+    ) async {
       await tester.pumpWidget(
         buildTestApp(
           MultiDropdown<int>(
@@ -1053,8 +1070,9 @@ void main() {
     // Callbacks
     // =========================================================================
 
-    testWidgets('onSelectionChange fires when items are selected',
-        (tester) async {
+    testWidgets('onSelectionChange fires when items are selected', (
+      tester,
+    ) async {
       final selectedValues = <int>[];
 
       await tester.pumpWidget(

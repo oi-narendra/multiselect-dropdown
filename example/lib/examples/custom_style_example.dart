@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:multi_dropdown/multi_dropdown.dart';
 
 /// GitHub-style issue labels demonstrating heavy customization.
@@ -16,9 +16,7 @@ class CustomStyleExample extends StatelessWidget {
     final colorScheme = theme.colorScheme;
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Issue Labels'),
-      ),
+      appBar: AppBar(title: const Text('Issue Labels')),
       body: ListView(
         padding: const EdgeInsets.all(20),
         children: [
@@ -87,14 +85,9 @@ class CustomStyleExample extends StatelessWidget {
                 fontWeight: FontWeight.w500,
                 fontSize: 13,
               ),
-              padding: const EdgeInsets.symmetric(
-                horizontal: 14,
-                vertical: 6,
-              ),
+              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
               borderRadius: BorderRadius.circular(24),
-              border: Border.all(
-                color: Colors.deepOrange.shade200,
-              ),
+              border: Border.all(color: Colors.deepOrange.shade200),
               deleteIcon: Icon(
                 Icons.cancel_rounded,
                 size: 16,
@@ -172,10 +165,7 @@ class CustomStyleExample extends StatelessWidget {
                 fontWeight: FontWeight.w500,
                 fontSize: 12,
               ),
-              padding: const EdgeInsets.symmetric(
-                horizontal: 10,
-                vertical: 4,
-              ),
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
               borderRadius: BorderRadius.circular(6),
               border: Border.all(color: colorScheme.outlineVariant),
               deleteIcon: Icon(
@@ -195,16 +185,11 @@ class CustomStyleExample extends StatelessWidget {
               ),
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(10),
-                borderSide: BorderSide(
-                  color: colorScheme.outlineVariant,
-                ),
+                borderSide: BorderSide(color: colorScheme.outlineVariant),
               ),
               focusedBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(10),
-                borderSide: BorderSide(
-                  color: colorScheme.primary,
-                  width: 2,
-                ),
+                borderSide: BorderSide(color: colorScheme.primary, width: 2),
               ),
             ),
             dropdownDecoration: DropdownDecoration(
@@ -274,10 +259,7 @@ class CustomStyleExample extends StatelessWidget {
               ),
               focusedBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(14),
-                borderSide: BorderSide(
-                  color: colorScheme.primary,
-                  width: 2,
-                ),
+                borderSide: BorderSide(color: colorScheme.primary, width: 2),
               ),
             ),
             dropdownItemDecoration: DropdownItemDecoration(

@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:multi_dropdown/multi_dropdown.dart';
 
 /// Recipe ingredient selector with programmatic controller actions.
@@ -49,9 +49,7 @@ class _ControllerExampleState extends State<ControllerExample> {
     final colorScheme = theme.colorScheme;
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Recipe Ingredients'),
-      ),
+      appBar: AppBar(title: const Text('Recipe Ingredients')),
       body: ListView(
         padding: const EdgeInsets.all(20),
         children: [
@@ -59,10 +57,7 @@ class _ControllerExampleState extends State<ControllerExample> {
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
               gradient: LinearGradient(
-                colors: [
-                  Colors.teal.withAlpha(40),
-                  Colors.green.withAlpha(30),
-                ],
+                colors: [Colors.teal.withAlpha(40), Colors.green.withAlpha(30)],
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
               ),
@@ -92,10 +87,7 @@ class _ControllerExampleState extends State<ControllerExample> {
             controller: _controller,
             chipDecoration: ChipDecoration(
               backgroundColor: Colors.teal.shade50,
-              labelStyle: TextStyle(
-                color: Colors.teal.shade800,
-                fontSize: 13,
-              ),
+              labelStyle: TextStyle(color: Colors.teal.shade800, fontSize: 13),
               borderRadius: BorderRadius.circular(20),
               deleteIcon: Icon(
                 Icons.close_rounded,
@@ -108,20 +100,14 @@ class _ControllerExampleState extends State<ControllerExample> {
             ),
             fieldDecoration: FieldDecoration(
               hintText: 'Select ingredients',
-              prefixIcon: Icon(
-                Icons.egg_outlined,
-                color: Colors.teal.shade400,
-              ),
+              prefixIcon: Icon(Icons.egg_outlined, color: Colors.teal.shade400),
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(14),
                 borderSide: BorderSide(color: Colors.teal.shade200),
               ),
               focusedBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(14),
-                borderSide: BorderSide(
-                  color: Colors.teal.shade400,
-                  width: 2,
-                ),
+                borderSide: BorderSide(color: Colors.teal.shade400, width: 2),
               ),
             ),
             dropdownDecoration: DropdownDecoration(
@@ -163,8 +149,12 @@ class _ControllerExampleState extends State<ControllerExample> {
                 onTap: () {
                   _controller.clearAll();
                   _controller.selectWhere(
-                    (item) => ['onion', 'tomato', 'garlic', 'bell_pepper']
-                        .contains(item.value),
+                    (item) => [
+                      'onion',
+                      'tomato',
+                      'garlic',
+                      'bell_pepper',
+                    ].contains(item.value),
                   );
                 },
               ),
@@ -191,14 +181,12 @@ class _ControllerExampleState extends State<ControllerExample> {
                 label: 'Add Ingredient',
                 color: Colors.purple,
                 onTap: () {
-                  final name = _customIngredients[
-                      _customCounter % _customIngredients.length];
+                  final name =
+                      _customIngredients[_customCounter %
+                          _customIngredients.length];
                   _customCounter++;
                   _controller.addItem(
-                    DropdownItem(
-                      label: name,
-                      value: 'custom_$_customCounter',
-                    ),
+                    DropdownItem(label: name, value: 'custom_$_customCounter'),
                   );
                 },
               ),
@@ -236,10 +224,7 @@ class _ActionChip extends StatelessWidget {
           borderRadius: BorderRadius.circular(12),
           onTap: onTap,
           child: Padding(
-            padding: const EdgeInsets.symmetric(
-              horizontal: 14,
-              vertical: 10,
-            ),
+            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [

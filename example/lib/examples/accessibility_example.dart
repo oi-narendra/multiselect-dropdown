@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:multi_dropdown/multi_dropdown.dart';
 
 /// Accessibility showcase demonstrating a11y best practices.
@@ -50,13 +50,10 @@ class _AccessibilityExampleState extends State<AccessibilityExample> {
           );
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Accessibility'),
-      ),
+      appBar: AppBar(title: const Text('Accessibility')),
       body: MediaQuery(
-        data: MediaQuery.of(context).copyWith(
-          textScaler: TextScaler.linear(_textScale),
-        ),
+        data: MediaQuery.of(context)
+            .copyWith(textScaler: TextScaler.linear(_textScale)),
         child: ListView(
           padding: const EdgeInsets.all(20),
           children: [
@@ -201,8 +198,9 @@ class _AccessibilityExampleState extends State<AccessibilityExample> {
                   backgroundColor: highContrastColors.chip,
                   labelStyle: TextStyle(
                     color: highContrastColors.chipText,
-                    fontWeight:
-                        _highContrast ? FontWeight.w700 : FontWeight.w400,
+                    fontWeight: _highContrast
+                        ? FontWeight.w700
+                        : FontWeight.w400,
                     fontSize: 13,
                   ),
                   borderRadius: BorderRadius.circular(_highContrast ? 4 : 20),
@@ -264,9 +262,7 @@ class _AccessibilityExampleState extends State<AccessibilityExample> {
                       decoration: BoxDecoration(
                         color: Colors.purple.shade50.withAlpha(60),
                         borderRadius: BorderRadius.circular(12),
-                        border: Border.all(
-                          color: Colors.purple.shade200,
-                        ),
+                        border: Border.all(color: Colors.purple.shade200),
                       ),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,

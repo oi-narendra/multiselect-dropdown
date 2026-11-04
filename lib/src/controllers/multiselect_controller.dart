@@ -38,8 +38,9 @@ class MultiSelectController<T> extends ChangeNotifier {
 
   /// Gets the list of selected dropdown items.
   List<DropdownItem<T>> get selectedItems {
-    return _cachedSelectedItems ??=
-        _items.where((element) => element.selected).toList();
+    return _cachedSelectedItems ??= _items
+        .where((element) => element.selected)
+        .toList();
   }
 
   /// Get the list of selected dropdown item values.

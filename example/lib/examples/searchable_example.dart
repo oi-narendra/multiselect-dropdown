@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:multi_dropdown/multi_dropdown.dart';
 
 /// Team member picker with search and custom item builder.
@@ -50,9 +50,7 @@ class _SearchableExampleState extends State<SearchableExample> {
   final _items = _departments.entries.map((e) {
     final name = e.key
         .split('_')
-        .map(
-          (w) => '${w[0].toUpperCase()}${w.substring(1)}',
-        )
+        .map((w) => '${w[0].toUpperCase()}${w.substring(1)}')
         .join(' ');
     return DropdownItem(label: name, value: e.key);
   }).toList();
@@ -65,9 +63,7 @@ class _SearchableExampleState extends State<SearchableExample> {
     final colorScheme = theme.colorScheme;
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Team Members'),
-      ),
+      appBar: AppBar(title: const Text('Team Members')),
       body: ListView(
         padding: const EdgeInsets.all(20),
         children: [
@@ -110,9 +106,7 @@ class _SearchableExampleState extends State<SearchableExample> {
               autofocus: true,
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),
-                borderSide: BorderSide(
-                  color: colorScheme.outlineVariant,
-                ),
+                borderSide: BorderSide(color: colorScheme.outlineVariant),
               ),
               focusedBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),
@@ -127,8 +121,11 @@ class _SearchableExampleState extends State<SearchableExample> {
               ),
             ),
             itemBuilder: (item, index, onTap) {
-              final initials =
-                  item.label.split(' ').take(2).map((w) => w[0]).join();
+              final initials = item.label
+                  .split(' ')
+                  .take(2)
+                  .map((w) => w[0])
+                  .join();
               final dept = _departments[item.value] ?? '';
               final avatarColor = _avatarColors[index % _avatarColors.length];
 
@@ -141,8 +138,9 @@ class _SearchableExampleState extends State<SearchableExample> {
                   child: Text(
                     initials,
                     style: TextStyle(
-                      color:
-                          item.selected ? colorScheme.onPrimary : avatarColor,
+                      color: item.selected
+                          ? colorScheme.onPrimary
+                          : avatarColor,
                       fontWeight: FontWeight.w600,
                       fontSize: 13,
                     ),
@@ -151,8 +149,9 @@ class _SearchableExampleState extends State<SearchableExample> {
                 title: Text(
                   item.label,
                   style: TextStyle(
-                    fontWeight:
-                        item.selected ? FontWeight.w600 : FontWeight.w400,
+                    fontWeight: item.selected
+                        ? FontWeight.w600
+                        : FontWeight.w400,
                   ),
                 ),
                 subtitle: Text(
@@ -199,10 +198,7 @@ class _SearchableExampleState extends State<SearchableExample> {
               ),
               focusedBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(14),
-                borderSide: BorderSide(
-                  color: colorScheme.secondary,
-                  width: 2,
-                ),
+                borderSide: BorderSide(color: colorScheme.secondary, width: 2),
               ),
             ),
             dropdownDecoration: DropdownDecoration(
@@ -235,14 +231,18 @@ class _SearchableExampleState extends State<SearchableExample> {
                         ),
                       ),
                       ..._selected.map((id) {
-                        final name =
-                            _items.firstWhere((i) => i.value == id).label;
+                        final name = _items
+                            .firstWhere((i) => i.value == id)
+                            .label;
                         final dept = _departments[id] ?? '';
                         final index = _items.indexWhere((i) => i.value == id);
                         final color =
                             _avatarColors[index % _avatarColors.length];
-                        final initials =
-                            name.split(' ').take(2).map((w) => w[0]).join();
+                        final initials = name
+                            .split(' ')
+                            .take(2)
+                            .map((w) => w[0])
+                            .join();
 
                         return Padding(
                           padding: const EdgeInsets.only(bottom: 8),
@@ -283,15 +283,16 @@ class _SearchableExampleState extends State<SearchableExample> {
                                         name,
                                         style: theme.textTheme.bodyMedium
                                             ?.copyWith(
-                                          fontWeight: FontWeight.w500,
-                                        ),
+                                              fontWeight: FontWeight.w500,
+                                            ),
                                       ),
                                       Text(
                                         dept,
-                                        style:
-                                            theme.textTheme.bodySmall?.copyWith(
-                                          color: colorScheme.onSurfaceVariant,
-                                        ),
+                                        style: theme.textTheme.bodySmall
+                                            ?.copyWith(
+                                              color:
+                                                  colorScheme.onSurfaceVariant,
+                                            ),
                                       ),
                                     ],
                                   ),

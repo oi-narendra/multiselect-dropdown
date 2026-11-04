@@ -1,5 +1,16 @@
 # ChangeLOG
 
+## 4.0.0
+
+### Breaking Changes
+
+- Migrated Material widgets and public decoration types to `package:material_ui/material_ui.dart`. Consumers must migrate their Material imports and app theme; see the README migration guide.
+- Requires Flutter 3.47+ and Dart 3.13+, with a direct dependency on `material_ui` ^1.4.0.
+
+### Bug Fixes
+
+- Fixed standalone Material input borders in search fields (#226, #227). Borders remain strongly typed as `InputBorder?` and render correctly in overlay and bottom-sheet modes, without dynamic casts.
+
 ## 3.2.2
 
 ### Changed

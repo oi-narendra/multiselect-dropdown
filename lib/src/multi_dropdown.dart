@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'dart:convert';
-import 'dart:io' if (dart.library.io) 'dart:io';
 import 'dart:math' as math;
 
 import 'package:flutter/foundation.dart';
@@ -773,11 +772,13 @@ class _MultiDropdownState<T extends Object> extends State<MultiDropdown<T>> {
           .toList();
 
       if (chipDecoration.wrap) {
-        return Wrap(
-          spacing: chipDecoration.spacing,
-          runSpacing: chipDecoration.runSpacing,
-          crossAxisAlignment: WrapCrossAlignment.center,
-          children: children,
+        return _wrapSelectedItems(
+          Wrap(
+            spacing: chipDecoration.spacing,
+            runSpacing: chipDecoration.runSpacing,
+            crossAxisAlignment: WrapCrossAlignment.center,
+            children: children,
+          ),
         );
       }
 
@@ -823,22 +824,24 @@ class _MultiDropdownState<T extends Object> extends State<MultiDropdown<T>> {
     }
 
     if (chipDecoration.wrap) {
-      return AnimatedSwitcher(
-        duration: const Duration(milliseconds: 200),
-        layoutBuilder: (currentChild, previousChildren) {
-          return Stack(
-            alignment: Alignment.topLeft,
-            children: [
-              ...previousChildren,
-              ?currentChild,
-            ],
-          );
-        },
-        child: Wrap(
-          key: ValueKey(selectedOptions.length),
-          spacing: chipDecoration.spacing,
-          runSpacing: chipDecoration.runSpacing,
-          children: chips,
+      return _wrapSelectedItems(
+        AnimatedSwitcher(
+          duration: const Duration(milliseconds: 200),
+          layoutBuilder: (currentChild, previousChildren) {
+            return Stack(
+              alignment: Alignment.topLeft,
+              children: [
+                ...previousChildren,
+                ?currentChild,
+              ],
+            );
+          },
+          child: Wrap(
+            key: ValueKey(selectedOptions.length),
+            spacing: chipDecoration.spacing,
+            runSpacing: chipDecoration.runSpacing,
+            children: chips,
+          ),
         ),
       );
     }
@@ -851,6 +854,16 @@ class _MultiDropdownState<T extends Object> extends State<MultiDropdown<T>> {
         itemCount: chips.length,
         itemBuilder: (context, index) => chips[index],
       ),
+    );
+  }
+
+  Widget _wrapSelectedItems(Widget child) {
+    final maxHeight = widget.chipDecoration.wrapMaxHeight;
+    if (maxHeight == null) return child;
+
+    return ConstrainedBox(
+      constraints: BoxConstraints(maxHeight: maxHeight),
+      child: SingleChildScrollView(primary: false, child: child),
     );
   }
 

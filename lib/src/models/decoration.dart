@@ -167,6 +167,9 @@ class DropdownDecoration {
   ///
   /// [borderRadius] is the border radius of the dropdown. The default value is 12.
   ///
+  /// [border] is the outline drawn around the dropdown panel. Defaults to
+  /// null, which draws no outline.
+  ///
   /// [animationDuration] is the duration of the open/close animation. Defaults to 200ms.
   ///
   /// [animationCurve] is the curve of the open/close animation. Defaults to [Curves.easeOutCubic].
@@ -178,6 +181,7 @@ class DropdownDecoration {
     this.marginTop = 0,
     this.listPadding,
     this.borderRadius = const BorderRadius.all(Radius.circular(12)),
+    this.border,
     this.footer,
     this.header,
     this.noItemsFoundText = 'No items found',
@@ -187,6 +191,9 @@ class DropdownDecoration {
     this.animationDuration = const Duration(milliseconds: 200),
     this.animationCurve = Curves.easeOutCubic,
   });
+
+  /// Optional outline around the overlay panel. Does not affect bottom sheets.
+  final BorderSide? border;
 
   /// The background color of the dropdown.
   ///
@@ -400,9 +407,14 @@ class ChipDecoration {
     this.labelStyle,
     this.borderRadius = const BorderRadius.all(Radius.circular(12)),
     this.wrap = true,
+    this.wrapMaxHeight,
     this.maxDisplayCount,
     this.overflowLabelBuilder,
-  });
+  }) : assert(
+         wrapMaxHeight == null ||
+             (wrapMaxHeight > 0 && wrapMaxHeight < double.infinity),
+         'wrapMaxHeight must be finite and greater than zero',
+       );
 
   /// The icon to display for deleting a chip.
   final Widget? deleteIcon;
@@ -435,6 +447,11 @@ class ChipDecoration {
   /// If true, the chips will wrap to the next line when they reach the end of the row.
   /// If false, the chips will not wrap and will be displayed in a single line, scrolling horizontally if necessary.
   final bool wrap;
+
+  /// Maximum height of wrapped chips before they scroll vertically.
+  /// Applies to custom selected items too. Ignored when [wrap] is false.
+  /// Must be finite and greater than zero. Null leaves the height unlimited.
+  final double? wrapMaxHeight;
 
   /// The maximum number of chips to display.
   ///

@@ -9,7 +9,13 @@
 
 ### Bug Fixes
 
+- Removed the `dart:io` import used for desktop keyboard shortcuts (#130).
 - Fixed standalone Material input borders in search fields (#226, #227). Borders remain strongly typed as `InputBorder?` and render correctly in overlay and bottom-sheet modes, without dynamic casts.
+
+### Added
+
+- Optional dropdown panel border (`DropdownDecoration.border`, #228).
+- Scroll wrapped chips within `ChipDecoration.wrapMaxHeight` (#229).
 
 ## 3.2.2
 

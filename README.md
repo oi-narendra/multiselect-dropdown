@@ -251,6 +251,7 @@ flutter run
 | borderRadius    | `BorderRadiusGeometry` | Chip border radius                  | `BorderRadius.circular(12)`                         |
 | wrap            | `bool`                 | Wrap chips or scroll horizontally   | `true`                                              |
 | maxDisplayCount | `int?`                 | Max visible chips (shows "+N more") | `null`                                              |
+| wrapMaxHeight | `double?` | Max height before wrapped chips scroll vertically | `null` |
 
 ### FieldDecoration
 
@@ -282,6 +283,7 @@ flutter run
 | elevation        | `double`          | Dropdown elevation              | `1.0`                       |
 | maxHeight        | `double`          | Maximum dropdown height         | `400.0`                     |
 | borderRadius     | `BorderRadius`    | Dropdown border radius          | `BorderRadius.circular(12)` |
+| border           | `BorderSide?`     | Outline around the overlay panel | `null`                      |
 | marginTop        | `double`          | Gap between field and dropdown  | `0.0`                       |
 | header           | `Widget?`         | Header widget inside dropdown   | `null`                      |
 | footer           | `Widget?`         | Footer widget inside dropdown   | `null`                      |

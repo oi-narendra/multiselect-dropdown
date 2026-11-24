@@ -1,5 +1,11 @@
 # ChangeLOG
 
+## [Unreleased]
+
+### Bug Fixes
+
+- Single-select no longer closes a disposed controller when the selection makes the parent replace the field, for example with a key derived from the selected value ("A MultiSelectController was used after being disposed").
+
 ## 4.0.0
 
 ### Breaking Changes

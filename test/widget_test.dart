@@ -264,6 +264,41 @@ void main() {
       controller.dispose();
     });
 
+    testWidgets('single-select survives the parent replacing it on selection', (
+      tester,
+    ) async {
+      // A key derived from the value is the usual way to make the field pick
+      // up a selection made elsewhere, so the tap that selects also swaps the
+      // widget out before the deferred close runs.
+      var value = 1;
+
+      await tester.pumpWidget(
+        buildTestApp(
+          StatefulBuilder(
+            builder: (context, setState) => MultiDropdown<int>(
+              key: ValueKey(value),
+              items: [
+                for (final item in createItems(3))
+                  item.copyWith(selected: item.value == value),
+              ],
+              singleSelect: true,
+              onSelectionChange: (values) {
+                if (values.isNotEmpty) setState(() => value = values.first);
+              },
+            ),
+          ),
+        ),
+      );
+
+      await tester.tap(find.byType(InkWell));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Item 3').last);
+      await tester.pumpAndSettle();
+
+      expect(value, 3);
+      expect(tester.takeException(), isNull);
+    });
+
     // =========================================================================
     // Dropdown Opening & Closing (#136)
     // =========================================================================

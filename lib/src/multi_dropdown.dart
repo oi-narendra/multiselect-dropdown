@@ -637,6 +637,11 @@ class _MultiDropdownState<T extends Object> extends State<MultiDropdown<T>> {
 
     if (widget.singleSelect) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
+        // The selection callback may have made the parent replace this
+        // widget (a key derived from the value), and then the controller it
+        // owned is already disposed by the time this runs.
+        if (!mounted) return;
+
         _dropdownController.closeDropdown();
       });
     }
